@@ -19,58 +19,6 @@ from performance_measures import ClassificationMeasures, RegressionMeasures
 from sklearn.neighbors import KNeighborsClassifier
 
 
-def knn_hyperparameter_tuning() -> None:
-
-    # Set of hyperparameters
-    k_list = range(3, 36, 2)
-    metric_list = ['manhattan', 'euclidean', 'cosine']
-
-    # Read interim CSV into DataFrame
-    df = pd.read_csv(f'{PROJECT_DIR}/data/interim/1/spotify.csv', index_col=0)
-
-    # Convert DataFrame to array
-    X = df.to_numpy()[:, :-1]
-    y = df.to_numpy()[:, -1].astype(int)
-
-    # Split the array into train, test and split
-    X_train, X_val, X_test, y_train, y_val, y_test = train_val_test_split(X, y)
-
-    # Initialize an empty dictionary for storing accuracy
-    all_accuracy = {}
-
-    # Iterate over all combinations of hyperparameters
-    for k in k_list:
-        for metric in metric_list:
-
-            # Initialize and train the model
-            knn = KNN(k, metric)
-            knn.fit(X_train, y_train)
-
-            # Compute predictions on the validation set
-            y_pred = knn.predict(X_val)
-
-            # Evaluate predictions for the validation set
-            cls_measures = ClassificationMeasures(y_val, y_pred)
-            accuracy = cls_measures.accuracy_score()
-
-            # Store the accuracy for comparision
-            all_accuracy[(k, metric)] = accuracy
-
-            # Log progress
-            print(k, metric, accuracy)
-
-    # Extract the top 10 hyperparameters by accuracy
-    best_hyperparameters = sorted(all_accuracy, key=all_accuracy.get, reverse=True)[:10]
-
-    # Write the top 10 hyperparameters to a file
-    print()
-    with open('results/knn_hyper_params.txt', 'w') as file:
-        for param in best_hyperparameters:
-            file.write(f'{param[0]}, {param[1]}, {all_accuracy[param]}\n')
-            print(f'{param[0]}, {param[1]}, {all_accuracy[param]}')
-    print()
-
-
 def knn_drop_columns() -> None:
 
     # Different combinations of columns to drop
@@ -183,6 +131,58 @@ def knn_drop_columns() -> None:
     print()
 
 
+def knn_hyperparameter_tuning() -> None:
+
+    # Set of hyperparameters
+    k_list = range(3, 36, 2)
+    metric_list = ['manhattan', 'euclidean', 'cosine']
+
+    # Read interim CSV into DataFrame
+    df = pd.read_csv(f'{PROJECT_DIR}/data/interim/1/spotify.csv', index_col=0)
+
+    # Convert DataFrame to array
+    X = df.to_numpy()[:, :-1]
+    y = df.to_numpy()[:, -1].astype(int)
+
+    # Split the array into train, test and split
+    X_train, X_val, X_test, y_train, y_val, y_test = train_val_test_split(X, y)
+
+    # Initialize an empty dictionary for storing accuracy
+    all_accuracy = {}
+
+    # Iterate over all combinations of hyperparameters
+    for k in k_list:
+        for metric in metric_list:
+
+            # Initialize and train the model
+            knn = KNN(k, metric)
+            knn.fit(X_train, y_train)
+
+            # Compute predictions on the validation set
+            y_pred = knn.predict(X_val)
+
+            # Evaluate predictions for the validation set
+            cls_measures = ClassificationMeasures(y_val, y_pred)
+            accuracy = cls_measures.accuracy_score()
+
+            # Store the accuracy for comparision
+            all_accuracy[(k, metric)] = accuracy
+
+            # Log progress
+            print(k, metric, accuracy)
+
+    # Extract the top 10 hyperparameters by accuracy
+    best_hyperparameters = sorted(all_accuracy, key=all_accuracy.get, reverse=True)[:10]
+
+    # Write the top 10 hyperparameters to a file
+    print()
+    with open('results/knn_hyper_params.txt', 'w') as file:
+        for param in best_hyperparameters:
+            file.write(f'{param[0]}, {param[1]}, {all_accuracy[param]}\n')
+            print(f'{param[0]}, {param[1]}, {all_accuracy[param]}')
+    print()
+
+
 def knn_inference_time() -> None:
 
     # Read the best hyperparameters from file
@@ -251,7 +251,7 @@ def knn_inference_time() -> None:
     plt.title('Inference times for different models')
     plt.xlabel('Models')
     plt.ylabel('Inference time (seconds)')
-    plt.savefig('figures/inference_time_models.png', bbox_inches='tight')
+    plt.savefig('figures/knn_inference_time_models.png', bbox_inches='tight')
     plt.close()
     plt.clf()
 
@@ -296,7 +296,57 @@ def knn_inference_time() -> None:
     plt.xlabel('Size of training dataset')
     plt.ylabel('Inference time (seconds)')
     plt.legend()
-    plt.savefig('figures/inference_time_train_sizes.png', bbox_inches='tight')
+    plt.savefig('figures/knn_inference_time_train_sizes.png', bbox_inches='tight')
+    plt.close()
+    plt.clf()
+
+
+def knn_k_values() -> None:
+
+    # Different k values to try
+    k_list = range(5, 20, 2)
+    metric = 'manhattan'
+
+    # Read interim CSV into DataFrame
+    df = pd.read_csv(f'{PROJECT_DIR}/data/interim/1/spotify.csv', index_col=0)
+
+    # Convert DataFrame to array
+    X = df.to_numpy()[:, :-1]
+    y = df.to_numpy()[:, -1].astype(int)
+
+    # Split the array into train, test and split
+    X_train, X_val, X_test, y_train, y_val, y_test = train_val_test_split(X, y)
+
+    # Initialize an empty list for storing accuracy
+    all_accuracy = []
+
+    # Iterate over different combinations
+    for k in k_list:
+
+        # Initialize and train the model
+        knn = KNN(k, metric)
+        knn.fit(X_train, y_train)
+
+        # Compute predictions on the validation set
+        y_pred = knn.predict(X_val)
+
+        # Evaluate predictions for the validation set
+        cls_measures = ClassificationMeasures(y_val, y_pred)
+        accuracy = cls_measures.accuracy_score()
+
+        # Store the accuracy for comparision
+        all_accuracy.append(accuracy)
+
+        # Log progress
+        print(f'{k}, {accuracy}')
+    print()
+
+    # Generate plot
+    plt.plot(k_list, all_accuracy)
+    plt.title('Accuracy for different values of k (manhattan distance)')
+    plt.xlabel('k')
+    plt.ylabel('Validation accuracy')
+    plt.savefig('figures/knn_accuracy_k.png', bbox_inches='tight')
     plt.close()
     plt.clf()
 
@@ -745,7 +795,7 @@ def visualize_spotify_dataset() -> None:
     # Convert boolean columns to integer datatype
     df['explicit'] = df['explicit'].astype(int)
 
-    # Randomly sample 5000 points from DataFrame
+    # Randomly sample 1000 points from DataFrame
     sampled_df = df.sample(n=1000, random_state=0)
 
     # Generate pairwise scatter plot
@@ -756,13 +806,6 @@ def visualize_spotify_dataset() -> None:
     plt.close()
     plt.clf()
     print(output_path)
-
-    # Generate scatter plot
-    # for class_value in df['track_genre'].unique():
-    #     subset = df[df['track_genre'] == class_value]
-    #     plt.scatter(subset['key'], subset['loudness'], label=class_value, s=5)
-    # plt.close()
-    # plt.clf()
 
 
 if __name__ == '__main__':
@@ -777,6 +820,7 @@ if __name__ == '__main__':
 
     ## 2.4 Hyperparameter Tuning
     knn_hyperparameter_tuning()
+    knn_k_values()
     knn_drop_columns()
 
     ## 2.5 Optimization

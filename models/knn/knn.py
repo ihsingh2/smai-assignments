@@ -2,7 +2,6 @@ from typing import Any, Literal, Self
 
 import numpy as np
 from numpy.typing import NDArray
-from sklearn.neighbors import KNeighborsClassifier
 
 
 class KNN:
@@ -76,16 +75,6 @@ class KNN:
         # Return the most common class label
         unique_labels, label_counts = np.unique(k_nearest_labels, return_counts=True)
         return unique_labels[label_counts.argmax()]
-
-
-    def fast_predict(self, X_test: NDArray) -> NDArray:
-        """ Returns the prediction for an array of test samples."""
-
-        # Import at the top
-        knn = KNeighborsClassifier(n_neighbors=self.k, metric=self.metric, algorithm='brute')
-        knn.fit(self.X_train, self.y_train)
-        y_pred = knn.predict(X_test)
-        return y_pred
 
 
 class OldKNN:
