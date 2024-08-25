@@ -1,0 +1,200 @@
+figures/spotify_pair_plot.png
+3 manhattan 0.2714508580343214
+3 euclidean 0.25005571651437486
+3 cosine 0.25206151103186986
+5 manhattan 0.2839313572542902
+5 euclidean 0.2616447515043459
+5 cosine 0.26142188544684647
+7 manhattan 0.2917316692667707
+7 euclidean 0.27033652774682415
+7 cosine 0.26721640294183197
+9 manhattan 0.2918431022955204
+9 euclidean 0.2721194562068197
+9 cosine 0.26665923779808337
+11 manhattan 0.2997548473367506
+11 euclidean 0.27345665255181634
+11 cosine 0.26833073322932915
+13 manhattan 0.30510363271673724
+13 euclidean 0.27022509471807443
+13 cosine 0.2711165589480722
+15 manhattan 0.30109204368174725
+15 euclidean 0.2732337864943169
+15 cosine 0.27379095163806555
+17 manhattan 0.3028749721417428
+17 euclidean 0.272788054379318
+17 cosine 0.270782259861823
+19 manhattan 0.3007577445954981
+19 euclidean 0.2715622910630711
+19 cosine 0.2675507020280811
+21 manhattan 0.29942054825050146
+21 euclidean 0.2731223534655672
+21 cosine 0.2653220414530867
+23 manhattan 0.30109204368174725
+23 euclidean 0.2711165589480722
+23 cosine 0.26766213505683084
+25 manhattan 0.29997771339425006
+25 euclidean 0.26911076443057724
+25 cosine 0.2689993314018275
+27 manhattan 0.30042344550924893
+27 euclidean 0.26833073322932915
+27 cosine 0.2694450635168264
+29 manhattan 0.30142634276799646
+29 euclidean 0.2706708268330733
+29 cosine 0.26777356808558056
+31 manhattan 0.30142634276799646
+31 euclidean 0.26777356808558056
+31 cosine 0.2674392689993314
+33 manhattan 0.2986405170492534
+33 euclidean 0.2686650323155783
+33 cosine 0.26443057722308894
+35 manhattan 0.30109204368174725
+35 euclidean 0.2712279919768219
+35 cosine 0.26454201025183866
+
+13, manhattan, 0.30510363271673724
+17, manhattan, 0.3028749721417428
+29, manhattan, 0.30142634276799646
+31, manhattan, 0.30142634276799646
+15, manhattan, 0.30109204368174725
+23, manhattan, 0.30109204368174725
+35, manhattan, 0.30109204368174725
+19, manhattan, 0.3007577445954981
+27, manhattan, 0.30042344550924893
+25, manhattan, 0.29997771339425006
+
+None 0.30510363271673724
+key 0.3153554713617116
+liveness 0.3082237575217294
+time_signature 0.30621796300423443
+mode 0.30387786940049033
+explicit 0.30131490973924674
+loudness 0.2919545353242701
+acousticness 0.2908402050367729
+speechiness 0.2905059059505237
+instrumentalness 0.28939157566302653
+energy 0.28950300869177625
+valence 0.28805437931802985
+tempo 0.28738578114553154
+danceability 0.2814798306217963
+duration_ms 0.2811455315355471
+popularity 0.22810340985067973
+['key', 'time_signature', 'mode', 'explicit'] 0.3241586806329396
+['key', 'liveness', 'time_signature', 'mode', 'explicit'] 0.3244929797191888
+['key', 'liveness', 'time_signature', 'mode', 'explicit', 'loudness', 'speechiness'] 0.30621796300423443
+['key', 'liveness', 'time_signature', 'mode', 'explicit', 'acousticness', 'instrumentalness'] 0.3063293960329842
+
+('key', 'liveness', 'time_signature', 'mode', 'explicit'), 0.3244929797191888
+('key', 'time_signature', 'mode', 'explicit'), 0.3241586806329396
+key, 0.3153554713617116
+liveness, 0.3082237575217294
+('key', 'liveness', 'time_signature', 'mode', 'explicit', 'acousticness', 'instrumentalness'), 0.3063293960329842
+time_signature, 0.30621796300423443
+('key', 'liveness', 'time_signature', 'mode', 'explicit', 'loudness', 'speechiness'), 0.30621796300423443
+None, 0.30510363271673724
+mode, 0.30387786940049033
+explicit, 0.30131490973924674
+
+<models.knn.knn.KNN object at 0x75a436e6d340> 52.92355513572693
+KNeighborsClassifier(algorithm='brute', metric='manhattan', n_neighbors=13) 1.3397889137268066
+0.01 <models.knn.knn.OldKNN object at 0x7f47a97088c0> 34.68346190452576
+0.01 <models.knn.knn.OldKNN object at 0x7f47aa2228d0> 34.888015031814575
+0.01 <models.knn.knn.KNN object at 0x7f47ad88cce0> 0.5753986835479736
+0.01 KNeighborsClassifier(algorithm='brute', metric='manhattan', n_neighbors=13) 0.043880462646484375
+0.02 <models.knn.knn.OldKNN object at 0x7f47a97088c0> 70.05900955200195
+0.02 <models.knn.knn.OldKNN object at 0x7f47aa2228d0> 66.72910356521606
+0.02 <models.knn.knn.KNN object at 0x7f47ad88cce0> 0.9455199241638184
+0.02 KNeighborsClassifier(algorithm='brute', metric='manhattan', n_neighbors=13) 0.06511712074279785
+0.03 <models.knn.knn.OldKNN object at 0x7f47a97088c0> 99.63114166259766
+0.03 <models.knn.knn.OldKNN object at 0x7f47aa2228d0> 99.4468297958374
+0.03 <models.knn.knn.KNN object at 0x7f47ad88cce0> 1.3342673778533936
+0.03 KNeighborsClassifier(algorithm='brute', metric='manhattan', n_neighbors=13) 0.08721756935119629
+0.04 <models.knn.knn.OldKNN object at 0x7f47a97088c0> 125.7961003780365
+0.04 <models.knn.knn.OldKNN object at 0x7f47aa2228d0> 135.42910313606262
+0.04 <models.knn.knn.KNN object at 0x7f47ad88cce0> 1.6824700832366943
+0.04 KNeighborsClassifier(algorithm='brute', metric='manhattan', n_neighbors=13) 0.11506247520446777
+0.05 <models.knn.knn.OldKNN object at 0x7f47a97088c0> 167.6342601776123
+0.05 <models.knn.knn.OldKNN object at 0x7f47aa2228d0> 157.06295347213745
+0.05 <models.knn.knn.KNN object at 0x7f47ad88cce0> 2.0693345069885254
+0.05 KNeighborsClassifier(algorithm='brute', metric='manhattan', n_neighbors=13) 0.1192331314086914
+
+13 manhattan 0.2528206516833649
+figures/regression_scatter_plot.png
+Train MSE: 0.3360577892703255
+Train Standard Deviation: 0.9171471721145169
+Train Variance: 0.8411589353176554
+Test MSE: 0.3983572844740323
+Test Standard Deviation: 0.8440823210133268
+Test Variance: 0.7124749646472448
+figures/regression_degree_1.png
+Observed minimum for k = 20
+Test MSE: 0.009482830123196217
+figures/regression_polynomial_1.gif
+figures/regression_polynomial_2.gif
+figures/regression_polynomial_3.gif
+figures/regression_polynomial_5.gif
+figures/regression_polynomial_7.gif
+figures/regression_polynomial_9.gif
+figures/regression_polynomial_11.gif
+figures/regularization_scatter_plot.png
+figures/regularization_1_None.png
+figures/regularization_1_l1.png
+figures/regularization_1_l2.png
+figures/regularization_2_None.png
+figures/regularization_2_l1.png
+figures/regularization_2_l2.png
+figures/regularization_3_None.png
+figures/regularization_3_l1.png
+figures/regularization_3_l2.png
+figures/regularization_4_None.png
+figures/regularization_4_l1.png
+figures/regularization_4_l2.png
+figures/regularization_5_None.png
+figures/regularization_5_l1.png
+figures/regularization_5_l2.png
+figures/regularization_6_None.png
+figures/regularization_6_l1.png
+figures/regularization_6_l2.png
+figures/regularization_7_None.png
+figures/regularization_7_l1.png
+figures/regularization_7_l2.png
+figures/regularization_8_None.png
+figures/regularization_8_l1.png
+figures/regularization_8_l2.png
+figures/regularization_9_None.png
+figures/regularization_9_l1.png
+figures/regularization_9_l2.png
+figures/regularization_10_None.png
+figures/regularization_10_l1.png
+figures/regularization_10_l2.png
+figures/regularization_11_None.png
+figures/regularization_11_l1.png
+figures/regularization_11_l2.png
+figures/regularization_12_None.png
+figures/regularization_12_l1.png
+figures/regularization_12_l2.png
+figures/regularization_13_None.png
+figures/regularization_13_l1.png
+figures/regularization_13_l2.png
+figures/regularization_14_None.png
+figures/regularization_14_l1.png
+figures/regularization_14_l2.png
+figures/regularization_15_None.png
+figures/regularization_15_l1.png
+figures/regularization_15_l2.png
+figures/regularization_16_None.png
+figures/regularization_16_l1.png
+figures/regularization_16_l2.png
+figures/regularization_17_None.png
+figures/regularization_17_l1.png
+figures/regularization_17_l2.png
+figures/regularization_18_None.png
+figures/regularization_18_l1.png
+figures/regularization_18_l2.png
+figures/regularization_19_None.png
+figures/regularization_19_l1.png
+figures/regularization_19_l2.png
+figures/regularization_20_None.png
+figures/regularization_20_l1.png
+figures/regularization_20_l2.png
+Observed minimum for k = 18, regularizer = None
+Test MSE: 0.013589322004168293

@@ -1,0 +1,182 @@
+k = 1
+--------------------------------------------------
+Train MSE: 0.3360577892703255
+Train Standard Deviation: 0.9171471721145169
+Train Variance: 0.8411589353176554
+Test MSE: 0.3983572844740323
+Test Standard Deviation: 0.8440823210133268
+Test Variance: 0.7124749646472448
+
+k = 2
+--------------------------------------------------
+Train MSE: 0.21768135580037634
+Train Standard Deviation: 0.9828387167302446
+Train Variance: 0.9659719431039541
+Test MSE: 0.21084468507539073
+Test Standard Deviation: 0.9455867962512517
+Test Variance: 0.8941343892447063
+
+k = 3
+--------------------------------------------------
+Train MSE: 0.07347732846539055
+Train Standard Deviation: 1.0611968872777058
+Train Variance: 1.1261388335678917
+Test MSE: 0.058502564392579746
+Test Standard Deviation: 1.0029826191471536
+Test Variance: 1.005974134311284
+
+k = 4
+--------------------------------------------------
+Train MSE: 0.07384133057635671
+Train Standard Deviation: 1.0621384270593368
+Train Variance: 1.128138038236082
+Test MSE: 0.0554852170582234
+Test Standard Deviation: 1.0066915936610605
+Test Variance: 1.0134279647478457
+
+k = 5
+--------------------------------------------------
+Train MSE: 0.024992006389134507
+Train Standard Deviation: 1.075882457507787
+Train Variance: 1.1575230623729953
+Test MSE: 0.01360524088988116
+Test Standard Deviation: 1.0470514598493246
+Test Variance: 1.0963167595726016
+
+k = 6
+--------------------------------------------------
+Train MSE: 0.02288587974483667
+Train Standard Deviation: 1.0781964047524384
+Train Variance: 1.162507487221084
+Test MSE: 0.014913125619143522
+Test Standard Deviation: 1.0377593452530112
+Test Variance: 1.0769444586599584
+
+k = 7
+--------------------------------------------------
+Train MSE: 0.016177554989657856
+Train Standard Deviation: 1.0802579498386857
+Train Variance: 1.1669572381896802
+Test MSE: 0.011462053730227332
+Test Standard Deviation: 1.045908476229925
+Test Variance: 1.0939245406496039
+
+k = 8
+--------------------------------------------------
+Train MSE: 0.015755079229311582
+Train Standard Deviation: 1.0824605942012606
+Train Variance: 1.1717209379985463
+Test MSE: 0.012399016038214274
+Test Standard Deviation: 1.0385754281287338
+Test Variance: 1.0786389199127828
+
+k = 9
+--------------------------------------------------
+Train MSE: 0.012787195568771278
+Train Standard Deviation: 1.083272547189657
+Train Variance: 1.1734794114947673
+Test MSE: 0.010724220968928683
+Test Standard Deviation: 1.0418595373311976
+Test Variance: 1.0854712955279773
+
+k = 10
+--------------------------------------------------
+Train MSE: 0.012617154863309308
+Train Standard Deviation: 1.0831694720036904
+Train Variance: 1.1732561050807533
+Test MSE: 0.010526536982962863
+Test Standard Deviation: 1.042258093002725
+Test Variance: 1.0863019324296768
+
+k = 11
+--------------------------------------------------
+Train MSE: 0.011068327548314246
+Train Standard Deviation: 1.0826431752007661
+Train Variance: 1.172116244808797
+Test MSE: 0.009715460202655825
+Test Standard Deviation: 1.0440829907468792
+Test Variance: 1.090109291566948
+
+k = 12
+--------------------------------------------------
+Train MSE: 0.011296097980266612
+Train Standard Deviation: 1.082239322057504
+Train Variance: 1.1712419502074858
+Test MSE: 0.009775110871358291
+Test Standard Deviation: 1.0457785217417293
+Test Variance: 1.0936527165363163
+
+k = 13
+--------------------------------------------------
+Train MSE: 0.010852225642155242
+Train Standard Deviation: 1.08198420965948
+Train Variance: 1.1706898299524497
+Test MSE: 0.009634879464807872
+Test Standard Deviation: 1.0467647690351094
+Test Variance: 1.095716481693126
+
+k = 14
+--------------------------------------------------
+Train MSE: 0.010963969945998579
+Train Standard Deviation: 1.0818419162330033
+Train Variance: 1.1703819317186965
+Test MSE: 0.009685706069860689
+Test Standard Deviation: 1.047521405528479
+Test Variance: 1.09730109504036
+
+k = 15
+--------------------------------------------------
+Train MSE: 0.010660024828110883
+Train Standard Deviation: 1.0815565062921046
+Train Variance: 1.1697644763027832
+Test MSE: 0.009623261270477959
+Test Standard Deviation: 1.04801727502914
+Test Variance: 1.0983402087595042
+
+k = 16
+--------------------------------------------------
+Train MSE: 0.010862349551327612
+Train Standard Deviation: 1.0811406714944047
+Train Variance: 1.1688651515593724
+Test MSE: 0.009820616381218335
+Test Standard Deviation: 1.0501558211572757
+Test Variance: 1.102827248710512
+
+k = 17
+--------------------------------------------------
+Train MSE: 0.010686567503186046
+Train Standard Deviation: 1.0809505699306754
+Train Variance: 1.168454134633452
+Test MSE: 0.009796943018075922
+Test Standard Deviation: 1.0503151679805545
+Test Variance: 1.1031619520900202
+
+k = 18
+--------------------------------------------------
+Train MSE: 0.010655273064703093
+Train Standard Deviation: 1.0810498397625163
+Train Variance: 1.1686687560505622
+Test MSE: 0.009755734966007424
+Test Standard Deviation: 1.049889921448228
+Test Variance: 1.1022688471585662
+
+k = 19
+--------------------------------------------------
+Train MSE: 0.01059403067089673
+Train Standard Deviation: 1.0809887270404024
+Train Variance: 1.1685366279884297
+Test MSE: 0.009751097992939158
+Test Standard Deviation: 1.050203922024101
+Test Variance: 1.1029282778348042
+
+k = 20
+--------------------------------------------------
+Train MSE: 0.010668604616247152
+Train Standard Deviation: 1.0820698908872461
+Train Variance: 1.1708752487647367
+Test MSE: 0.009482830123196217
+Test Standard Deviation: 1.0472732113856926
+Test Variance: 1.0967811792861015
+
+Observed minimum Test MSE for k = 20
+Test MSE: 0.009482830123196217

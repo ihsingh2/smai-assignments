@@ -1,0 +1,542 @@
+k = 1, No Regularization
+--------------------------------------------------
+Train MSE: 0.20976882086229762
+Train Standard Deviation: 0.16353071164633692
+Train Variance: 0.0267422936515574
+Test MSE: 0.2958028572093591
+Test Standard Deviation: 0.14490522869839345
+Test Variance: 0.02099752530413371
+
+k = 1, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.2285716357089732
+Train Standard Deviation: 0.2615136478865061
+Train Variance: 0.0683893880309075
+Test MSE: 0.2628476220769065
+Test Standard Deviation: 0.23172830701488686
+Test Variance: 0.05369800827198567
+
+k = 1, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.21565584239597796
+Train Standard Deviation: 0.13314623936299724
+Train Variance: 0.017727921056508555
+Test MSE: 0.3080118053279681
+Test Standard Deviation: 0.11798142422905747
+Test Variance: 0.013919616463116829
+
+k = 2, No Regularization
+--------------------------------------------------
+Train MSE: 0.018492442488799235
+Train Standard Deviation: 0.46337279981929597
+Train Variance: 0.21471435161237332
+Test MSE: 0.023312761138645395
+Test Standard Deviation: 0.5505008344697163
+Test Variance: 0.303051168751854
+
+k = 2, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.05382182981190111
+Train Standard Deviation: 0.3860974727884639
+Train Variance: 0.14907125849363864
+Test MSE: 0.05765327542817581
+Test Standard Deviation: 0.464950650198435
+Test Variance: 0.21617910711994745
+
+k = 2, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.06431612445032839
+Train Standard Deviation: 0.26806233856050743
+Train Variance: 0.07185741735452812
+Test MSE: 0.10221168536088375
+Test Standard Deviation: 0.3248510300803464
+Test Variance: 0.1055281917442621
+
+k = 3, No Regularization
+--------------------------------------------------
+Train MSE: 0.01878863279110953
+Train Standard Deviation: 0.47015780160073795
+Train Variance: 0.22104835840603884
+Test MSE: 0.023025454785506064
+Test Standard Deviation: 0.5580221162354017
+Test Variance: 0.31138868220783605
+
+k = 3, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.07356886813870321
+Train Standard Deviation: 0.43364001647878386
+Train Variance: 0.18804366389171992
+Test MSE: 0.04667719767078947
+Test Standard Deviation: 0.5605533203752643
+Test Variance: 0.3142200249837337
+
+k = 3, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.06040002638886403
+Train Standard Deviation: 0.28540190144299454
+Train Variance: 0.08145424534727676
+Test MSE: 0.08491956522896124
+Test Standard Deviation: 0.3558681561928078
+Test Variance: 0.12664214459206866
+
+k = 4, No Regularization
+--------------------------------------------------
+Train MSE: 0.013247497260559345
+Train Standard Deviation: 0.48421702646940656
+Train Variance: 0.23446612872287398
+Test MSE: 0.01425615238548521
+Test Standard Deviation: 0.5931124976002095
+Test Variance: 0.35178243480955845
+
+k = 4, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.07791760050686562
+Train Standard Deviation: 0.41225788072543584
+Train Variance: 0.1699565602202277
+Test MSE: 0.05106042290229271
+Test Standard Deviation: 0.5347521779717611
+Test Variance: 0.2859598918455421
+
+k = 4, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.033300893855513256
+Train Standard Deviation: 0.3432245632426673
+Train Variance: 0.11780310081311975
+Test MSE: 0.04483998796690379
+Test Standard Deviation: 0.4380821973784204
+Test Variance: 0.19191601165990532
+
+k = 5, No Regularization
+--------------------------------------------------
+Train MSE: 0.014103667822610568
+Train Standard Deviation: 0.4818072240795802
+Train Variance: 0.23213820117527081
+Test MSE: 0.015674838643652798
+Test Standard Deviation: 0.6149977811857287
+Test Variance: 0.3782222708633694
+
+k = 5, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.12761835060032378
+Train Standard Deviation: 0.46251675229107186
+Train Variance: 0.21392174614988074
+Test MSE: 0.08256316298556915
+Test Standard Deviation: 0.6291575929193703
+Test Variance: 0.3958392767280961
+
+k = 5, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.033178010812672694
+Train Standard Deviation: 0.351073899831327
+Train Variance: 0.1232528831427766
+Test MSE: 0.04008147611130784
+Test Standard Deviation: 0.4559472697086567
+Test Variance: 0.2078879127547785
+
+k = 6, No Regularization
+--------------------------------------------------
+Train MSE: 0.013619345933979597
+Train Standard Deviation: 0.47772616631131454
+Train Variance: 0.22822228997850577
+Test MSE: 0.015318975101396093
+Test Standard Deviation: 0.6086941551196626
+Test Variance: 0.3705085744768399
+
+k = 6, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.15281730086043918
+Train Standard Deviation: 0.4625433805611501
+Train Variance: 0.2139463789009369
+Test MSE: 0.08721838210173073
+Test Standard Deviation: 0.5725181063925128
+Test Variance: 0.3277769821472685
+
+k = 6, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.026540257556620265
+Train Standard Deviation: 0.3758166089828752
+Train Variance: 0.14123812358738733
+Test MSE: 0.0292192592759936
+Test Standard Deviation: 0.4951899126079671
+Test Variance: 0.24521304954868606
+
+k = 7, No Regularization
+--------------------------------------------------
+Train MSE: 0.013187974661484895
+Train Standard Deviation: 0.4778639045315728
+Train Variance: 0.22835391125416013
+Test MSE: 0.014933455879425073
+Test Standard Deviation: 0.6053829873630612
+Test Variance: 0.36648856138862423
+
+k = 7, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.1869959042971587
+Train Standard Deviation: 0.4921087012699237
+Train Variance: 0.24217097386557096
+Test MSE: 0.10260055934989004
+Test Standard Deviation: 0.6199306308765045
+Test Variance: 0.38431398709894077
+
+k = 7, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.027238130408369622
+Train Standard Deviation: 0.37960846824080013
+Train Variance: 0.14410258916012658
+Test MSE: 0.028251420200140827
+Test Standard Deviation: 0.5046547886761565
+Test Variance: 0.2546764557337762
+
+k = 8, No Regularization
+--------------------------------------------------
+Train MSE: 0.011362904622898651
+Train Standard Deviation: 0.47579982466653614
+Train Variance: 0.22638547315270655
+Test MSE: 0.013888955232759199
+Test Standard Deviation: 0.5976277479185291
+Test Variance: 0.357158925082173
+
+k = 8, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.24927765911618188
+Train Standard Deviation: 0.5452325970844547
+Train Variance: 0.2972785849234594
+Test MSE: 0.1293525034431437
+Test Standard Deviation: 0.5963286162130089
+Test Variance: 0.35560781851452206
+
+k = 8, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.02616258255199685
+Train Standard Deviation: 0.3909881822002709
+Train Variance: 0.15287175862027222
+Test MSE: 0.025418160865778545
+Test Standard Deviation: 0.5241666526758496
+Test Variance: 0.27475067977740475
+
+k = 9, No Regularization
+--------------------------------------------------
+Train MSE: 0.011218453342918705
+Train Standard Deviation: 0.4762636796763632
+Train Variance: 0.2268270925788695
+Test MSE: 0.01410477003606606
+Test Standard Deviation: 0.5951963504684421
+Test Variance: 0.3542586956109525
+
+k = 9, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.2815267535686143
+Train Standard Deviation: 0.5665805734234515
+Train Variance: 0.3210135461808471
+Test MSE: 0.13468727765391256
+Test Standard Deviation: 0.6269628676398183
+Test Variance: 0.39308243739914434
+
+k = 9, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.026787291849150734
+Train Standard Deviation: 0.3926208311322159
+Train Variance: 0.15415111703895198
+Test MSE: 0.025405627702924927
+Test Standard Deviation: 0.5284741609212683
+Test Variance: 0.27928493876143856
+
+k = 10, No Regularization
+--------------------------------------------------
+Train MSE: 0.011293683773729468
+Train Standard Deviation: 0.47659071465473685
+Train Variance: 0.2271387092951128
+Test MSE: 0.0143349208834958
+Test Standard Deviation: 0.594916555751858
+Test Variance: 0.3539257083076535
+
+k = 10, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.3507278103457093
+Train Standard Deviation: 0.6249519133690864
+Train Variance: 0.3905648940236821
+Test MSE: 0.16452459319723253
+Test Standard Deviation: 0.6288939285705165
+Test Variance: 0.39550757339285797
+
+k = 10, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.027140406784537115
+Train Standard Deviation: 0.39775684971015773
+Train Variance: 0.158210511491349
+Test MSE: 0.024878300239251763
+Test Standard Deviation: 0.5376464134211193
+Test Variance: 0.2890636658645931
+
+k = 11, No Regularization
+--------------------------------------------------
+Train MSE: 0.01302455122299022
+Train Standard Deviation: 0.47832710635771264
+Train Variance: 0.22879682067654256
+Test MSE: 0.016543191443730065
+Test Standard Deviation: 0.5959820787267502
+Test Variance: 0.35519463816345836
+
+k = 11, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.37821338409471444
+Train Standard Deviation: 0.6387526449353714
+Train Variance: 0.4080049414119327
+Test MSE: 0.16311891346088447
+Test Standard Deviation: 0.6419295627895338
+Test Variance: 0.412073563583162
+
+k = 11, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.027445324057198888
+Train Standard Deviation: 0.3982657950634896
+Train Variance: 0.1586156435175535
+Test MSE: 0.024973703704702914
+Test Standard Deviation: 0.5390254822448597
+Test Variance: 0.29054847050930355
+
+k = 12, No Regularization
+--------------------------------------------------
+Train MSE: 0.012126786265994156
+Train Standard Deviation: 0.4769702296798031
+Train Variance: 0.22750060000080416
+Test MSE: 0.014749271962679552
+Test Standard Deviation: 0.5924738644738041
+Test Variance: 0.3510252800845236
+
+k = 12, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.4386239377871734
+Train Standard Deviation: 0.685947672844505
+Train Variance: 0.4705242098807921
+Test MSE: 0.18833791416141044
+Test Standard Deviation: 0.6558476109851173
+Test Variance: 0.4301360888348858
+
+k = 12, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.027927390191452014
+Train Standard Deviation: 0.4003625670565067
+Train Variance: 0.16029018510007584
+Test MSE: 0.02501600467019941
+Test Standard Deviation: 0.5427316453370168
+Test Variance: 0.2945576388502254
+
+k = 13, No Regularization
+--------------------------------------------------
+Train MSE: 0.011782831128359119
+Train Standard Deviation: 0.4763287723107273
+Train Variance: 0.22688909933104467
+Test MSE: 0.014384524271854122
+Test Standard Deviation: 0.5919589812016121
+Test Variance: 0.35041543542525055
+
+k = 13, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.4815393494270009
+Train Standard Deviation: 0.7102430976876135
+Train Variance: 0.504445257812897
+Test MSE: 0.18358248944260805
+Test Standard Deviation: 0.6496019146175703
+Test Variance: 0.4219826474748131
+
+k = 13, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.027925650453980676
+Train Standard Deviation: 0.4003594947105559
+Train Variance: 0.1602877250048916
+Test MSE: 0.025015175575135207
+Test Standard Deviation: 0.542723487126484
+Test Variance: 0.2945487834787308
+
+k = 14, No Regularization
+--------------------------------------------------
+Train MSE: 0.011672213844487106
+Train Standard Deviation: 0.4762953400908437
+Train Variance: 0.22685725099225246
+Test MSE: 0.013974608388489537
+Test Standard Deviation: 0.5898228137098976
+Test Variance: 0.3478909515726606
+
+k = 14, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.5406462565710105
+Train Standard Deviation: 0.7521737101525008
+Train Variance: 0.5657652902445782
+Test MSE: 0.20111322715489088
+Test Standard Deviation: 0.6750636179963018
+Test Variance: 0.4557108883422568
+
+k = 14, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.02819323595962913
+Train Standard Deviation: 0.4010305999776463
+Train Variance: 0.16082554211843095
+Test MSE: 0.025112438503935627
+Test Standard Deviation: 0.5437923234434681
+Test Variance: 0.29571009103604534
+
+k = 15, No Regularization
+--------------------------------------------------
+Train MSE: 0.011819821538930993
+Train Standard Deviation: 0.47600867310106076
+Train Variance: 0.22658425686743253
+Test MSE: 0.014096079509739295
+Test Standard Deviation: 0.5907931446016993
+Test Variance: 0.3490365397083644
+
+k = 15, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.587776219714984
+Train Standard Deviation: 0.7788314104395889
+Train Variance: 0.6065783658873194
+Test MSE: 0.19930461839691788
+Test Standard Deviation: 0.6539466948349051
+Test Variance: 0.42764627968549646
+
+k = 15, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.027990097612316953
+Train Standard Deviation: 0.40087214175087177
+Train Variance: 0.16069847403193105
+Test MSE: 0.025006671526037343
+Test Standard Deviation: 0.5434207235564454
+Test Variance: 0.2953060827906107
+
+k = 16, No Regularization
+--------------------------------------------------
+Train MSE: 0.012231901277339589
+Train Standard Deviation: 0.47736401801489553
+Train Variance: 0.22787640569532552
+Test MSE: 0.01364604858425641
+Test Standard Deviation: 0.5806144333803909
+Test Variance: 0.33711312024963236
+
+k = 16, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.6342522379023438
+Train Standard Deviation: 0.8088156851813191
+Train Variance: 0.6541828125953266
+Test MSE: 0.20928191016439032
+Test Standard Deviation: 0.6837173511491876
+Test Variance: 0.4674694162624616
+
+k = 16, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.02804051386607519
+Train Standard Deviation: 0.4009584656023001
+Train Variance: 0.16076769113815087
+Test MSE: 0.025032922324413853
+Test Standard Deviation: 0.5434947284167129
+Test Variance: 0.2953865198167565
+
+k = 17, No Regularization
+--------------------------------------------------
+Train MSE: 0.012261580153741514
+Train Standard Deviation: 0.47716574305361387
+Train Variance: 0.22768714634390744
+Test MSE: 0.01363067653675696
+Test Standard Deviation: 0.5815003616759556
+Test Variance: 0.3381426706292673
+
+k = 17, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.6899366668251743
+Train Standard Deviation: 0.8411833239661402
+Train Variance: 0.7075893845187243
+Test MSE: 0.2153484317553921
+Test Standard Deviation: 0.6502806639919992
+Test Variance: 0.42286494196187535
+
+k = 17, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.027752798245565043
+Train Standard Deviation: 0.40082996319289027
+Train Variance: 0.16066465939321375
+Test MSE: 0.024859458690386464
+Test Standard Deviation: 0.5433672848272874
+Test Variance: 0.29524800622057845
+
+k = 18, No Regularization
+--------------------------------------------------
+Train MSE: 0.012049240235114245
+Train Standard Deviation: 0.4766024935100808
+Train Variance: 0.22714993682002665
+Test MSE: 0.013589322004168293
+Test Standard Deviation: 0.5844784618871715
+Test Variance: 0.34161507240999367
+
+k = 18, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.7307394891808113
+Train Standard Deviation: 0.8633900134389917
+Train Variance: 0.7454423153061822
+Test MSE: 0.21145571666486723
+Test Standard Deviation: 0.6977525699516289
+Test Variance: 0.48685864887410285
+
+k = 18, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.027675238613514865
+Train Standard Deviation: 0.40074453946293115
+Train Variance: 0.1605961859093568
+Test MSE: 0.02480919680975652
+Test Standard Deviation: 0.5433969364473111
+Test Variance: 0.2952802305403231
+
+k = 19, No Regularization
+--------------------------------------------------
+Train MSE: 0.012047279807360096
+Train Standard Deviation: 0.4773371216287285
+Train Variance: 0.22785072768479953
+Test MSE: 0.013776567775522568
+Test Standard Deviation: 0.58055526980009
+Test Variance: 0.3370444212926552
+
+k = 19, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.7942173271789764
+Train Standard Deviation: 0.90098418540844
+Train Variance: 0.8117725023561102
+Test MSE: 0.22126487274628065
+Test Standard Deviation: 0.6466683222812508
+Test Variance: 0.4181799190420477
+
+k = 19, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.0273951184721349
+Train Standard Deviation: 0.40071802677894325
+Train Variance: 0.16057493698560987
+Test MSE: 0.024611633092952688
+Test Standard Deviation: 0.5437927553527863
+Test Variance: 0.29571056077417524
+
+k = 20, No Regularization
+--------------------------------------------------
+Train MSE: 0.012115404630486071
+Train Standard Deviation: 0.473069239083366
+Train Variance: 0.22379450496691491
+Test MSE: 0.014343505542777222
+Test Standard Deviation: 0.6130978700825067
+Test Variance: 0.37588899829970635
+
+k = 20, L1 Regularization
+--------------------------------------------------
+Train MSE: 0.8382163429355368
+Train Standard Deviation: 0.9196291354521524
+Train Variance: 0.8457177467724734
+Test MSE: 0.20737468850534058
+Test Standard Deviation: 0.7264206970588992
+Test Variance: 0.5276870291155371
+
+k = 20, L2 Regularization
+--------------------------------------------------
+Train MSE: 0.027281613719331837
+Train Standard Deviation: 0.40063758115672027
+Train Variance: 0.16051047143510763
+Test MSE: 0.02451328979375112
+Test Standard Deviation: 0.5442282298145106
+Test Variance: 0.29618436612703575
+
+Observed minimum for k = 18, regularizer = None
+Test MSE: 0.013589322004168293

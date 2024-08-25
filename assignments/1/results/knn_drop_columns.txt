@@ -1,0 +1,10 @@
+('key', 'liveness', 'time_signature', 'mode', 'explicit'), 0.3244929797191888
+('key', 'time_signature', 'mode', 'explicit'), 0.3241586806329396
+key, 0.3153554713617116
+liveness, 0.3082237575217294
+('key', 'liveness', 'time_signature', 'mode', 'explicit', 'acousticness', 'instrumentalness'), 0.3063293960329842
+time_signature, 0.30621796300423443
+('key', 'liveness', 'time_signature', 'mode', 'explicit', 'loudness', 'speechiness'), 0.30621796300423443
+None, 0.30510363271673724
+mode, 0.30387786940049033
+explicit, 0.30131490973924674
