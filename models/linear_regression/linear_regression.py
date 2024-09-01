@@ -51,7 +51,7 @@ class LinearRegression:
     ) -> Self:
         """ Fits the model for the given training data. """
 
-        # Reinitialize the random number generator 
+        # Reinitialize the random number generator
         if random_seed is not None:
             np.random.seed(random_seed)
 
@@ -201,11 +201,11 @@ class LinearRegression:
         # Termination condition
         if np.linalg.norm(gradient_vector) < eps:
             return False
-        
+
         return True
 
 
-    def load_parameters(file_name: str) -> None:
+    def load_parameters(self, file_name: str) -> None:
         """ Load model parameters from a file. """
 
         # Load coefficients from file
