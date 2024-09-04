@@ -6,7 +6,7 @@ from typing import Literal, Self
 
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy.typing import NDArray
+import numpy.typing as npt
 from PIL import Image
 
 #pylint: disable=wrong-import-position
@@ -53,7 +53,7 @@ class LinearRegression:
 
 
     #pylint: disable-next=too-many-arguments
-    def fit(self, x_train: NDArray, y_train: NDArray, eps: float = 1e-3,
+    def fit(self, x_train: npt.NDArray, y_train: npt.NDArray, eps: float = 1e-3,
         stop_after_max_iterations: bool = False, max_iterations: int = 500,
         random_seed: int | None = 0, animation_path: str | None = None,
         iterations_per_frame: int = 15, frame_duration: int = 75
@@ -189,7 +189,7 @@ class LinearRegression:
         return self
 
 
-    def _gradient_descent_one_step(self, X_train: NDArray, y_train: NDArray, eps) -> bool:
+    def _gradient_descent_one_step(self, X_train: npt.NDArray, y_train: npt.NDArray, eps) -> bool:
         """ Performs one step of gradient descent. """
 
         # Compute predictions
@@ -225,7 +225,7 @@ class LinearRegression:
         self.coeff = np.load(file_name)
 
 
-    def predict(self, x_test: NDArray) -> NDArray:
+    def predict(self, x_test: npt.NDArray) -> npt.NDArray:
         """ Returns the prediction for an array of test samples."""
 
         # Check if fit method called before predict

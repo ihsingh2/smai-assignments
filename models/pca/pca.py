@@ -1,7 +1,7 @@
 """ Provides the PCA class. """
 
 # import numpy as np
-# from numpy.typing import NDArray
+# import numpy.typing as npt
 
 
 class PCA:

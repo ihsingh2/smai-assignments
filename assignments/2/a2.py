@@ -4,7 +4,7 @@ import sys
 
 # import matplotlib.pyplot as plt
 # import numpy as np
-# from numpy.typing import NDArray
+# import numpy.typing as npt
 # import pandas as pd
 
 # pylint: disable=wrong-import-position

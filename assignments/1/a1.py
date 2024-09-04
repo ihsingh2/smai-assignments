@@ -6,7 +6,7 @@ from typing import Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy.typing import NDArray
+import numpy.typing as npt
 import pandas as pd
 import seaborn as sns
 from sklearn.neighbors import KNeighborsClassifier
@@ -706,9 +706,9 @@ def simple_regression_polynomial() -> None:
 
 # pylint: disable-next=too-many-arguments
 def train_val_test_split(
-    X: NDArray, y: NDArray, train_size: float = 0.8, val_size: float = 0.1, test_size: float = 0.1,
-    random_seed: int | None = 0
-) -> Tuple[NDArray, NDArray, NDArray, NDArray, NDArray, NDArray]:
+    X: npt.NDArray, y: npt.NDArray, train_size: float = 0.8, val_size: float = 0.1,
+    test_size: float = 0.1, random_seed: int | None = 0
+) -> Tuple[npt.NDArray, npt.NDArray, npt.NDArray, npt.NDArray, npt.NDArray, npt.NDArray]:
     """ Partitions dataset represented as a pair of array, into three groups. """
 
     # Reinitialize the random number generator

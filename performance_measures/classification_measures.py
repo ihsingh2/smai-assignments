@@ -3,13 +3,13 @@
 from typing import Literal
 
 import numpy as np
-from numpy.typing import NDArray
+import numpy.typing as npt
 
 
 class ClassificationMeasures:
     """ Computes common evaluation measures for classification based tasks. """
 
-    def __init__(self, y_true: NDArray, y_pred: NDArray):
+    def __init__(self, y_true: npt.NDArray, y_pred: npt.NDArray):
         """ Initializes the class to compute on given data.
 
         Args:
@@ -35,7 +35,7 @@ class ClassificationMeasures:
         return np.mean(self.y_true == self.y_pred)
 
 
-    def compute_confusion_matrices(self) -> NDArray:
+    def compute_confusion_matrices(self) -> npt.NDArray:
         """ Compute the confusion matrices for each class. """
 
         confusion_matrices = np.empty((self.num_classes, 2, 2))

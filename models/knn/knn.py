@@ -3,7 +3,7 @@
 from typing import Any, Literal, Self
 
 import numpy as np
-from numpy.typing import NDArray
+import numpy.typing as npt
 
 
 class KNN:
@@ -32,7 +32,7 @@ class KNN:
         self.y_train = None
 
 
-    def fit(self, X_train: NDArray, y_train: NDArray):
+    def fit(self, X_train: npt.NDArray, y_train: npt.NDArray) -> Self:
         """ Fits the model for the given training data. """
 
         # Store the training data
@@ -42,7 +42,7 @@ class KNN:
         return self
 
 
-    def predict(self, X_test: NDArray) -> NDArray:
+    def predict(self, X_test: npt.NDArray) -> npt.NDArray:
         """ Returns the prediction for an array of test samples."""
 
         # Check if fit method before predict
@@ -107,7 +107,7 @@ class OldKNN:
         self.y_train = None
 
 
-    def fit(self, X_train: NDArray, y_train: NDArray) -> Self:
+    def fit(self, X_train: npt.NDArray, y_train: npt.NDArray) -> Self:
         """ Fits the model for the given training data. """
 
         # Store the training data
@@ -117,7 +117,7 @@ class OldKNN:
         return self
 
 
-    def predict(self, X_test: NDArray) -> NDArray:
+    def predict(self, X_test: npt.NDArray) -> npt.NDArray:
         """ Returns the prediction for an array of test samples."""
 
         # Check if fit method before predict
