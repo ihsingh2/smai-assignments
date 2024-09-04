@@ -1,3 +1,5 @@
+""" Provides ClassificationMeasures. """
+
 from typing import Literal
 
 import numpy as np
@@ -5,6 +7,7 @@ from numpy.typing import NDArray
 
 
 class ClassificationMeasures:
+    """ Computes common evaluation measures for classification based tasks. """
 
     def __init__(self, y_true: NDArray, y_pred: NDArray):
         """ Initializes the class to compute on given data.
@@ -79,7 +82,8 @@ class ClassificationMeasures:
         if average == 'micro':
             # Compute recall of pooled confusion matrix
             pooled_confusion_matrix = np.sum(self.confusion_matrices, axis=0)
-            recall = pooled_confusion_matrix[0, 0] / (pooled_confusion_matrix[0, 0] + pooled_confusion_matrix[0, 1])
+            recall = pooled_confusion_matrix[0, 0] / \
+                            (pooled_confusion_matrix[0, 0] + pooled_confusion_matrix[0, 1])
 
         elif average == 'macro':
             # Compute average over recall of individual classes
@@ -108,7 +112,8 @@ class ClassificationMeasures:
         if average == 'micro':
             # Compute precision of pooled confusion matrix
             pooled_confusion_matrix = np.sum(self.confusion_matrices, axis=0)
-            precision = pooled_confusion_matrix[0, 0] / (pooled_confusion_matrix[0, 0] + pooled_confusion_matrix[1, 0])
+            precision = pooled_confusion_matrix[0, 0] / \
+                                (pooled_confusion_matrix[0, 0] + pooled_confusion_matrix[1, 0])
 
         elif average == 'macro':
             # Compute average over precision of individual classes

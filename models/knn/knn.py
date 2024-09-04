@@ -1,3 +1,5 @@
+""" Provides the KNN class. """
+
 from typing import Any, Literal, Self
 
 import numpy as np
@@ -5,7 +7,7 @@ from numpy.typing import NDArray
 
 
 class KNN:
-    """ Implements K Nearest Neighbour Classifier. """
+    """ Implements K-Nearest Neighbour Classifier. """
 
 
     def __init__(self, k: int, metric: Literal['manhattan', 'euclidean', 'cosine']):
@@ -18,7 +20,8 @@ class KNN:
 
         # Validate the passed arguments
         assert k > 0, 'k should be positive'
-        assert metric in ['manhattan', 'euclidean', 'cosine'], f'Unrecognized value passed for metric {metric}'
+        assert metric in ['manhattan', 'euclidean', 'cosine'], \
+                                f'Unrecognized value passed for metric {metric}'
 
         # Store the passed arguments
         self.k = k
@@ -65,6 +68,8 @@ class KNN:
             X_train_norm = self.X_train / np.linalg.norm(self.X_train, axis=1).reshape(-1, 1)
             x_norm = x / np.linalg.norm(x)
             distances = 1 - np.sum(x_norm * X_train_norm, axis=1)
+        else:
+            raise ValueError(f'Found unrecognized value for metric {self.metric}')
 
         # Sort by distance and return the indices of the first k neighbors
         k_indices = np.argsort(distances)[:self.k]
@@ -90,7 +95,8 @@ class OldKNN:
 
         # Validate the passed arguments
         assert k > 0, 'k should be positive'
-        assert metric in ['manhattan', 'euclidean', 'cosine'], f'Unrecognized value passed for metric {metric}'
+        assert metric in ['manhattan', 'euclidean', 'cosine'], \
+                                f'Unrecognized value passed for metric {metric}'
 
         # Store the passed arguments
         self.k = k
@@ -134,6 +140,8 @@ class OldKNN:
         elif self.metric == 'cosine':
             distances = [ 1 - np.sum(x * x_train) / (np.linalg.norm(x) * np.linalg.norm(x_train)) \
                                                      for x_train in self.X_train ]
+        else:
+            raise ValueError(f'Found unrecognized value for metric {self.metric}')
 
         # Sort by distance and return the indices of the first k neighbors
         k_indices = np.argsort(distances)[:self.k]

@@ -1,8 +1,11 @@
+""" Provides RegressionMeasures. """
+
 import numpy as np
 from numpy.typing import NDArray
 
 
 class RegressionMeasures:
+    """ Computes common evaluation measures for regression based tasks. """
 
     def __init__(self, y_true: NDArray, y_pred: NDArray):
         """ Initializes the class to compute on given data.

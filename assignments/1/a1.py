@@ -1,14 +1,17 @@
-""" Assignment 1: KNN and Linear Regression. """
+""" Assignment 1: K-Nearest Neighbours and Linear Regression. """
 
 import sys
 import time
-from typing import Literal, Tuple
+from typing import Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
 import pandas as pd
 import seaborn as sns
+from sklearn.neighbors import KNeighborsClassifier
+
+#pylint: disable=wrong-import-position
 
 PROJECT_DIR = '../..'
 sys.path.insert(0, PROJECT_DIR)
@@ -16,10 +19,12 @@ sys.path.insert(0, PROJECT_DIR)
 from models.knn import KNN, OldKNN
 from models.linear_regression import LinearRegression
 from performance_measures import ClassificationMeasures, RegressionMeasures
-from sklearn.neighbors import KNeighborsClassifier
+
+#pylint: enable=wrong-import-position
 
 
 def knn_drop_columns() -> None:
+    """ Test KNN on a reduced dataset, dropping different combinations of columns. """
 
     # Different combinations of columns to drop
     combinations = [
@@ -73,7 +78,7 @@ def knn_drop_columns() -> None:
     ]
 
     # Read the best hyperparameters from file
-    with open('results/knn_hyper_params.txt', 'r') as file:
+    with open('results/knn_hyper_params.txt', 'r', encoding='utf-8') as file:
         k, metric, _ = file.readline().strip().split(', ')
         k = int(k)
 
@@ -97,7 +102,7 @@ def knn_drop_columns() -> None:
         y = df_reduced.to_numpy()[:, -1].astype(int)
 
         # Split the array into train, test and split
-        X_train, X_val, X_test, y_train, y_val, y_test = train_val_test_split(X, y)
+        X_train, X_val, _, y_train, y_val, _ = train_val_test_split(X, y)
 
         # Initialize and train the model
         knn = KNN(k, metric)
@@ -111,7 +116,7 @@ def knn_drop_columns() -> None:
         accuracy = cls_measures.accuracy_score()
 
         # Store the accuracy for comparision
-        if type(choice) is list:
+        if isinstance(choice, list):
             all_accuracy[tuple(choice)] = accuracy
         else:
             all_accuracy[choice] = accuracy
@@ -124,7 +129,7 @@ def knn_drop_columns() -> None:
 
     # Write the top 10 hyperparameters to a file
     print()
-    with open('results/knn_drop_columns.txt', 'w') as file:
+    with open('results/knn_drop_columns.txt', 'w', encoding='utf-8') as file:
         for param in best_combination:
             file.write(f'{param}, {all_accuracy[param]}\n')
             print(f'{param}, {all_accuracy[param]}')
@@ -132,6 +137,7 @@ def knn_drop_columns() -> None:
 
 
 def knn_hyperparameter_tuning() -> None:
+    """ Test KNN for different hyperparameters, and save the top 10 hyperparameters. """
 
     # Set of hyperparameters
     k_list = range(3, 36, 2)
@@ -145,7 +151,7 @@ def knn_hyperparameter_tuning() -> None:
     y = df.to_numpy()[:, -1].astype(int)
 
     # Split the array into train, test and split
-    X_train, X_val, X_test, y_train, y_val, y_test = train_val_test_split(X, y)
+    X_train, X_val, _, y_train, y_val, _ = train_val_test_split(X, y)
 
     # Initialize an empty dictionary for storing accuracy
     all_accuracy = {}
@@ -176,7 +182,7 @@ def knn_hyperparameter_tuning() -> None:
 
     # Write the top 10 hyperparameters to a file
     print()
-    with open('results/knn_hyper_params.txt', 'w') as file:
+    with open('results/knn_hyper_params.txt', 'w', encoding='utf-8') as file:
         for param in best_hyperparameters:
             file.write(f'{param[0]}, {param[1]}, {all_accuracy[param]}\n')
             print(f'{param[0]}, {param[1]}, {all_accuracy[param]}')
@@ -184,9 +190,10 @@ def knn_hyperparameter_tuning() -> None:
 
 
 def knn_inference_time() -> None:
+    """ Run KNN for different models and plot their respective inference times. """
 
     # Read the best hyperparameters from file
-    with open('results/knn_hyper_params.txt', 'r') as file:
+    with open('results/knn_hyper_params.txt', 'r', encoding='utf-8') as file:
         best_k, best_metric, _ = file.readline().strip().split(', ')
         best_k = int(best_k)
 
@@ -223,7 +230,7 @@ def knn_inference_time() -> None:
     # ------------------------------ COMPLETE DATASET ------------------------------
 
     # Split the array into train, test and split
-    X_train, X_val, X_test, y_train, y_val, y_test = train_val_test_split(X, y)
+    X_train, X_val, _, y_train, _, _ = train_val_test_split(X, y)
 
     # Initialize an empty list to store the execution times
     exec_times = []
@@ -264,7 +271,7 @@ def knn_inference_time() -> None:
     for train_size in train_size_combinations:
 
         # Split the array into train, test and split
-        X_train, X_val, X_test, y_train, y_val, y_test = train_val_test_split(X, y, \
+        X_train, X_val, _, y_train, _, _ = train_val_test_split(X, y, \
                         train_size=train_size, val_size=0.1, test_size=1-(train_size+0.1))
 
         # Iterate over all model combinations
@@ -302,6 +309,7 @@ def knn_inference_time() -> None:
 
 
 def knn_k_values() -> None:
+    """ Test KNN for different values of k, and plot the graph for k vs accuracy. """
 
     # Different k values to try
     k_list = range(5, 20, 2)
@@ -315,7 +323,7 @@ def knn_k_values() -> None:
     y = df.to_numpy()[:, -1].astype(int)
 
     # Split the array into train, test and split
-    X_train, X_val, X_test, y_train, y_val, y_test = train_val_test_split(X, y)
+    X_train, X_val, _, y_train, y_val, _ = train_val_test_split(X, y)
 
     # Initialize an empty list for storing accuracy
     all_accuracy = []
@@ -352,6 +360,7 @@ def knn_k_values() -> None:
 
 
 def knn_second_dataset() -> None:
+    """ Apply KNN on the second dataset, with predefined train, validation and test split. """
 
     # Read interim CSV files into DataFrames
     df_train = pd.read_csv(f'{PROJECT_DIR}/data/interim/1/spotify-2/train.csv', index_col=0)
@@ -364,7 +373,7 @@ def knn_second_dataset() -> None:
     y_test = df_test.to_numpy()[:, -1].astype(int)
 
     # Read the best hyperparameters from file
-    with open('results/knn_hyper_params.txt', 'r') as file:
+    with open('results/knn_hyper_params.txt', 'r', encoding='utf-8') as file:
         k, metric, _ = file.readline().strip().split(', ')
         k = int(k)
 
@@ -383,11 +392,12 @@ def knn_second_dataset() -> None:
     print(k, metric, accuracy)
 
     # Write the accuracy to a file
-    with open('results/knn_second_dataset.txt', 'w') as file:
+    with open('results/knn_second_dataset.txt', 'w', encoding='utf-8') as file:
         file.write(f'{k}, {metric}, {accuracy}\n')
 
 
 def preprocess_spotify_dataset() -> None:
+    """ Remove redundant rows and columns, and standardize the Spotify dataset. """
 
     def preprocess_worker(df, categories_map):
 
@@ -440,6 +450,8 @@ def preprocess_spotify_dataset() -> None:
 
 
 def regularization() -> None:
+    """ Fit a polynomial of different degress with and without L1 and L2 regularization.
+    Record the MSE, standard deviation and variance, and plot the resulting curves. """
 
     # Read external CSV into DataFrame
     df = pd.read_csv(f'{PROJECT_DIR}/data/external/regularisation.csv')
@@ -449,7 +461,7 @@ def regularization() -> None:
     y = df.to_numpy()[:, 1]
 
     # Split the array into train, test and split
-    x_train, x_val, x_test, y_train, y_val, y_test = train_val_test_split(x, y)
+    x_train, _, x_test, y_train, _, y_test = train_val_test_split(x, y)
 
     # Domain of the training data
     x_train_min = np.min(x_train)
@@ -457,7 +469,7 @@ def regularization() -> None:
     x_train_domain = np.linspace(x_train_min, x_train_max, 400)
 
     # Clear contents of output file
-    with open('results/regularization.txt', 'w') as file:
+    with open('results/regularization.txt', 'w', encoding='utf-8') as file:
         pass
 
     # Initialize the minimum test loss and corresponding model
@@ -498,7 +510,7 @@ def regularization() -> None:
             ]
 
             # Write the evaluated measures to file
-            with open('results/regularization.txt', 'a') as file:
+            with open('results/regularization.txt', 'a', encoding='utf-8') as file:
                 if regularizer is None:
                     file.write(f'k = {k}, No Regularization\n')
                 else:
@@ -527,10 +539,12 @@ def regularization() -> None:
             print(output_path)
 
     # Save the result summary to file
-    with open('results/regularization.txt', 'a') as file:
-        file.write(f'Observed minimum for k = {min_test_mse_model.k}, regularizer = {min_test_mse_regularizer}\n')
+    with open('results/regularization.txt', 'a', encoding='utf-8') as file:
+        file.write(f'Observed minimum for k = {min_test_mse_model.k}, ' \
+                   f'regularizer = {min_test_mse_regularizer}\n')
         file.write(f'Test MSE: {min_test_mse}\n')
-        print(f'Observed minimum for k = {min_test_mse_model.k}, regularizer = {min_test_mse_regularizer}')
+        print(f'Observed minimum for k = {min_test_mse_model.k}, ' \
+              f'regularizer = {min_test_mse_regularizer}')
         print(f'Test MSE: {min_test_mse}')
 
     # Save model parameters to a file
@@ -538,6 +552,8 @@ def regularization() -> None:
 
 
 def simple_regression_animation() -> None:
+    """ Fit a polynomial of different degress and plot the training points with the fitted line,
+    for each iteration, and save the sequence of plots as a GIF. """
 
     # Possible orders for polynomials
     k_combinations = [1, 2, 3, 5, 7, 9, 11]
@@ -548,9 +564,6 @@ def simple_regression_animation() -> None:
     # Convert DataFrame to array
     x = df.to_numpy()[:, 0]
     y = df.to_numpy()[:, 1]
-
-    # Split the array into train, test and split
-    x_train, x_val, x_test, y_train, y_val, y_test = train_val_test_split(x, y)
 
     # Iterate over different forms of polynomials
     for k in k_combinations:
@@ -567,6 +580,7 @@ def simple_regression_animation() -> None:
 
 
 def simple_regression_line() -> None:
+    """ Fit a polynomial of different degress and plot the training points with the fitted line. """
 
     # Read external CSV into DataFrame
     df = pd.read_csv(f'{PROJECT_DIR}/data/external/linreg.csv')
@@ -576,7 +590,7 @@ def simple_regression_line() -> None:
     y = df.to_numpy()[:, 1]
 
     # Split the array into train, test and split
-    x_train, x_val, x_test, y_train, y_val, y_test = train_val_test_split(x, y)
+    x_train, _, x_test, y_train, _, y_test = train_val_test_split(x, y)
 
     # Initialize and fit the model to data
     reg = LinearRegression()
@@ -601,7 +615,7 @@ def simple_regression_line() -> None:
     ]
 
     # Write the evaluated measures to a file
-    with open('results/regression_line.txt', 'w') as file:
+    with open('results/regression_line.txt', 'w', encoding='utf-8') as file:
         for measure, score in evaluated_measures:
             file.write(f'{measure}: {score}\n')
             print(f'{measure}: {score}')
@@ -621,6 +635,7 @@ def simple_regression_line() -> None:
 
 
 def simple_regression_polynomial() -> None:
+    """ Fit a polynomial of different degress and save the best model parameters. """
 
     # Read external CSV into DataFrame
     df = pd.read_csv(f'{PROJECT_DIR}/data/external/linreg.csv')
@@ -630,10 +645,10 @@ def simple_regression_polynomial() -> None:
     y = df.to_numpy()[:, 1]
 
     # Split the array into train, test and split
-    x_train, x_val, x_test, y_train, y_val, y_test = train_val_test_split(x, y)
+    x_train, _, x_test, y_train, _, y_test = train_val_test_split(x, y)
 
     # Clear contents of output file
-    with open('results/regression_polynomial.txt', 'w') as file:
+    with open('results/regression_polynomial.txt', 'w', encoding='utf-8') as file:
         pass
 
     # Initialize the minimum test loss and corresponding model
@@ -671,7 +686,7 @@ def simple_regression_polynomial() -> None:
         ]
 
         # Write the evaluated measures to file
-        with open('results/regression_polynomial.txt', 'a') as file:
+        with open('results/regression_polynomial.txt', 'a', encoding='utf-8') as file:
             file.write(f'k = {k}\n')
             file.write('--------------------------------------------------\n')
             for measure, score in evaluated_measures:
@@ -679,7 +694,7 @@ def simple_regression_polynomial() -> None:
             file.write('\n')
 
     # Save the result summary to file
-    with open('results/regression_polynomial.txt', 'a') as file:
+    with open('results/regression_polynomial.txt', 'a', encoding='utf-8') as file:
         file.write(f'Observed minimum Test MSE for k = {min_test_mse_model.k}\n')
         file.write(f'Test MSE: {min_test_mse}\n')
         print(f'Observed minimum for k = {min_test_mse_model.k}')
@@ -689,6 +704,7 @@ def simple_regression_polynomial() -> None:
     min_test_mse_model.save_parameters('results/regression_params.npy')
 
 
+# pylint: disable-next=too-many-arguments
 def train_val_test_split(
     X: NDArray, y: NDArray, train_size: float = 0.8, val_size: float = 0.1, test_size: float = 0.1,
     random_seed: int | None = 0
@@ -700,7 +716,8 @@ def train_val_test_split(
         np.random.seed(random_seed)
 
     # Ensure the sizes form a probability simplex
-    assert train_size + val_size + test_size == 1.0, 'train_size, val_size, and test_size sizes must sum to 1.'
+    assert train_size + val_size + test_size == 1.0, \
+                                    'train_size, val_size, and test_size sizes must sum to 1.'
     assert 0.0 <= train_size <= 1.0, 'train_size must lie in (0, 1)'
     assert 0.0 <= val_size <= 1.0, 'val_size must lie in (0, 1)'
     assert 0.0 <= test_size <= 1.0, 'test_size must lie in (0, 1)'
@@ -728,6 +745,7 @@ def train_val_test_split(
 
 
 def visualize_regression_splits() -> None:
+    """ Visualize the dataset splits used for simple regression task. """
 
     # Read external CSV into DataFrame
     df = pd.read_csv(f'{PROJECT_DIR}/data/external/linreg.csv')
@@ -755,6 +773,7 @@ def visualize_regression_splits() -> None:
 
 
 def visualize_regularization_splits() -> None:
+    """ Visualize the dataset splits used for regularization task. """
 
     # Read external CSV into DataFrame
     df = pd.read_csv(f'{PROJECT_DIR}/data/external/regularisation.csv')
@@ -782,6 +801,7 @@ def visualize_regularization_splits() -> None:
 
 
 def visualize_spotify_dataset() -> None:
+    """ Generate plots to show distributions of various features in the Spotify dataset. """
 
     # Read external CSV into DataFrame
     df = pd.read_csv(f'{PROJECT_DIR}/data/external/spotify.csv', index_col=0)

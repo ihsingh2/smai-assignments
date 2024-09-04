@@ -1,3 +1,5 @@
+""" Provides the LinearRegression class. """
+
 import os
 import sys
 from typing import Literal, Self
@@ -7,10 +9,14 @@ import numpy as np
 from numpy.typing import NDArray
 from PIL import Image
 
+#pylint: disable=wrong-import-position
+
 PROJECT_DIR = '../..'
 sys.path.insert(0, PROJECT_DIR)
 
 from performance_measures import RegressionMeasures
+
+#pylint: enable=wrong-import-position
 
 
 class LinearRegression:
@@ -33,7 +39,8 @@ class LinearRegression:
         assert k >= 1, 'order should be atleast 1'
         assert lr > 0.0, 'lr should be positive'
         assert alpha >= 0.0, 'alpha should be non-negative'
-        assert regularizer in ['l1', 'l2', None], f'Unrecognized value for regularizer {regularizer}'
+        assert regularizer in ['l1', 'l2', None], \
+                            f'Unrecognized value for regularizer {regularizer}'
 
         # Store the passed arguments
         self.k = k
@@ -45,8 +52,10 @@ class LinearRegression:
         self.coeff = None
 
 
-    def fit(self, x_train: NDArray, y_train: NDArray, eps: float = 1e-3, stop_after_max_iterations: bool = False,
-        max_iterations: int = 500, random_seed: int | None = 0, animation_path: str | None = None,
+    #pylint: disable-next=too-many-arguments
+    def fit(self, x_train: NDArray, y_train: NDArray, eps: float = 1e-3,
+        stop_after_max_iterations: bool = False, max_iterations: int = 500,
+        random_seed: int | None = 0, animation_path: str | None = None,
         iterations_per_frame: int = 15, frame_duration: int = 75
     ) -> Self:
         """ Fits the model for the given training data. """
@@ -89,7 +98,8 @@ class LinearRegression:
             y_train_std = np.std(y_train)
             y_train_var = np.var(y_train)
 
-            while self._gradient_descent_one_step(X_train, y_train, eps) and num_iterations < max_iterations:
+            while self._gradient_descent_one_step(X_train, y_train, eps) \
+                                            and num_iterations < max_iterations:
 
                 if num_iterations % iterations_per_frame == 0:
 
@@ -107,14 +117,18 @@ class LinearRegression:
                     if self.regularizer is None:
                         fig.suptitle(f'Linear Regression (k = {self.k}), across iterations')
                     else:
-                        fig.suptitle(f'Linear Regression (k = {self.k}, {str.upper(self.regularizer)} Regularization), across iterations')
+                        fig.suptitle(f'Linear Regression (k = {self.k}, ' \
+                            f'{str.upper(self.regularizer)} Regularization), across iterations')
 
                     # Generate plot for line fit and residuals
                     ax[0][0].scatter(x_train, y_train, label='Training samples', s=5)
-                    ax[0][0].plot(x_train_domain, y_train_domain, label='Fitted line', c='darkorange')
-                    ax[0][0].vlines(x_train[0], y_train[0], y_train_pred[0], label='Residuals', color='g', linewidth=1)
+                    ax[0][0].plot(x_train_domain, y_train_domain, \
+                                                        label='Fitted line', c='darkorange')
+                    ax[0][0].vlines(x_train[0], y_train[0], y_train_pred[0], \
+                                                    label='Residuals', color='g', linewidth=1)
                     for idx in range(1, len(x_train), 5):
-                        ax[0][0].vlines(x_train[idx], y_train[idx], y_train_pred[idx], color='g', linewidth=1)
+                        ax[0][0].vlines(x_train[idx], y_train[idx], y_train_pred[idx], \
+                                                                        color='g', linewidth=1)
                     ax[0][0].set_title('Line Fit and Residuals')
                     ax[0][0].set_xlabel('x')
                     ax[0][0].set_ylabel('y')
@@ -153,25 +167,24 @@ class LinearRegression:
 
                 num_iterations += 1
 
-            if animation_path is not None:
+            # Create GIF
+            image_paths = [f'.tmp/{idx}.png' for idx in \
+                                            range(0, num_iterations, iterations_per_frame)]
+            images = [Image.open(img_path) for img_path in image_paths]
+            images[0].save(
+                animation_path,
+                save_all=True,
+                append_images=images[1:],
+                duration=frame_duration,
+                loop=0
+            )
 
-                # Create GIF
-                image_paths = [f'.tmp/{idx}.png' for idx in range(0, num_iterations, iterations_per_frame)]
-                images = [Image.open(img_path) for img_path in image_paths]
-                images[0].save(
-                    animation_path,
-                    save_all=True,
-                    append_images=images[1:],
-                    duration=frame_duration,
-                    loop=0
-                )
-
-                # Remove figures from temporary folder
-                for path in image_paths:
-                    try:
-                        os.remove(path)
-                    except OSError:
-                        pass
+            # Remove figures from temporary folder
+            for path in image_paths:
+                try:
+                    os.remove(path)
+                except OSError:
+                    pass
 
         return self
 
