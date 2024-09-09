@@ -2,10 +2,9 @@
 
 import sys
 
-# import matplotlib.pyplot as plt
-# import numpy as np
-# import numpy.typing as npt
-# import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
 # pylint: disable=wrong-import-position
 
@@ -13,7 +12,7 @@ PROJECT_DIR = '../..'
 sys.path.insert(0, PROJECT_DIR)
 
 # from models.gmm import GMM
-# from models.k_means import KMeans
+from models.k_means import KMeans
 # from models.knn import KNN
 # from models.pca import PCA
 
@@ -47,6 +46,35 @@ def kmeans_dimensionality_reduction() -> None:
 
 def kmeans_optimal_num_clusters() -> None:
     """ Find the optimal number of clusters for KMeans using Elbow Method. """
+
+    # Set of hyperparameters
+    k_list = range(1, 11)
+
+    # Read the external data into a DataFrame
+    df = pd.read_feather(f'{PROJECT_DIR}/data/external/word-embeddings.feather')
+
+    # Extract the 512 length embeddings
+    X_train = df.to_numpy()[:, 1]
+    X_train = np.vstack(X_train)
+
+    # Initialize empty list to store costs for different values of hyperparameter
+    costs = []
+
+    # Iterate over all hyperparameters
+    for k in k_list:
+        kmeans = KMeans(k).fit(X_train)
+        costs.append(kmeans.getCost())
+
+    # Plot the relation between hyperparameter and cost
+    plt.plot(k_list, costs)
+    plt.title('k vs WCSS')
+    plt.ylabel('Within Cluster Sum of Squares (WCSS)')
+    plt.xlabel('Number of clusters (k)')
+    plt.grid()
+    plt.savefig('figures/kmeans_optimal_num_clusters.png', bbox_inches='tight')
+    plt.close()
+    plt.clf()
+    print('figures/kmeans_optimal_num_clusters.png')
 
 
 def nearest_neighbour_search() -> None:
