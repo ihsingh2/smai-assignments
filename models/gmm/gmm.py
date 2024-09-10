@@ -56,12 +56,11 @@ class GMM:
             # Check for convergence
             likelihoods.append(self.getLikelihood())
             delta_likelihood = likelihoods[-1] - likelihoods[-2]
-            # print(likelihoods[-1])
 
         return self
 
 
-    def _init_parameters(self, X):
+    def _init_parameters(self, X: npt.NDArray) -> None:
         """ Initializes the model parameters based on random assignment
         of training samples to the components. """
 
@@ -97,7 +96,7 @@ class GMM:
             # assert np.linalg.cholesky(self.covariances[component]) is not None
 
 
-    def _evaluate_responsibilities(self, X):
+    def _evaluate_responsibilities(self, X: npt.NDArray) -> npt.NDArray:
         """ Evaluates the responsibilites given current parameters. """
 
         # Shape of the dataset
@@ -114,7 +113,7 @@ class GMM:
         return gamma
 
 
-    def _estimate_parameters(self, responsibilities, X):
+    def _estimate_parameters(self, responsibilities: npt.NDArray, X: npt.NDArray) -> None:
         """ Re-estimates the parameters given current responsibilities. """
 
         # Shape of the dataset
