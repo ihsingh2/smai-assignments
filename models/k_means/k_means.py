@@ -71,7 +71,7 @@ class KMeans:
     def predict(self, X_test: npt.NDArray) -> npt.NDArray:
         """ Returns the prediction for an array of test samples."""
 
-        # Check if fit method before predict
+        # Check if fit method called before predict
         assert self.X_train is not None, 'fit method should be called before predict'
         assert self.centroids is not None, 'fit method should be called before predict'
 
@@ -89,7 +89,7 @@ class KMeans:
     def getCost(self):
         """ Returns the Within Cluster Sum of Squares (WCSS). """
 
-        # Check if fit method before getCost
+        # Check if fit method called before getCost
         assert self.X_train is not None, 'fit method should be called before getCost'
         assert self.centroids is not None, 'fit method should be called before getCost'
 

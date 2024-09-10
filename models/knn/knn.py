@@ -120,7 +120,7 @@ class OldKNN:
     def predict(self, X_test: npt.NDArray) -> npt.NDArray:
         """ Returns the prediction for an array of test samples."""
 
-        # Check if fit method before predict
+        # Check if fit method called before predict
         assert self.X_train is not None, 'fit method should be called before predict'
         assert self.y_train is not None, 'fit method should be called before predict'
 
