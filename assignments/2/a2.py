@@ -11,7 +11,7 @@ import pandas as pd
 PROJECT_DIR = '../..'
 sys.path.insert(0, PROJECT_DIR)
 
-# from models.gmm import GMM
+from models.gmm import GMM
 from models.k_means import KMeans
 # from models.knn import KNN
 # from models.pca import PCA
@@ -30,6 +30,36 @@ def gmm_dimensionality_reduction() -> None:
 def gmm_optimal_num_clusters() -> None:
     """ Find the optimal number of clusters for Gaussian Mixture Model using
     Bayesian Information Criterion and Akaike Information Criterion. """
+
+    # Set of hyperparameters
+    k_list = range(3, 10)
+
+    # Read the external data into a DataFrame
+    df = pd.read_feather(f'{PROJECT_DIR}/data/external/word-embeddings.feather')
+
+    # Extract the 512 length embeddings
+    X_train = df.to_numpy()[:, 1]
+    X_train = np.vstack(X_train)
+
+    # Initialize empty list to store costs for different values of hyperparameter
+    likelihoods = []
+
+    # Iterate over all hyperparameters
+    for k in k_list:
+        gmm = GMM(k).fit(X_train)
+        likelihoods.append(gmm.getLikelihood())
+        print(k, likelihoods[-1])
+
+    # Plot the relation between hyperparameter and likelihood
+    plt.plot(k_list, likelihoods)
+    plt.title('k vs Log Likelihood')
+    plt.ylabel('Log Likelihood')
+    plt.xlabel('Number of components (k)')
+    plt.grid()
+    plt.savefig('figures/gmm_optimal_num_clusters.png', bbox_inches='tight')
+    plt.close()
+    plt.clf()
+    print('figures/gmm_optimal_num_clusters.png')
 
 
 def hierarchical_clustering() -> None:
