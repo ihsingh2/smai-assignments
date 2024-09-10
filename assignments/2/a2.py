@@ -14,7 +14,7 @@ sys.path.insert(0, PROJECT_DIR)
 from models.gmm import GMM
 from models.k_means import KMeans
 # from models.knn import KNN
-# from models.pca import PCA
+from models.pca import PCA
 
 # pylint: enable=wrong-import-position
 
@@ -113,6 +113,54 @@ def nearest_neighbour_search() -> None:
 
 def pca_dimensionality_reduction() -> None:
     """ Perform dimensionality reduction using PCA and visualize reduced data. """
+
+    # Read the external data into a DataFrame
+    df = pd.read_feather(f'{PROJECT_DIR}/data/external/word-embeddings.feather')
+
+    # Extract the words
+    Y = df.to_numpy()[:, 0]
+
+    # Extract the 512 length embeddings
+    X = df.to_numpy()[:, 1]
+    X = np.vstack(X)
+
+    # Dimensionality reduction to 2D
+    pca = PCA(n_components=2).fit(X)
+    X_2d = pca.transform(X)
+
+    # Dimensionality reduction to 3D
+    pca = PCA(n_components=3).fit(X)
+    X_3d = pca.transform(X)
+
+    # Visualize 2D representation
+    output_path = 'figures/pca_2d.png'
+    plt.figure(figsize=(25,25))
+    plt.scatter(X_2d[:, 0], X_2d[:, 1], s=5)
+    for i in range(X.shape[0]):
+        plt.annotate(Y[i], (X_2d[i, 0] + 5e-3, X_2d[i, 1]), fontsize=6)
+    plt.title('PCA: Visualization for n_components=2')
+    plt.xlabel('Component 1')
+    plt.ylabel('Component 2')
+    plt.savefig(output_path, bbox_inches='tight')
+    plt.close()
+    plt.clf()
+    print(output_path)
+
+    # Visualize 3D representation
+    output_path = 'figures/pca_3d.png'
+    fig = plt.figure(figsize=(30, 40))
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(X_3d[:, 0], X_3d[:, 1], X_3d[:, 2], s=5)
+    for i in range(X.shape[0]):
+        ax.text(X_3d[i, 0] + 5e-3, X_3d[i, 1], X_3d[i, 2], Y[i], fontsize=6)
+    ax.set_title('PCA: Visualization for n_components=3')
+    ax.set_xlabel('Component 1')
+    ax.set_ylabel('Component 2')
+    ax.set_zlabel('Component 3')
+    plt.savefig(output_path, bbox_inches='tight')
+    plt.close()
+    plt.clf()
+    print(output_path)
 
 
 if __name__ == '__main__':
