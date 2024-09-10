@@ -74,12 +74,12 @@ class GMM:
         self.covariances = np.empty((self.k, num_features, num_features))
 
         # Random initialization of responsibilties
-        responsibilities = np.zeros((num_samples, self.k))
-        responsibilities[np.arange(num_samples), np.random.choice(self.k, num_samples)] = 1
+        resp = np.zeros((num_samples, self.k))
+        resp[np.arange(num_samples), np.random.choice(self.k, num_samples)] = 1
 
         # Iterate over all components
         for component in range(self.k):
-            in_component = np.isclose(responsibilities[:, component], 1)
+            in_component = np.isclose(resp[:, component], 1)
             in_component_count = int(np.sum(in_component))
             self.mixing_coeffs[component] = in_component_count / num_samples
             if in_component_count > 1:
@@ -113,7 +113,7 @@ class GMM:
         return gamma
 
 
-    def _estimate_parameters(self, responsibilities: npt.NDArray, X: npt.NDArray) -> None:
+    def _estimate_parameters(self, resp: npt.NDArray, X: npt.NDArray) -> None:
         """ Re-estimates the parameters given current responsibilities. """
 
         # Shape of the dataset
@@ -121,16 +121,16 @@ class GMM:
         num_features = X.shape[1]
 
         # Compute the mixing coefficients and mean
-        N_k = np.sum(responsibilities, axis=0)
-        self.mixing_coeffs = N_k / num_samples
-        self.means = np.dot(responsibilities.T, X) / (N_k[:, np.newaxis] + 1e-6)
+        total_resp = np.sum(resp, axis=0)
+        self.mixing_coeffs = total_resp / num_samples
+        self.means = np.dot(resp.T, X) / (total_resp[:, np.newaxis] + 1e-6)
 
         # Compute the covariances
         self.covariances = np.empty((self.k, num_features, num_features))
         for component in range(self.k):
             X_centered = X - self.means[component]
-            self.covariances[component] = ((responsibilities[:, component, np.newaxis] * \
-                                            X_centered).T @ X_centered) / (N_k[component] + 1e-6)
+            self.covariances[component] = ((resp[:, component, np.newaxis] * \
+                                    X_centered).T @ X_centered) / (total_resp[component] + 1e-6)
 
 
     # pylint: disable-next=invalid-name
@@ -159,8 +159,8 @@ class GMM:
             X = self.X_train
 
         # Find the component with the highest responsibility
-        responsibilities = self._evaluate_responsibilities(X)
-        membership = np.argmax(responsibilities, axis=1)
+        resp = self._evaluate_responsibilities(X)
+        membership = np.argmax(resp, axis=1)
 
         return membership
 

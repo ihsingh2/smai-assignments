@@ -1,5 +1,14 @@
+[BASIC]
+
+good-names-rgxs=^[XY].*$
+
+
 [MESSAGES CONTROL]
 
-disable=invalid-name,
-        too-many-locals,
+disable=too-many-locals,
         too-many-statements
+
+
+[SIMILARITIES]
+
+min-similarity-lines=8
