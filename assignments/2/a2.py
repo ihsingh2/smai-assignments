@@ -15,6 +15,7 @@ from models.gmm import GMM
 from models.k_means import KMeans
 # from models.knn import KNN
 from models.pca import PCA
+from performance_measures import ClusteringMeasures
 
 # pylint: enable=wrong-import-position
 
@@ -31,8 +32,11 @@ def gmm_optimal_num_clusters() -> None:
     """ Find the optimal number of clusters for Gaussian Mixture Model using
     Bayesian Information Criterion and Akaike Information Criterion. """
 
+    # Log function call
+    print('gmm_optimal_num_clusters')
+
     # Set of hyperparameters
-    k_list = range(3, 10)
+    k_list = range(2, 11)
 
     # Read the external data into a DataFrame
     df = pd.read_feather(f'{PROJECT_DIR}/data/external/word-embeddings.feather')
@@ -41,25 +45,73 @@ def gmm_optimal_num_clusters() -> None:
     X_train = df.to_numpy()[:, 1]
     X_train = np.vstack(X_train)
 
-    # Initialize empty list to store costs for different values of hyperparameter
+    # List to store measures for different values of hyperparameter
     likelihoods = []
+    aic_list = []
+    bic_list = []
 
     # Iterate over all hyperparameters
     for k in k_list:
+
+        # Initialize and fit the model
         gmm = GMM(k).fit(X_train)
+
+        # Compute the likelihood
         likelihoods.append(gmm.getLikelihood())
-        print(k, likelihoods[-1])
+
+        # Compute AIC and BIC
+        cls_measures = ClusteringMeasures(k, X_train.shape[0], likelihoods[-1])
+        aic_list.append(cls_measures.aic())
+        bic_list.append(cls_measures.bic())
+
+        # Print all computed measures
+        print(k, likelihoods[-1], aic_list[-1], bic_list[-1])
 
     # Plot the relation between hyperparameter and likelihood
     plt.plot(k_list, likelihoods)
-    plt.title('k vs Log Likelihood')
+    plt.title('GMM: k vs Log Likelihood')
     plt.ylabel('Log Likelihood')
     plt.xlabel('Number of components (k)')
     plt.grid()
-    plt.savefig('figures/gmm_optimal_num_clusters.png', bbox_inches='tight')
+    plt.savefig('figures/gmm_log_likelihood.png', bbox_inches='tight')
     plt.close()
     plt.clf()
-    print('figures/gmm_optimal_num_clusters.png')
+    print('figures/gmm_log_likelihood.png')
+
+    # Plot the relation between hyperparameter and AIC
+    plt.plot(k_list, aic_list)
+    plt.title('GMM: k vs AIC')
+    plt.ylabel('Akaike Information Criterion')
+    plt.xlabel('Number of components (k)')
+    plt.grid()
+    plt.savefig('figures/gmm_aic.png', bbox_inches='tight')
+    plt.close()
+    plt.clf()
+    print('figures/gmm_aic.png')
+
+    # Plot the relation between hyperparameter and BIC
+    plt.plot(k_list, bic_list)
+    plt.title('GMM: k vs BIC')
+    plt.ylabel('Bayesian Information Criterion')
+    plt.xlabel('Number of components (k)')
+    plt.grid()
+    plt.savefig('figures/gmm_bic.png', bbox_inches='tight')
+    plt.close()
+    plt.clf()
+    print('figures/gmm_bic.png')
+
+    # Read the optimal number of clusters determined manually
+    with open('results/k_gmm1.txt', 'r', encoding='utf-8') as file:
+        k, _, _, _ = file.readline().strip().split(', ')
+        k = int(k)
+
+    # Perform clustering based on optimal number of clusters
+    gmm = GMM(k)
+    gmm.fit(X_train)
+    likelihood = gmm.getLikelihood()
+    cls_measures = ClusteringMeasures(k, X_train.shape[0], likelihoods[-1])
+    print('Optimal number of clusters:', k, likelihood, cls_measures.aic(), cls_measures.bic())
+    print()
 
 
 def hierarchical_clustering() -> None:
@@ -77,6 +129,9 @@ def kmeans_dimensionality_reduction() -> None:
 def kmeans_optimal_num_clusters() -> None:
     """ Find the optimal number of clusters for KMeans using Elbow Method. """
 
+    # Log function call
+    print('kmeans_optimal_num_clusters')
+
     # Set of hyperparameters
     k_list = range(1, 11)
 
@@ -93,18 +148,33 @@ def kmeans_optimal_num_clusters() -> None:
     # Iterate over all hyperparameters
     for k in k_list:
         kmeans = KMeans(k).fit(X_train)
-        costs.append(kmeans.getCost())
+        cost = kmeans.getCost()
+        costs.append(cost)
+        print(k, cost)
 
     # Plot the relation between hyperparameter and cost
     plt.plot(k_list, costs)
-    plt.title('k vs WCSS')
+    plt.title('K-Means: k vs WCSS')
     plt.ylabel('Within Cluster Sum of Squares (WCSS)')
     plt.xlabel('Number of clusters (k)')
     plt.grid()
-    plt.savefig('figures/kmeans_optimal_num_clusters.png', bbox_inches='tight')
+    plt.savefig('figures/kmeans_wcss.png', bbox_inches='tight')
     plt.close()
     plt.clf()
-    print('figures/kmeans_optimal_num_clusters.png')
+    print('figures/kmeans_wcss.png')
+
+    # Read the elbow point determined manually
+    with open('results/k_means1.txt', 'r', encoding='utf-8') as file:
+        k, _ = file.readline().strip().split(', ')
+        k = int(k)
+
+    # Perform clustering based on elbow point
+    kmeans = KMeans(k)
+    kmeans.fit(X_train)
+    y_pred = kmeans.predict(X_train)
+    cost = kmeans.getCost()
+    print('Elbow point:', k, cost)
+    print()
 
 
 def nearest_neighbour_search() -> None:
@@ -113,6 +183,9 @@ def nearest_neighbour_search() -> None:
 
 def pca_dimensionality_reduction() -> None:
     """ Perform dimensionality reduction using PCA and visualize reduced data. """
+
+    # Log function call
+    print('pca_dimensionality_reduction')
 
     # Read the external data into a DataFrame
     df = pd.read_feather(f'{PROJECT_DIR}/data/external/word-embeddings.feather')
@@ -126,10 +199,12 @@ def pca_dimensionality_reduction() -> None:
 
     # Dimensionality reduction to 2D
     pca = PCA(n_components=2).fit(X)
+    pca.checkPCA()
     X_2d = pca.transform(X)
 
     # Dimensionality reduction to 3D
     pca = PCA(n_components=3).fit(X)
+    pca.checkPCA()
     X_3d = pca.transform(X)
 
     # Visualize 2D representation
@@ -161,6 +236,7 @@ def pca_dimensionality_reduction() -> None:
     plt.close()
     plt.clf()
     print(output_path)
+    print()
 
 
 if __name__ == '__main__':
