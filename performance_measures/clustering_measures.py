@@ -2,8 +2,6 @@
 
 import math
 
-import numpy as np
-
 
 class ClusteringMeasures:
     """ Computes common evaluation measures for clustering based tasks. """
