@@ -80,7 +80,7 @@ def gmm_dimensionality_reduction() -> None:
 
     # Perform dimensionality reduction based on the optimal number of dimensions
     pca = PCA(n_components=n_components).fit(X)
-    pca.checkPCA()
+    assert pca.checkPCA()
     X_reduced = pca.transform(X)
 
     # --- Determine the optimal number of clusters for the reduced dataset ---
@@ -334,7 +334,7 @@ def kmeans_dimensionality_reduction() -> None:
 
     # Perform dimensionality reduction based on the optimal number of dimensions
     pca = PCA(n_components=n_components).fit(X)
-    pca.checkPCA()
+    assert pca.checkPCA()
     X_reduced = pca.transform(X)
 
     # --- Determine the optimal number of clusters for the reduced dataset ---
@@ -481,7 +481,7 @@ def nearest_neighbour_search() -> None:
 
     # Perform dimensionality reduction based on the optimal number of dimensions
     pca = PCA(n_components=n_components).fit(X)
-    pca.checkPCA()
+    assert pca.checkPCA()
     X_reduced = pca.transform(X)
 
     # --- Apply K-Nearest Neighbours on the original dataset ---
@@ -558,12 +558,12 @@ def pca_dimensionality_reduction() -> None:
 
     # Dimensionality reduction to 2D
     pca = PCA(n_components=2).fit(X)
-    pca.checkPCA()
+    assert pca.checkPCA()
     X_2d = pca.transform(X)
 
     # Dimensionality reduction to 3D
     pca = PCA(n_components=3).fit(X)
-    pca.checkPCA()
+    assert pca.checkPCA()
     X_3d = pca.transform(X)
 
     # Visualize 2D representation

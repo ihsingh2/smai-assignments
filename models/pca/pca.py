@@ -78,7 +78,7 @@ class PCA:
 
 
     # pylint: disable-next=invalid-name
-    def checkPCA(self) -> None:
+    def checkPCA(self) -> bool:
         """ Checks whether the dimensions were reduced appropriately. """
 
         # Check if fit method called before checkPCA
@@ -91,10 +91,14 @@ class PCA:
         # Test cases -- the number of test samples in each test case
         test_cases = [50, 100, 150]
 
+        # Variable to keep track of test pass status
+        pass_status = True
+
+        # Iterate over all test cases
         for num_test_samples in test_cases:
             data = np.random.randn(num_test_samples, num_original_dimensions)
             data_transformed = self.transform(data)
-            assert data_transformed.shape[0] == num_test_samples, \
-                                        'Received lesser samples than expected upon transform'
-            assert data_transformed.shape[1] == self.n_components, \
-                                        'Received wrong number of components upon transform'
+            pass_status &= data_transformed.shape[0] == num_test_samples
+            pass_status &= data_transformed.shape[1] == self.n_components
+
+        return pass_status
