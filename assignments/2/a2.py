@@ -1,9 +1,12 @@
 """ Assignment 2: KMeans, Gaussian Mixture Models and Principal Component Analysis. """
 
 import sys
+import time
+from typing import Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 
 # pylint: disable=wrong-import-position
@@ -13,9 +16,9 @@ sys.path.insert(0, PROJECT_DIR)
 
 from models.gmm import GMM
 from models.k_means import KMeans
-# from models.knn import KNN
+from models.knn import KNN
 from models.pca import PCA
-from performance_measures import ClusteringMeasures
+from performance_measures import ClassificationMeasures, ClusteringMeasures
 
 # pylint: enable=wrong-import-position
 
@@ -314,15 +317,15 @@ def kmeans_dimensionality_reduction() -> None:
     # Generate scree plot
     plt.figure(figsize=(15,6))
     plt.plot(range(1, eigenvalues.shape[0] + 1), eigenvalues)
-    plt.title('PCA: Scree Plot')
+    plt.title('PCA (Word Embeddings): Scree Plot')
     plt.xlabel('Component Number')
     plt.ylabel('Eigenvalue')
-    plt.xticks(range(0, 512, 15))
+    plt.xticks(range(1, 513, 15))
     plt.grid()
-    plt.savefig('figures/pca_scree_plot.png', bbox_inches='tight')
+    plt.savefig('figures/pca_wordemb_scree_plot.png', bbox_inches='tight')
     plt.close()
     plt.clf()
-    print('figures/pca_scree_plot.png')
+    print('figures/pca_wordemb_scree_plot.png')
 
     # Read the optimal number of dimensions determined manually
     with open('results/pca_wordemb_optimal_dimensions.txt', 'r', encoding='utf-8') as file:
@@ -441,6 +444,101 @@ def kmeans_optimal_num_clusters() -> None:
 def nearest_neighbour_search() -> None:
     """ Find the nearest neighbour on the dataset reduced using PCA. """
 
+    # Log function call
+    print('nearest_neighbour_search')
+
+    # Read interim CSV into DataFrame
+    df = pd.read_csv(f'{PROJECT_DIR}/data/interim/1/spotify.csv', index_col=0)
+
+    # Convert DataFrame to array
+    X = df.to_numpy()[:, :-1]
+    y = df.to_numpy()[:, -1].astype(int)
+
+    # Compute the eigenvalues of the covariance matrix
+    X_centered = X - np.mean(X, axis=0)
+    covariance = X_centered.T @ X_centered / (X.shape[0] - 1)
+    eigenvalues, _ = np.linalg.eig(covariance)
+    eigenvalues = np.real(eigenvalues)
+    eigenvalues = np.sort(eigenvalues)[::-1]
+
+    # Generate scree plot
+    plt.figure(figsize=(15,6))
+    plt.plot(range(1, eigenvalues.shape[0] + 1), eigenvalues)
+    plt.title('PCA (Spotify): Scree Plot')
+    plt.xlabel('Component Number')
+    plt.ylabel('Eigenvalue')
+    plt.xticks(range(1, 17))
+    plt.grid()
+    plt.savefig('figures/pca_spotify_scree_plot.png', bbox_inches='tight')
+    plt.close()
+    plt.clf()
+    print('figures/pca_spotify_scree_plot.png')
+
+    # Read the optimal number of dimensions determined manually
+    with open('results/pca_spotify_optimal_dimensions.txt', 'r', encoding='utf-8') as file:
+        n_components = file.readline().strip()
+        n_components = int(n_components)
+
+    # Perform dimensionality reduction based on the optimal number of dimensions
+    pca = PCA(n_components=n_components).fit(X)
+    pca.checkPCA()
+    X_reduced = pca.transform(X)
+
+    # --- Apply K-Nearest Neighbours on the original dataset ---
+
+    # Read the best hyperparameters from file
+    with open(f'{PROJECT_DIR}/assignments/1/results/knn_hyper_params.txt', 'r', encoding='utf-8') \
+                                                                                        as file:
+        k, metric, _ = file.readline().strip().split(', ')
+        k = int(k)
+
+    # Split the array into train, test and split
+    X_train, X_val, _, y_train, y_val, _ = train_val_test_split(X, y)
+
+    # Initialize and train the model
+    knn = KNN(k, metric)
+    knn.fit(X_train, y_train)
+
+    # Compute predictions on the test set
+    start_time = time.time()
+    y_pred = knn.predict(X_val)
+    original_exec_time = time.time() - start_time
+
+    # Evaluate predictions for the test set
+    print('Original dimension:', n_components, k, metric)
+    cls_measures = ClassificationMeasures(y_val, y_pred)
+    cls_measures.print_all_measures()
+    print()
+
+    # --- Apply K-Nearest Neighbours on the reduced dataset ---
+
+    # Split the array into train, test and split
+    X_train, X_val, _, y_train, y_val, _ = train_val_test_split(X_reduced, y)
+
+    # Initialize and train the model
+    knn = KNN(k, metric)
+    knn.fit(X_train, y_train)
+
+    # Compute predictions on the test set
+    start_time = time.time()
+    y_pred = knn.predict(X_val)
+    reduced_exec_time = time.time() - start_time
+
+    # Evaluate predictions for the test set
+    print('Reduced dimension:', n_components, k, metric)
+    cls_measures = ClassificationMeasures(y_val, y_pred)
+    cls_measures.print_all_measures()
+
+    # Plot inference time as bar graph
+    plt.bar(['Complete dataset', 'Reduced dataset'], [original_exec_time, reduced_exec_time])
+    plt.title('PCA + KNN: Inference times for different datasets')
+    plt.xlabel('Datasets')
+    plt.ylabel('Inference time (seconds)')
+    plt.savefig('figures/pca_knn_inference_time.png', bbox_inches='tight')
+    plt.close()
+    plt.clf()
+    print()
+
 
 def pca_dimensionality_reduction() -> None:
     """ Perform dimensionality reduction using PCA and visualize reduced data. """
@@ -474,7 +572,7 @@ def pca_dimensionality_reduction() -> None:
     plt.scatter(X_2d[:, 0], X_2d[:, 1], s=5)
     for i in range(X.shape[0]):
         plt.annotate(y[i], (X_2d[i, 0] + 5e-3, X_2d[i, 1]), fontsize=6)
-    plt.title('PCA: Visualization for n_components=2')
+    plt.title('PCA (Word Embeddings): Visualization for n_components=2')
     plt.xlabel('Component 1')
     plt.ylabel('Component 2')
     plt.savefig(output_path, bbox_inches='tight')
@@ -489,7 +587,7 @@ def pca_dimensionality_reduction() -> None:
     ax.scatter(X_3d[:, 0], X_3d[:, 1], X_3d[:, 2], s=5)
     for i in range(X.shape[0]):
         ax.text(X_3d[i, 0] + 5e-3, X_3d[i, 1], X_3d[i, 2], y[i], fontsize=6)
-    ax.set_title('PCA: Visualization for n_components=3')
+    ax.set_title('PCA (Word Embeddings): Visualization for n_components=3')
     ax.set_xlabel('Component 1')
     ax.set_ylabel('Component 2')
     ax.set_zlabel('Component 3')
@@ -498,6 +596,46 @@ def pca_dimensionality_reduction() -> None:
     plt.clf()
     print(output_path)
     print()
+
+
+# pylint: disable-next=too-many-arguments
+def train_val_test_split(
+    X: npt.NDArray, y: npt.NDArray, train_size: float = 0.8, val_size: float = 0.1,
+    test_size: float = 0.1, random_seed: int | None = 0
+) -> Tuple[npt.NDArray, npt.NDArray, npt.NDArray, npt.NDArray, npt.NDArray, npt.NDArray]:
+    """ Partitions dataset represented as a pair of array, into three groups. """
+
+    # Reinitialize the random number generator
+    if random_seed is not None:
+        np.random.seed(random_seed)
+
+    # Ensure the sizes form a probability simplex
+    assert train_size + val_size + test_size == 1.0, \
+                                    'train_size, val_size, and test_size sizes must sum to 1.'
+    assert 0.0 <= train_size <= 1.0, 'train_size must lie in (0, 1)'
+    assert 0.0 <= val_size <= 1.0, 'val_size must lie in (0, 1)'
+    assert 0.0 <= test_size <= 1.0, 'test_size must lie in (0, 1)'
+
+    # Ensure that X and y are of same length
+    assert X.shape[0] == y.shape[0], 'Expected X and y to be the same length'
+
+    # Shuffle the indices
+    indices = np.arange(X.shape[0])
+    np.random.shuffle(indices)
+
+    # Shuffle the dataset as per the indices
+    X = X[indices]
+    y = y[indices]
+
+    # Compute the splitting indices
+    train_end = int(train_size * X.shape[0])
+    val_end = train_end + int(val_size * X.shape[0])
+
+    # Split the data
+    X_train, X_val, X_test = X[:train_end], X[train_end:val_end], X[val_end:]
+    y_train, y_val, y_test = y[:train_end], y[train_end:val_end], y[val_end:]
+
+    return X_train, X_val, X_test, y_train, y_val, y_test
 
 
 if __name__ == '__main__':
@@ -535,4 +673,4 @@ if __name__ == '__main__':
     # hierarchical_clustering()
 
     # # 9 Nearest Neighbour Search
-    # nearest_neighbour_search()
+    nearest_neighbour_search()
