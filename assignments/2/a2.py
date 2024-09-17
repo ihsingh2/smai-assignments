@@ -319,7 +319,7 @@ def hierarchical_clustering() -> None:
                 linkage_matrix = hc.linkage(X, method=linkage, metric=metric)
                 plt.figure(figsize=(25, 10))
                 hc.dendrogram(linkage_matrix)
-                plt.title(f'Dendogram: {linkage.title()} Linkage, {metric.title()} Distance')
+                plt.title(f'Dendrogram: {linkage.title()} Linkage, {metric.title()} Distance')
                 plt.ylabel('Distance')
                 plt.xlabel('Words')
                 plt.savefig(f'figures/hierarchical_{linkage}_linkage_{metric}.png')

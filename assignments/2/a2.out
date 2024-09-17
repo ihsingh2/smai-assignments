@@ -288,13 +288,13 @@ Skipping ward linkage for cityblock distance
 figures/hierarchical_ward_linkage_euclidean.png
 Skipping ward linkage for cosine distance
 
-7 ward
-['sing' 'listen' 'dive' 'flame' 'knock' 'exit' 'brick' 'smile' 'bury'
- 'download' 'hard' 'bend' 'fight' 'face' 'scream' 'kiss' 'selfie' 'catch'
- 'hit' 'paint' 'far' 'cry' 'sleep' 'hollow' 'clean' 'sad' 'empty' 'slide'
- 'drink' 'door' 'draw' 'pray' 'arrest' 'buy' 'burn' 'fire' 'close' 'angry'
- 'lazy' 'scary' 'hang' 'tattoo' 'earth' 'enter' 'key' 'swim' 'happy'
- 'loud' 'love' 'cook' 'cut']
+8 ward
+['listen' 'flame' 'download' 'hard' 'fight' 'hit' 'cry' 'sad' 'pray' 'buy'
+ 'burn' 'fire' 'close' 'scary' 'cut']
+['sing' 'dive' 'knock' 'exit' 'brick' 'smile' 'bury' 'bend' 'face'
+ 'scream' 'kiss' 'selfie' 'catch' 'paint' 'far' 'sleep' 'hollow' 'clean'
+ 'empty' 'slide' 'drink' 'door' 'draw' 'arrest' 'angry' 'lazy' 'hang'
+ 'tattoo' 'earth' 'enter' 'key' 'swim' 'happy' 'loud' 'love' 'cook']
 ['deer' 'spider' 'shark' 'giraffe' 'lizard' 'feather' 'frog' 'fly'
  'starfish' 'peacock' 'fish' 'ant' 'goldfish' 'bird' 'spiderman' 'bee'
  'beetle' 'snake' 'dragonfly' 'butterfly' 'crocodile']
@@ -317,13 +317,13 @@ Skipping ward linkage for cosine distance
  'mouse' 'skate' 'tank' 'airplane' 'ambulance' 'pizza' 'car' 'basketball'
  'bicycle' 'arrow' 'walk' 'truck']
 
-7 ward
-['sing' 'listen' 'dive' 'flame' 'knock' 'exit' 'brick' 'smile' 'bury'
- 'download' 'hard' 'bend' 'fight' 'face' 'scream' 'kiss' 'selfie' 'catch'
- 'hit' 'paint' 'far' 'cry' 'sleep' 'hollow' 'clean' 'sad' 'empty' 'slide'
- 'drink' 'door' 'draw' 'pray' 'arrest' 'buy' 'burn' 'fire' 'close' 'angry'
- 'lazy' 'scary' 'hang' 'tattoo' 'earth' 'enter' 'key' 'swim' 'happy'
- 'loud' 'love' 'cook' 'cut']
+8 ward
+['listen' 'flame' 'download' 'hard' 'fight' 'hit' 'cry' 'sad' 'pray' 'buy'
+ 'burn' 'fire' 'close' 'scary' 'cut']
+['sing' 'dive' 'knock' 'exit' 'brick' 'smile' 'bury' 'bend' 'face'
+ 'scream' 'kiss' 'selfie' 'catch' 'paint' 'far' 'sleep' 'hollow' 'clean'
+ 'empty' 'slide' 'drink' 'door' 'draw' 'arrest' 'angry' 'lazy' 'hang'
+ 'tattoo' 'earth' 'enter' 'key' 'swim' 'happy' 'loud' 'love' 'cook']
 ['deer' 'spider' 'shark' 'giraffe' 'lizard' 'feather' 'frog' 'fly'
  'starfish' 'peacock' 'fish' 'ant' 'goldfish' 'bird' 'spiderman' 'bee'
  'beetle' 'snake' 'dragonfly' 'butterfly' 'crocodile']
