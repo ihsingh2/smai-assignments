@@ -31,8 +31,12 @@ class GMM:
         self.covariances = None
 
 
-    def fit(self, X_train: npt.NDArray, eps: float = 1e-6) -> Self:
+    def fit(self, X_train: npt.NDArray, eps: float = 1e-6, random_seed: int | None = 0) -> Self:
         """ Fits the model for the given training data. """
+
+        # Reinitialize the random number generator
+        if random_seed is not None:
+            np.random.seed(random_seed)
 
         # Store the training data
         self.X_train = X_train

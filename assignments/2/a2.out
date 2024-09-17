@@ -1,0 +1,368 @@
+--- kmeans_optimal_num_clusters
+1 4527.93663666962
+2 4257.7346060341715
+3 4142.512105107806
+4 4080.358325991434
+5 3998.8170983016785
+6 3929.0478407466926
+7 3896.9305277350813
+8 3871.584939772245
+9 3822.12386727143
+10 3776.98700556114
+11 3749.556508759749
+12 3720.4732607657097
+13 3680.0222712017194
+14 3643.1934626956954
+15 3630.389076006564
+16 3572.0700503579883
+17 3548.753104013986
+18 3512.121372196756
+19 3491.4822711797397
+20 3450.519997922681
+figures/kmeans_wcss.png
+
+Elbow point: 6 3929.0478407466926
+['listen' 'flame' 'knock' 'bury' 'download' 'postcard' 'hard' 'fight'
+ 'call' 'hit' 'far' 'cry' 'sleep' 'clean' 'sad' 'slide' 'draw' 'pray'
+ 'arrest' 'email' 'buy' 'burn' 'fire' 'close' 'angry' 'lazy' 'scary'
+ 'hang' 'book' 'enter' 'happy' 'loud' 'love' 'cook' 'recycle' 'cut']
+['mug' 'selfie' 'microwave' 'microphone' 'drink' 'calendar' 'candle'
+ 'oven' 'calculator' 'toothbrush' 'ambulance' 'television' 'camera'
+ 'loudspeaker' 'telephone' 'toothpaste' 'toaster' 'keyboard' 'radio']
+['sit' 'table' 'roof' 'stairs' 'bed' 'knit' 'sweater' 'jacket' 'bench'
+ 'laptop' 'chair' 'ladder' 'igloo' 'pillow' 'throne' 'tent' 'lantern'
+ 'stove' 'suitcase']
+['panda' 'ape' 'cat' 'eraser' 'eat' 'gym' 'rifle' 'cow' 'pencil'
+ 'starfish' 'dig' 'run' 'van' 'sun' 'feet' 'pear' 'peacock' 'fruit'
+ 'grape' 'ant' 'bee' 'tomato' 'parachute' 'car' 'elephant' 'pant' 'potato'
+ 'crocodile']
+['drive' 'sing' 'rose' 'dive' 'needle' 'carrot' 'exit' 'brick' 'smile'
+ 'bullet' 'grass' 'brush' 'feather' 'spoon' 'bend' 'puppet' 'fly' 'face'
+ 'climb' 'kneel' 'scream' 'kiss' 'passport' 'catch' 'paint' 'plant'
+ 'notebook' 'clap' 'pull' 'cigarette' 'hollow' 'puppy' 'empty' 'flute'
+ 'scissor' 'door' 'mouse' 'finger' 'clock' 'envelope' 'hammer'
+ 'screwdriver' 'snake' 'tattoo' 'earth' 'fingerprints' 'teaspoon' 'length'
+ 'dustbin' 'rain' 'tank' 'key' 'swim' 'zip' 'sword' 'rainy' 'knife'
+ 'arrow' 'comb' 'shoe' 'walk' 'fork' 'sunny' 'paintbrush']
+['deer' 'helicopter' 'fishing' 'bear' 'spider' 'shark' 'giraffe' 'forest'
+ 'lizard' 'frog' 'lake' 'monkey' 'baseball' 'bucket' 'boat' 'basket'
+ 'fish' 'saturn' 'badminton' 'goldfish' 'bird' 'spiderman' 'tree' 'beetle'
+ 'skate' 'airplane' 'pizza' 'dragonfly' 'butterfly' 'basketball' 'wheel'
+ 'bicycle' 'windmill' 'truck']
+
+--- gmm_optimal_num_clusters
+models.gmm: Finished execution on 512 dimensions
+sklearn.mixture.GaussianMixture: Finished execution on 512 dimensions
+2 -9711.19062322848 19426.38124645696 19432.977881190058
+3 -9984.465384386487 19974.930768772974 19984.825720872617
+4 -9145.626934581182 18299.253869162363 18312.447138628555
+5 -8490.677835171573 16991.355670343146 17007.847257175887
+6 -7858.638847875922 15729.277695751844 15749.067599951131
+7 -7268.256055027869 14550.512110055737 14573.600331621574
+8 -6733.2555754972545 13482.511150994509 13508.897689926893
+9 -6408.791888132984 12835.583776265968 12865.268632564901
+10 -6034.950717624531 12089.901435249061 12122.88460891454
+figures/gmm_log_likelihood.png
+figures/gmm_aic.png
+figures/gmm_bic.png
+
+Optimal number of clusters: 9 -6408.791888132984 12835.583776265968 12865.268632564901
+['sing' 'bullet' 'giraffe' 'postcard' 'spoon' 'gym' 'lake' 'starfish'
+ 'baseball' 'sun' 'puppy' 'basket' 'peacock' 'slide' 'candle' 'ant'
+ 'igloo' 'fire' 'skate' 'snake' 'fingerprints' 'airplane' 'love']
+['needle' 'brick' 'lizard' 'hard' 'passport' 'stairs' 'rifle' 'hollow'
+ 'clean' 'badminton' 'mouse' 'rain' 'tomato' 'radio']
+['dive' 'bury' 'puppet' 'fly' 'bed' 'feet' 'pear' 'empty' 'flute' 'drink'
+ 'scissor' 'door' 'chair' 'finger' 'bee' 'pillow' 'tree' 'swim' 'sword'
+ 'toothpaste' 'shoe' 'truck' 'suitcase']
+['deer' 'panda' 'listen' 'spider' 'shark' 'download' 'brush' 'mug'
+ 'feather' 'fight' 'cow' 'paint' 'run' 'van' 'bench' 'sad' 'grape'
+ 'laptop' 'draw' 'email' 'bird' 'clock' 'burn' 'lazy' 'envelope'
+ 'toothbrush' 'dustbin' 'car' 'loudspeaker' 'lantern' 'basketball'
+ 'windmill' 'toaster' 'potato' 'crocodile' 'walk']
+['flame' 'bear' 'bend' 'face' 'kiss' 'selfie' 'far' 'microwave' 'cry'
+ 'notebook' 'clap' 'pull' 'knit' 'boat' 'calendar' 'ladder' 'beetle'
+ 'hammer' 'ambulance' 'stove' 'arrow']
+['drive' 'rose' 'fishing' 'grass' 'climb' 'kneel' 'plant' 'cigarette'
+ 'microphone' 'jacket' 'bucket' 'saturn' 'earth' 'length' 'enter' 'loud'
+ 'knife' 'bicycle' 'recycle' 'sunny']
+['sit' 'eraser' 'scream' 'hit' 'dig' 'pray' 'buy' 'goldfish' 'book'
+ 'teaspoon' 'pizza' 'camera' 'zip' 'dragonfly' 'happy' 'telephone' 'rainy']
+['ape' 'helicopter' 'table' 'carrot' 'eat' 'frog' 'call' 'catch' 'pencil'
+ 'sweater' 'fish' 'fruit' 'television' 'elephant' 'wheel' 'comb' 'cut'
+ 'keyboard' 'fork']
+['knock' 'cat' 'exit' 'smile' 'forest' 'monkey' 'roof' 'sleep' 'arrest'
+ 'oven' 'calculator' 'spiderman' 'close' 'angry' 'scary' 'hang'
+ 'screwdriver' 'tattoo' 'tank' 'throne' 'key' 'tent' 'parachute'
+ 'butterfly' 'pant' 'cook' 'paintbrush']
+
+--- pca_dimensionality_reduction
+figures/pca_2d.png
+figures/pca_3d.png
+
+--- kmeans_2d_visualization
+6 3929.0478407466926
+['listen' 'flame' 'knock' 'bury' 'download' 'postcard' 'hard' 'fight'
+ 'call' 'hit' 'far' 'cry' 'sleep' 'clean' 'sad' 'slide' 'draw' 'pray'
+ 'arrest' 'email' 'buy' 'burn' 'fire' 'close' 'angry' 'lazy' 'scary'
+ 'hang' 'book' 'enter' 'happy' 'loud' 'love' 'cook' 'recycle' 'cut']
+['mug' 'selfie' 'microwave' 'microphone' 'drink' 'calendar' 'candle'
+ 'oven' 'calculator' 'toothbrush' 'ambulance' 'television' 'camera'
+ 'loudspeaker' 'telephone' 'toothpaste' 'toaster' 'keyboard' 'radio']
+['sit' 'table' 'roof' 'stairs' 'bed' 'knit' 'sweater' 'jacket' 'bench'
+ 'laptop' 'chair' 'ladder' 'igloo' 'pillow' 'throne' 'tent' 'lantern'
+ 'stove' 'suitcase']
+['panda' 'ape' 'cat' 'eraser' 'eat' 'gym' 'rifle' 'cow' 'pencil'
+ 'starfish' 'dig' 'run' 'van' 'sun' 'feet' 'pear' 'peacock' 'fruit'
+ 'grape' 'ant' 'bee' 'tomato' 'parachute' 'car' 'elephant' 'pant' 'potato'
+ 'crocodile']
+['drive' 'sing' 'rose' 'dive' 'needle' 'carrot' 'exit' 'brick' 'smile'
+ 'bullet' 'grass' 'brush' 'feather' 'spoon' 'bend' 'puppet' 'fly' 'face'
+ 'climb' 'kneel' 'scream' 'kiss' 'passport' 'catch' 'paint' 'plant'
+ 'notebook' 'clap' 'pull' 'cigarette' 'hollow' 'puppy' 'empty' 'flute'
+ 'scissor' 'door' 'mouse' 'finger' 'clock' 'envelope' 'hammer'
+ 'screwdriver' 'snake' 'tattoo' 'earth' 'fingerprints' 'teaspoon' 'length'
+ 'dustbin' 'rain' 'tank' 'key' 'swim' 'zip' 'sword' 'rainy' 'knife'
+ 'arrow' 'comb' 'shoe' 'walk' 'fork' 'sunny' 'paintbrush']
+['deer' 'helicopter' 'fishing' 'bear' 'spider' 'shark' 'giraffe' 'forest'
+ 'lizard' 'frog' 'lake' 'monkey' 'baseball' 'bucket' 'boat' 'basket'
+ 'fish' 'saturn' 'badminton' 'goldfish' 'bird' 'spiderman' 'tree' 'beetle'
+ 'skate' 'airplane' 'pizza' 'dragonfly' 'butterfly' 'basketball' 'wheel'
+ 'bicycle' 'windmill' 'truck']
+
+--- kmeans_dimensionality_reduction
+figures/pca_wordemb_scree_plot.png
+1 1670.8577987476779
+2 1401.068874928424
+3 1292.6047805562098
+4 1235.5196256837885
+5 1156.3732118007601
+6 1080.0151997577573
+7 1017.0218707962258
+8 959.2592796309327
+9 941.129600123192
+10 899.9948514352368
+11 879.8777830401807
+12 869.1308522903628
+13 842.025848631474
+14 824.8944365383339
+15 807.9765749089108
+16 781.834176741441
+17 750.1423032495868
+18 754.632757774608
+19 747.2182438282541
+20 732.5549333017773
+figures/pca_kmeans_wcss.png
+
+Elbow point: 8 959.2592796309327
+['drive' 'sing' 'rose' 'dive' 'exit' 'brick' 'fishing' 'smile' 'bullet'
+ 'grass' 'forest' 'bend' 'puppet' 'fly' 'lake' 'face' 'climb' 'scream'
+ 'kiss' 'selfie' 'catch' 'paint' 'plant' 'clap' 'pull' 'cigarette'
+ 'baseball' 'hollow' 'bucket' 'puppy' 'boat' 'basket' 'empty' 'fish'
+ 'drink' 'door' 'bird' 'tree' 'skate' 'tattoo' 'earth' 'fingerprints'
+ 'rain' 'tank' 'pizza' 'key' 'swim' 'zip' 'rainy' 'cook' 'basketball'
+ 'bicycle' 'arrow' 'shoe' 'walk' 'sunny' 'truck']
+['mug' 'postcard' 'passport' 'microwave' 'notebook' 'microphone' 'laptop'
+ 'calendar' 'clock' 'oven' 'calculator' 'envelope' 'dustbin' 'ambulance'
+ 'television' 'loudspeaker' 'telephone' 'stove' 'toaster' 'keyboard'
+ 'radio' 'suitcase']
+['sit' 'table' 'kneel' 'roof' 'stairs' 'bed' 'bench' 'feet' 'chair'
+ 'ladder' 'throne' 'wheel']
+['panda' 'ape' 'cat' 'eat' 'gym' 'rifle' 'cow' 'pencil' 'dig' 'run' 'van'
+ 'sun' 'ant' 'bee' 'camera' 'tomato' 'car' 'pant' 'potato']
+['needle' 'brush' 'feather' 'spoon' 'flute' 'scissor' 'finger' 'hammer'
+ 'toothbrush' 'screwdriver' 'teaspoon' 'length' 'sword' 'knife'
+ 'toothpaste' 'comb' 'fork' 'paintbrush']
+['deer' 'helicopter' 'bear' 'spider' 'shark' 'giraffe' 'lizard' 'frog'
+ 'monkey' 'starfish' 'mouse' 'goldfish' 'spiderman' 'beetle' 'snake'
+ 'airplane' 'dragonfly' 'butterfly' 'elephant' 'windmill' 'crocodile']
+['listen' 'flame' 'knock' 'bury' 'download' 'hard' 'fight' 'call' 'hit'
+ 'far' 'cry' 'sleep' 'clean' 'sad' 'slide' 'draw' 'pray' 'arrest' 'email'
+ 'buy' 'burn' 'fire' 'close' 'angry' 'lazy' 'scary' 'hang' 'book' 'enter'
+ 'happy' 'loud' 'love' 'recycle' 'cut']
+['eraser' 'carrot' 'knit' 'sweater' 'jacket' 'pear' 'peacock' 'saturn'
+ 'fruit' 'grape' 'badminton' 'candle' 'igloo' 'pillow' 'tent' 'parachute'
+ 'lantern']
+
+--- gmm_2d_visualization
+6 -7858.638847875922 15729.277695751844 15749.067599951131
+['deer' 'knock' 'cat' 'carrot' 'bear' 'grass' 'download' 'brush' 'spoon'
+ 'puppet' 'scream' 'monkey' 'roof' 'bed' 'run' 'puppy' 'empty' 'flute'
+ 'drink' 'draw' 'pray' 'email' 'hammer' 'snake' 'tattoo' 'earth' 'dustbin'
+ 'tank' 'ambulance' 'tent' 'camera' 'zip' 'dragonfly' 'car' 'telephone'
+ 'basketball' 'wheel' 'bicycle' 'toaster' 'keyboard' 'fork']
+['rose' 'table' 'exit' 'fishing' 'spider' 'mug' 'bend' 'frog' 'fight'
+ 'rifle' 'cow' 'starfish' 'paint' 'plant' 'far' 'knit' 'peacock' 'saturn'
+ 'scissor' 'finger' 'clock' 'close' 'scary' 'hang' 'knife' 'recycle'
+ 'comb' 'walk' 'suitcase']
+['helicopter' 'eraser' 'forest' 'call' 'face' 'kneel' 'hit' 'pencil' 'cry'
+ 'van' 'boat' 'grape' 'door' 'chair' 'mouse' 'candle' 'ant' 'igloo' 'bird'
+ 'oven' 'burn' 'angry' 'tree' 'envelope' 'book' 'teaspoon' 'enter'
+ 'throne' 'parachute' 'butterfly']
+['panda' 'ape' 'listen' 'dive' 'shark' 'giraffe' 'lizard' 'feather'
+ 'postcard' 'hard' 'gym' 'lake' 'microwave' 'dig' 'notebook' 'clap'
+ 'cigarette' 'jacket' 'feet' 'slide' 'badminton' 'buy' 'goldfish'
+ 'calculator' 'spiderman' 'bee' 'pillow' 'lazy' 'skate' 'toothbrush'
+ 'screwdriver' 'fingerprints' 'length' 'television' 'key' 'tomato'
+ 'loudspeaker' 'elephant' 'pant' 'toothpaste' 'shoe' 'radio' 'truck']
+['drive' 'sit' 'needle' 'bullet' 'fly' 'climb' 'kiss' 'stairs' 'catch'
+ 'sleep' 'sweater' 'microphone' 'baseball' 'hollow' 'bench' 'sun' 'bucket'
+ 'clean' 'laptop' 'fire' 'beetle' 'rain' 'sword' 'happy' 'loud' 'stove'
+ 'potato' 'sunny']
+['sing' 'flame' 'brick' 'smile' 'bury' 'eat' 'passport' 'selfie' 'pull'
+ 'pear' 'basket' 'sad' 'fish' 'fruit' 'calendar' 'ladder' 'arrest'
+ 'airplane' 'pizza' 'swim' 'lantern' 'love' 'rainy' 'cook' 'windmill'
+ 'arrow' 'cut' 'crocodile' 'paintbrush']
+
+--- gmm_dimensionality_reduction
+1 -3122.227231711978 6246.454463423956 6249.752780790504
+2 -2792.4647095319656 5588.929419063931 5595.526053797027
+3 -2560.56706986078 5127.13413972156 5137.029091821204
+4 -2475.9829996235294 4959.965999247059 4973.159268713251
+5 -2412.364618498493 4834.729236996986 4851.220823829726
+6 -2301.815786673654 4615.631573347308 4635.421477546596
+7 -2256.0249016776324 4526.049803355265 4549.1380249211015
+8 -2008.8914618762785 4033.782923752557 4060.169462684941
+9 -2172.842642737125 4363.68528547425 4393.370141773183
+10 -2187.8513567396176 4395.702713479235 4428.685887144716
+11 -2197.2269406863074 4416.453881372615 4452.735372404643
+12 -2157.0511482305833 4338.102296461167 4377.682104859743
+13 -2225.822660443163 4477.645320886326 4520.52344665145
+14 -2208.556600663662 4445.113201327324 4491.289644458996
+15 -2259.017407316638 4548.034814633276 4597.509575131497
+figures/pca_gmm_log_likelihood.png
+figures/pca_gmm_aic.png
+figures/pca_gmm_bic.png
+
+Optimal number of clusters: 8 -2008.8914618762785 4033.782923752557 4060.169462684941
+['eraser' 'table' 'carrot' 'grass' 'feather' 'spoon' 'frog' 'stairs'
+ 'notebook' 'bench' 'saturn' 'draw' 'mouse' 'clock' 'beetle' 'book'
+ 'screwdriver' 'teaspoon' 'elephant' 'cook' 'arrow' 'comb' 'fork'
+ 'paintbrush']
+['sing' 'listen' 'flame' 'brick' 'bury' 'download' 'postcard' 'hard'
+ 'fight' 'call' 'kiss' 'passport' 'hit' 'bed' 'far' 'sleep' 'van'
+ 'microphone' 'hollow' 'clean' 'scissor' 'pray' 'email' 'pillow' 'fire'
+ 'close' 'lazy' 'hang' 'envelope' 'earth' 'rain' 'key' 'camera'
+ 'telephone' 'loud' 'rainy' 'cut' 'sunny' 'radio']
+['forest' 'catch' 'paint' 'plant' 'microwave' 'baseball' 'bucket' 'basket'
+ 'empty' 'peacock' 'grape' 'oven' 'skate' 'toothbrush' 'ambulance' 'pizza'
+ 'enter' 'television' 'stove' 'basketball' 'windmill' 'toaster' 'walk']
+['drive' 'panda' 'ape' 'dive' 'helicopter' 'cat' 'fishing' 'shark'
+ 'lizard' 'mug' 'eat' 'fly' 'gym' 'monkey' 'rifle' 'cow' 'pencil'
+ 'starfish' 'dig' 'run' 'clap' 'sun' 'puppy' 'sad' 'fish' 'flute' 'drink'
+ 'buy' 'goldfish' 'bird' 'snake' 'tattoo' 'airplane' 'swim' 'zip'
+ 'dragonfly' 'butterfly' 'pant' 'bicycle' 'crocodile']
+['knock' 'exit' 'brush' 'climb' 'knit' 'cigarette' 'laptop' 'door'
+ 'badminton' 'ladder' 'arrest' 'finger' 'candle' 'igloo' 'hammer'
+ 'lantern' 'knife' 'keyboard']
+['deer' 'rose' 'sit' 'bear' 'giraffe' 'lake' 'scream' 'boat' 'fruit'
+ 'calculator' 'spiderman' 'bee' 'burn' 'fingerprints' 'dustbin' 'car'
+ 'recycle' 'truck']
+['bullet' 'kneel' 'pull' 'feet' 'pear' 'slide' 'calendar' 'ant' 'tomato'
+ 'parachute' 'loudspeaker' 'happy' 'love' 'toothpaste' 'potato' 'shoe'
+ 'suitcase']
+['needle' 'smile' 'spider' 'bend' 'puppet' 'face' 'selfie' 'roof' 'cry'
+ 'sweater' 'jacket' 'chair' 'angry' 'scary' 'tree' 'length' 'tank'
+ 'throne' 'tent' 'sword' 'wheel']
+
+--- hierarchical_clustering
+figures/hierarchical_single_linkage_cityblock.png
+figures/hierarchical_single_linkage_euclidean.png
+figures/hierarchical_single_linkage_cosine.png
+figures/hierarchical_complete_linkage_cityblock.png
+figures/hierarchical_complete_linkage_euclidean.png
+figures/hierarchical_complete_linkage_cosine.png
+figures/hierarchical_average_linkage_cityblock.png
+figures/hierarchical_average_linkage_euclidean.png
+figures/hierarchical_average_linkage_cosine.png
+figures/hierarchical_weighted_linkage_cityblock.png
+figures/hierarchical_weighted_linkage_euclidean.png
+figures/hierarchical_weighted_linkage_cosine.png
+Skipping centroid linkage for cityblock distance
+figures/hierarchical_centroid_linkage_euclidean.png
+Skipping centroid linkage for cosine distance
+Skipping median linkage for cityblock distance
+figures/hierarchical_median_linkage_euclidean.png
+Skipping median linkage for cosine distance
+Skipping ward linkage for cityblock distance
+figures/hierarchical_ward_linkage_euclidean.png
+Skipping ward linkage for cosine distance
+
+7 ward
+['sing' 'listen' 'dive' 'flame' 'knock' 'exit' 'brick' 'smile' 'bury'
+ 'download' 'hard' 'bend' 'fight' 'face' 'scream' 'kiss' 'selfie' 'catch'
+ 'hit' 'paint' 'far' 'cry' 'sleep' 'hollow' 'clean' 'sad' 'empty' 'slide'
+ 'drink' 'door' 'draw' 'pray' 'arrest' 'buy' 'burn' 'fire' 'close' 'angry'
+ 'lazy' 'scary' 'hang' 'tattoo' 'earth' 'enter' 'key' 'swim' 'happy'
+ 'loud' 'love' 'cook' 'cut']
+['deer' 'spider' 'shark' 'giraffe' 'lizard' 'feather' 'frog' 'fly'
+ 'starfish' 'peacock' 'fish' 'ant' 'goldfish' 'bird' 'spiderman' 'bee'
+ 'beetle' 'snake' 'dragonfly' 'butterfly' 'crocodile']
+['panda' 'ape' 'sit' 'cat' 'eraser' 'carrot' 'bear' 'grass' 'forest' 'eat'
+ 'puppet' 'gym' 'kneel' 'monkey' 'cow' 'pencil' 'plant' 'dig' 'run' 'clap'
+ 'pull' 'sun' 'puppy' 'feet' 'pear' 'fruit' 'grape' 'finger' 'tree'
+ 'fingerprints' 'rain' 'zip' 'tomato' 'elephant' 'pant' 'rainy' 'potato'
+ 'shoe' 'sunny']
+['brush' 'spoon' 'scissor' 'hammer' 'toothbrush' 'screwdriver' 'teaspoon'
+ 'length' 'sword' 'knife' 'toothpaste' 'comb' 'fork' 'paintbrush']
+['postcard' 'call' 'passport' 'microwave' 'notebook' 'microphone' 'laptop'
+ 'calendar' 'email' 'oven' 'calculator' 'envelope' 'book' 'dustbin'
+ 'television' 'camera' 'loudspeaker' 'telephone' 'stove' 'recycle'
+ 'toaster' 'keyboard' 'radio' 'suitcase']
+['table' 'mug' 'climb' 'roof' 'stairs' 'bed' 'knit' 'sweater' 'jacket'
+ 'bench' 'bucket' 'chair' 'ladder' 'candle' 'igloo' 'clock' 'pillow'
+ 'throne' 'tent' 'parachute' 'lantern' 'wheel' 'windmill']
+['drive' 'rose' 'helicopter' 'needle' 'fishing' 'bullet' 'lake' 'rifle'
+ 'van' 'cigarette' 'baseball' 'boat' 'basket' 'saturn' 'flute' 'badminton'
+ 'mouse' 'skate' 'tank' 'airplane' 'ambulance' 'pizza' 'car' 'basketball'
+ 'bicycle' 'arrow' 'walk' 'truck']
+
+7 ward
+['sing' 'listen' 'dive' 'flame' 'knock' 'exit' 'brick' 'smile' 'bury'
+ 'download' 'hard' 'bend' 'fight' 'face' 'scream' 'kiss' 'selfie' 'catch'
+ 'hit' 'paint' 'far' 'cry' 'sleep' 'hollow' 'clean' 'sad' 'empty' 'slide'
+ 'drink' 'door' 'draw' 'pray' 'arrest' 'buy' 'burn' 'fire' 'close' 'angry'
+ 'lazy' 'scary' 'hang' 'tattoo' 'earth' 'enter' 'key' 'swim' 'happy'
+ 'loud' 'love' 'cook' 'cut']
+['deer' 'spider' 'shark' 'giraffe' 'lizard' 'feather' 'frog' 'fly'
+ 'starfish' 'peacock' 'fish' 'ant' 'goldfish' 'bird' 'spiderman' 'bee'
+ 'beetle' 'snake' 'dragonfly' 'butterfly' 'crocodile']
+['panda' 'ape' 'sit' 'cat' 'eraser' 'carrot' 'bear' 'grass' 'forest' 'eat'
+ 'puppet' 'gym' 'kneel' 'monkey' 'cow' 'pencil' 'plant' 'dig' 'run' 'clap'
+ 'pull' 'sun' 'puppy' 'feet' 'pear' 'fruit' 'grape' 'finger' 'tree'
+ 'fingerprints' 'rain' 'zip' 'tomato' 'elephant' 'pant' 'rainy' 'potato'
+ 'shoe' 'sunny']
+['brush' 'spoon' 'scissor' 'hammer' 'toothbrush' 'screwdriver' 'teaspoon'
+ 'length' 'sword' 'knife' 'toothpaste' 'comb' 'fork' 'paintbrush']
+['postcard' 'call' 'passport' 'microwave' 'notebook' 'microphone' 'laptop'
+ 'calendar' 'email' 'oven' 'calculator' 'envelope' 'book' 'dustbin'
+ 'television' 'camera' 'loudspeaker' 'telephone' 'stove' 'recycle'
+ 'toaster' 'keyboard' 'radio' 'suitcase']
+['table' 'mug' 'climb' 'roof' 'stairs' 'bed' 'knit' 'sweater' 'jacket'
+ 'bench' 'bucket' 'chair' 'ladder' 'candle' 'igloo' 'clock' 'pillow'
+ 'throne' 'tent' 'parachute' 'lantern' 'wheel' 'windmill']
+['drive' 'rose' 'helicopter' 'needle' 'fishing' 'bullet' 'lake' 'rifle'
+ 'van' 'cigarette' 'baseball' 'boat' 'basket' 'saturn' 'flute' 'badminton'
+ 'mouse' 'skate' 'tank' 'airplane' 'ambulance' 'pizza' 'car' 'basketball'
+ 'bicycle' 'arrow' 'walk' 'truck']
+
+--- nearest_neighbour_search
+figures/pca_spotify_scree_plot.png
+
+Original dimension: 2 13 manhattan
+Accuracy: 0.30510363271673724
+Precision (Micro): 0.30510363271673724
+Recall (Micro): 0.30510363271673724
+F1 Score (Micro): 0.30510363271673724
+Precision (Macro): 0.2795649666432867
+Recall (Macro): 0.28621211228498433
+F1 Score (Macro): 0.28284949180134794
+
+Reduced dimension: 2 13 manhattan
+Accuracy: 0.08658346333853355
+Precision (Micro): 0.08658346333853355
+Recall (Micro): 0.08658346333853355
+F1 Score (Micro): 0.08658346333853355
+Precision (Macro): 0.08912415708250836
+Recall (Macro): 0.09554396384446338
+F1 Score (Macro): 0.09222247130923997

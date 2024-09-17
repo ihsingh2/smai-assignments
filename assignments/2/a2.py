@@ -9,6 +9,7 @@ import numpy as np
 import numpy.typing as npt
 import pandas as pd
 import scipy.cluster.hierarchy as hc
+from sklearn.mixture import GaussianMixture
 
 # pylint: disable=wrong-import-position
 
@@ -116,6 +117,7 @@ def gmm_dimensionality_reduction() -> None:
     plt.title('PCA + GMM: k vs Log Likelihood')
     plt.ylabel('Log Likelihood')
     plt.xlabel('Number of components (k)')
+    plt.xticks(k_list[::2])
     plt.grid()
     plt.savefig('figures/pca_gmm_log_likelihood.png', bbox_inches='tight')
     plt.close()
@@ -127,6 +129,7 @@ def gmm_dimensionality_reduction() -> None:
     plt.title('PCA + GMM: k vs AIC')
     plt.ylabel('Akaike Information Criterion')
     plt.xlabel('Number of components (k)')
+    plt.xticks(k_list[::2])
     plt.grid()
     plt.savefig('figures/pca_gmm_aic.png', bbox_inches='tight')
     plt.close()
@@ -138,6 +141,7 @@ def gmm_dimensionality_reduction() -> None:
     plt.title('PCA + GMM: k vs BIC')
     plt.ylabel('Bayesian Information Criterion')
     plt.xlabel('Number of components (k)')
+    plt.xticks(k_list[::2])
     plt.grid()
     plt.savefig('figures/pca_gmm_bic.png', bbox_inches='tight')
     plt.close()
@@ -183,6 +187,26 @@ def gmm_optimal_num_clusters() -> None:
     X = df.to_numpy()[:, 1]
     X = np.vstack(X)
 
+    # pylint: disable=bare-except
+
+    # Check the working of models.gmm
+    try:
+        gmm = GMM(k=5).fit(X)
+        gmm.getMembership(X)
+        print('models.gmm: Finished execution on 512 dimensions')
+    except:
+        print('models.gmm: Failed to execute on 512 dimensions')
+
+    # Check the working of sklearn.mixture.GaussianMixture
+    try:
+        gmm = GaussianMixture(n_components=5).fit(X)
+        gmm.predict(X)
+        print('sklearn.mixture.GaussianMixture: Finished execution on 512 dimensions')
+    except:
+        print('sklearn.mixture.GaussianMixture: Failed to execute on 512 dimensions')
+
+    # pylint: enable=bare-except
+
     # List to store measures for different values of hyperparameter
     likelihoods = []
     aic_list = []
@@ -210,6 +234,7 @@ def gmm_optimal_num_clusters() -> None:
     plt.title('GMM: k vs Log Likelihood')
     plt.ylabel('Log Likelihood')
     plt.xlabel('Number of components (k)')
+    plt.xticks(k_list[::2])
     plt.grid()
     plt.savefig('figures/gmm_log_likelihood.png', bbox_inches='tight')
     plt.close()
@@ -221,6 +246,7 @@ def gmm_optimal_num_clusters() -> None:
     plt.title('GMM: k vs AIC')
     plt.ylabel('Akaike Information Criterion')
     plt.xlabel('Number of components (k)')
+    plt.xticks(k_list[::2])
     plt.grid()
     plt.savefig('figures/gmm_aic.png', bbox_inches='tight')
     plt.close()
@@ -232,6 +258,7 @@ def gmm_optimal_num_clusters() -> None:
     plt.title('GMM: k vs BIC')
     plt.ylabel('Bayesian Information Criterion')
     plt.xlabel('Number of components (k)')
+    plt.xticks(k_list[::2])
     plt.grid()
     plt.savefig('figures/gmm_bic.png', bbox_inches='tight')
     plt.close()
@@ -292,6 +319,9 @@ def hierarchical_clustering() -> None:
                 linkage_matrix = hc.linkage(X, method=linkage, metric=metric)
                 plt.figure(figsize=(25, 10))
                 hc.dendrogram(linkage_matrix)
+                plt.title(f'Dendogram: {linkage.title()} Linkage, {metric.title()} Distance')
+                plt.ylabel('Distance')
+                plt.xlabel('Words')
                 plt.savefig(f'figures/hierarchical_{linkage}_linkage_{metric}.png')
                 plt.close()
                 plt.clf()
@@ -305,7 +335,7 @@ def hierarchical_clustering() -> None:
         linkage = file.readline().strip()
 
     # Read the best k from K-Means as per analysis
-    with open('results/k_means.txt', 'r', encoding='utf-8') as file:
+    with open('results/k_kmeans.txt', 'r', encoding='utf-8') as file:
         k_best1 = file.readline().strip()
         k_best1 = int(k_best1)
 
@@ -320,7 +350,7 @@ def hierarchical_clustering() -> None:
     print()
 
     # Read the best k from GMM as per analysis
-    with open('results/k_means.txt', 'r', encoding='utf-8') as file:
+    with open('results/k_kmeans.txt', 'r', encoding='utf-8') as file:
         k_best2 = file.readline().strip()
         k_best2 = int(k_best2)
 
@@ -436,7 +466,7 @@ def kmeans_dimensionality_reduction() -> None:
     plt.title('PCA + K-Means: k vs WCSS')
     plt.ylabel('Within Cluster Sum of Squares (WCSS)')
     plt.xlabel('Number of clusters (k)')
-    plt.xticks(range(1, 21, 2))
+    plt.xticks(k_list[::2])
     plt.grid()
     plt.savefig('figures/pca_kmeans_wcss.png', bbox_inches='tight')
     plt.close()
@@ -445,7 +475,7 @@ def kmeans_dimensionality_reduction() -> None:
     print()
 
     # Read the elbow point determined manually
-    with open('results/k_means3.txt', 'r', encoding='utf-8') as file:
+    with open('results/k_kmeans3.txt', 'r', encoding='utf-8') as file:
         k, _ = file.readline().strip().split(', ')
         k = int(k)
 
@@ -496,7 +526,7 @@ def kmeans_optimal_num_clusters() -> None:
     plt.title('K-Means: k vs WCSS')
     plt.ylabel('Within Cluster Sum of Squares (WCSS)')
     plt.xlabel('Number of clusters (k)')
-    plt.xticks(range(1, 21, 2))
+    plt.xticks(k_list[::2])
     plt.grid()
     plt.savefig('figures/kmeans_wcss.png', bbox_inches='tight')
     plt.close()
@@ -505,7 +535,7 @@ def kmeans_optimal_num_clusters() -> None:
     print()
 
     # Read the elbow point determined manually
-    with open('results/k_means1.txt', 'r', encoding='utf-8') as file:
+    with open('results/k_kmeans1.txt', 'r', encoding='utf-8') as file:
         k, _ = file.readline().strip().split(', ')
         k = int(k)
 
@@ -547,7 +577,7 @@ def nearest_neighbour_search() -> None:
     plt.title('PCA (Spotify): Scree Plot')
     plt.xlabel('Component Number')
     plt.ylabel('Eigenvalue')
-    plt.xticks(range(1, 17))
+    plt.xticks(range(1, eigenvalues.shape[0] + 1))
     plt.grid()
     plt.savefig('figures/pca_spotify_scree_plot.png', bbox_inches='tight')
     plt.close()
