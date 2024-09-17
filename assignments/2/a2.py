@@ -28,7 +28,7 @@ def gmm_2d_visualization() -> None:
     """ Perform GMM using the number of clusters estimated from 2D visualization. """
 
     # Log function call
-    print('gmm_2d_visualization')
+    print('--- gmm_2d_visualization')
 
     # Read the external data into a DataFrame
     df = pd.read_feather(f'{PROJECT_DIR}/data/external/word-embeddings.feather')
@@ -62,7 +62,7 @@ def gmm_dimensionality_reduction() -> None:
     """ Find the optimal number of clusters for the dataset reduced using Scree Plot. """
 
     # Log function call
-    print('gmm_dimensionality_reduction')
+    print('--- gmm_dimensionality_reduction')
 
     # Read the external data into a DataFrame
     df = pd.read_feather(f'{PROJECT_DIR}/data/external/word-embeddings.feather')
@@ -143,6 +143,7 @@ def gmm_dimensionality_reduction() -> None:
     plt.close()
     plt.clf()
     print('figures/pca_gmm_bic.png')
+    print()
 
     # Read the optimal number of clusters determined manually
     with open('results/k_gmm3.txt', 'r', encoding='utf-8') as file:
@@ -167,7 +168,7 @@ def gmm_optimal_num_clusters() -> None:
     Bayesian Information Criterion and Akaike Information Criterion. """
 
     # Log function call
-    print('gmm_optimal_num_clusters')
+    print('--- gmm_optimal_num_clusters')
 
     # Set of hyperparameters
     k_list = range(2, 11)
@@ -236,6 +237,7 @@ def gmm_optimal_num_clusters() -> None:
     plt.close()
     plt.clf()
     print('figures/gmm_bic.png')
+    print()
 
     # Read the optimal number of clusters determined manually
     with open('results/k_gmm1.txt', 'r', encoding='utf-8') as file:
@@ -259,7 +261,7 @@ def hierarchical_clustering() -> None:
     """ Hierarchical clustering, with different linkage methods and distance metrics. """
 
     # Log function call
-    print('hierarchical_clustering')
+    print('--- hierarchical_clustering')
 
     # Read the external data into a DataFrame
     df = pd.read_feather(f'{PROJECT_DIR}/data/external/word-embeddings.feather')
@@ -338,7 +340,7 @@ def kmeans_2d_visualization() -> None:
     """ Perform KMeans using the number of clusters estimated from 2D visualization. """
 
     # Log function call
-    print('kmeans_2d_visualization')
+    print('--- kmeans_2d_visualization')
 
     # Read the external data into a DataFrame
     df = pd.read_feather(f'{PROJECT_DIR}/data/external/word-embeddings.feather')
@@ -371,7 +373,7 @@ def kmeans_dimensionality_reduction() -> None:
     """ Find the optimal number of clusters for the dataset reduced based on Scree Plot. """
 
     # Log function call
-    print('kmeans_dimensionality_reduction')
+    print('--- kmeans_dimensionality_reduction')
 
     # Read the external data into a DataFrame
     df = pd.read_feather(f'{PROJECT_DIR}/data/external/word-embeddings.feather')
@@ -440,6 +442,7 @@ def kmeans_dimensionality_reduction() -> None:
     plt.close()
     plt.clf()
     print('figures/pca_kmeans_wcss.png')
+    print()
 
     # Read the elbow point determined manually
     with open('results/k_means3.txt', 'r', encoding='utf-8') as file:
@@ -462,7 +465,7 @@ def kmeans_optimal_num_clusters() -> None:
     """ Find the optimal number of clusters for KMeans using Elbow Method. """
 
     # Log function call
-    print('kmeans_optimal_num_clusters')
+    print('--- kmeans_optimal_num_clusters')
 
     # Set of hyperparameters
     k_list = range(1, 21)
@@ -499,6 +502,7 @@ def kmeans_optimal_num_clusters() -> None:
     plt.close()
     plt.clf()
     print('figures/kmeans_wcss.png')
+    print()
 
     # Read the elbow point determined manually
     with open('results/k_means1.txt', 'r', encoding='utf-8') as file:
@@ -521,7 +525,7 @@ def nearest_neighbour_search() -> None:
     """ Find the nearest neighbour on the dataset reduced using PCA. """
 
     # Log function call
-    print('nearest_neighbour_search')
+    print('--- nearest_neighbour_search')
 
     # Read interim CSV into DataFrame
     df = pd.read_csv(f'{PROJECT_DIR}/data/interim/1/spotify.csv', index_col=0)
@@ -549,6 +553,7 @@ def nearest_neighbour_search() -> None:
     plt.close()
     plt.clf()
     print('figures/pca_spotify_scree_plot.png')
+    print()
 
     # Read the optimal number of dimensions determined manually
     with open('results/pca_spotify_optimal_dimensions.txt', 'r', encoding='utf-8') as file:
@@ -620,7 +625,7 @@ def pca_dimensionality_reduction() -> None:
     """ Perform dimensionality reduction using PCA and visualize reduced data. """
 
     # Log function call
-    print('pca_dimensionality_reduction')
+    print('--- pca_dimensionality_reduction')
 
     # Read the external data into a DataFrame
     df = pd.read_feather(f'{PROJECT_DIR}/data/external/word-embeddings.feather')
