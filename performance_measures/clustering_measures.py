@@ -10,7 +10,7 @@ class ClusteringMeasures:
         """ Initializes the class to compute on given data.
 
         Args:
-            k: Number of clusters.
+            k: Number of parameters.
             n: Number of points.
             log_likelihood: Log likelihood of given data.
         """
@@ -24,10 +24,10 @@ class ClusteringMeasures:
     def aic(self) -> float:
         """ Computes the Akaike Information Criterion. """
 
-        return (self.k * math.log(self.n)) - (2 * self.log_likelihood)
+        return (2 * self.k) - (2 * self.log_likelihood)
 
 
     def bic(self) -> float:
         """ Compute the Bayesian Information Criterion. """
 
-        return (2 * self.k) - (2 * self.log_likelihood)
+        return (self.k * math.log(self.n)) - (2 * self.log_likelihood)
