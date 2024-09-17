@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
+import scipy.cluster.hierarchy as hc
 
 # pylint: disable=wrong-import-position
 
@@ -256,6 +257,81 @@ def gmm_optimal_num_clusters() -> None:
 
 def hierarchical_clustering() -> None:
     """ Hierarchical clustering, with different linkage methods and distance metrics. """
+
+    # Log function call
+    print('hierarchical_clustering')
+
+    # Read the external data into a DataFrame
+    df = pd.read_feather(f'{PROJECT_DIR}/data/external/word-embeddings.feather')
+
+    # Extract the words
+    y = df.to_numpy()[:, 0]
+
+    # Extract the 512 length embeddings
+    X = df.to_numpy()[:, 1]
+    X = np.vstack(X)
+
+    # Different combinations of linkage methods
+    linkage_list = [
+        'single',
+        'complete',
+        'average',
+        'weighted',
+        'centroid',
+        'median',
+        'ward'
+    ]
+    metric_list = ['cityblock', 'euclidean', 'cosine']
+
+    # Iterate over all methods
+    for linkage in linkage_list:
+        for metric in metric_list:
+            try:
+                linkage_matrix = hc.linkage(X, method=linkage, metric=metric)
+                plt.figure(figsize=(25, 10))
+                hc.dendrogram(linkage_matrix)
+                plt.savefig(f'figures/hierarchical_{linkage}_linkage_{metric}.png')
+                plt.close()
+                plt.clf()
+                print(f'figures/hierarchical_{linkage}_linkage_{metric}.png')
+            except ValueError:
+                print(f'Skipping {linkage} linkage for {metric} distance')
+    print()
+
+    # Read the best linkage method as per analysis
+    with open('results/hierarchical_best_linkage_method.txt', 'r', encoding='utf-8') as file:
+        linkage = file.readline().strip()
+
+    # Read the best k from K-Means as per analysis
+    with open('results/k_means.txt', 'r', encoding='utf-8') as file:
+        k_best1 = file.readline().strip()
+        k_best1 = int(k_best1)
+
+    # Cut the dendogram at the points corresponding to k from K-Means
+    linkage_matrix = hc.linkage(X, method=linkage, metric='euclidean')
+    y_pred = hc.fcluster(linkage_matrix, k_best1, criterion='maxclust')
+
+    # Print the clusters
+    print(k_best1, linkage)
+    for cluster in np.unique(y_pred):
+        print(y[y_pred == cluster])
+    print()
+
+    # Read the best k from GMM as per analysis
+    with open('results/k_means.txt', 'r', encoding='utf-8') as file:
+        k_best2 = file.readline().strip()
+        k_best2 = int(k_best2)
+
+    # Cut the dendogram at the points corresponding to k from K-Means
+    linkage_matrix = hc.linkage(X, method=linkage, metric='euclidean')
+    y_pred = hc.fcluster(linkage_matrix, k_best2, criterion='maxclust')
+
+    # Print the clusters
+    print(k_best2, linkage)
+    for cluster in np.unique(y_pred):
+        print(y[y_pred == cluster])
+
+    print()
 
 
 def kmeans_2d_visualization() -> None:
@@ -598,6 +674,8 @@ def pca_dimensionality_reduction() -> None:
     print()
 
 
+# pylint: disable=duplicate-code
+
 # pylint: disable-next=too-many-arguments
 def train_val_test_split(
     X: npt.NDArray, y: npt.NDArray, train_size: float = 0.8, val_size: float = 0.1,
@@ -637,6 +715,8 @@ def train_val_test_split(
 
     return X_train, X_val, X_test, y_train, y_val, y_test
 
+# pylint: enable=duplicate-code
+
 
 if __name__ == '__main__':
 
@@ -669,8 +749,8 @@ if __name__ == '__main__':
     ## 6.4 PCA + GMMs
     gmm_dimensionality_reduction()
 
-    # # 8 Hierarchical Clustering
-    # hierarchical_clustering()
+    # 8 Hierarchical Clustering
+    hierarchical_clustering()
 
-    # # 9 Nearest Neighbour Search
+    # 9 Nearest Neighbour Search
     nearest_neighbour_search()
