@@ -128,7 +128,17 @@ def test_sequential():
         layers.append(Linear(NUM_HIDDEN_DIMENSIONS, NUM_HIDDEN_DIMENSIONS))
     layers.append(Linear(NUM_HIDDEN_DIMENSIONS, NUM_OUTPUT_DIMENSIONS))
 
-    activations = [ Sigmoid() for _ in range(len(layers)) ]
+    activations = []
+    for _ in range(len(layers)):
+        u = np.random.rand()
+        if u <= 0.25:
+            activations.append(Identity())
+        elif u <= 0.5:
+            activations.append(ReLU())
+        elif u <= 0.75:
+            activations.append(Sigmoid())
+        else:
+            activations.append(Tanh())
 
     sequential = Sequential(layers, activations)
 
