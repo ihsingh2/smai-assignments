@@ -29,10 +29,11 @@ def _test_activation(activation: ActivationFunction):
 
         X = np.random.randn(NUM_SAMPLES, NUM_INPUT_DIMENSIONS)
 
-        grad = activation.backward(activation.forward(X), np.ones_like(X))
+        base_grad = np.random.randn(NUM_SAMPLES, NUM_INPUT_DIMENSIONS)
+        grad = activation.backward(activation.forward(X), base_grad)
         assert grad.shape == X.shape
 
-        numerical_grad = (activation.forward(X + EPSILON) - activation.forward(X)) / EPSILON
+        numerical_grad = base_grad * (activation.forward(X + EPSILON) - activation.forward(X)) / EPSILON
         assert np.isclose(grad, numerical_grad).all()
 
 
@@ -82,7 +83,8 @@ def test_linear():
         assert y.shape == (NUM_SAMPLES, NUM_OUTPUT_DIMENSIONS)
 
         # pylint: disable-next=invalid-name
-        grad_W, grad_b, grad_X = layer.backward(X, np.ones_like(y))
+        base_grad = np.random.randn(NUM_SAMPLES, NUM_OUTPUT_DIMENSIONS)
+        grad_W, grad_b, grad_X = layer.backward(X, base_grad)
         assert grad_W.shape == layer.weight.shape
         assert grad_b.shape == layer.bias.shape
         assert grad_X.shape == X.shape
@@ -94,20 +96,26 @@ def test_linear():
         for jdx in range(NUM_INPUT_DIMENSIONS):
             for kdx in range(NUM_OUTPUT_DIMENSIONS):
                 weight_aug[jdx, kdx] += EPSILON
-                numerical_grad = (layer.forward(X, weight=weight_aug) - layer.forward(X)) / EPSILON
+                numerical_grad = np.sum( base_grad * ( \
+                    layer.forward(X, weight=weight_aug) - layer.forward(X) \
+                )) / EPSILON
                 weight_aug[jdx, kdx] -= EPSILON
                 assert np.isclose(grad_W[jdx, kdx], np.sum(numerical_grad), atol=THRESHOLD)
 
         for jdx in range(NUM_OUTPUT_DIMENSIONS):
             bias_aug[jdx] += EPSILON
-            numerical_grad = (layer.forward(X, bias=bias_aug) - layer.forward(X)) / EPSILON
+            numerical_grad = np.sum( base_grad * ( \
+                layer.forward(X, bias=bias_aug) - layer.forward(X) \
+            )) / EPSILON
             bias_aug[jdx] -= EPSILON
             assert np.isclose(grad_b[jdx], np.sum(numerical_grad), atol=THRESHOLD)
 
         for jdx in range(NUM_SAMPLES):
             for kdx in range(NUM_INPUT_DIMENSIONS):
                 X_aug[jdx, kdx] += EPSILON
-                numerical_grad = (layer.forward(X_aug) - layer.forward(X)) / EPSILON
+                numerical_grad = np.sum( base_grad * ( \
+                    layer.forward(X_aug) - layer.forward(X) \
+                )) / EPSILON
                 X_aug[jdx, kdx] -= EPSILON
                 assert np.isclose(grad_X[jdx, kdx], np.sum(numerical_grad), atol=THRESHOLD)
 
@@ -131,7 +139,8 @@ def test_sequential():
         y = sequential.forward(X)
         assert y.shape == (NUM_SAMPLES, NUM_OUTPUT_DIMENSIONS)
 
-        gradient = sequential.backward(np.ones_like(y))
+        base_grad = np.random.randn(NUM_SAMPLES, NUM_OUTPUT_DIMENSIONS)
+        gradient = sequential.backward(base_grad)
         assert len(gradient) == len(layers)
 
         layers_aug = copy.deepcopy(sequential.layers)
@@ -144,9 +153,9 @@ def test_sequential():
             for jdx in range(gradient[idx][0].shape[0]):
                 for kdx in range(gradient[idx][0].shape[1]):
                     layers_aug[idx].weight[jdx, kdx] += EPSILON
-                    numerical_grad = np.sum( \
+                    numerical_grad = np.sum( base_grad * ( \
                         sequential.forward(X, layers=layers_aug) \
-                        - sequential.forward(X) \
+                        - sequential.forward(X)) \
                     ) / EPSILON
                     layers_aug[idx].weight[jdx, kdx] -= EPSILON
 
@@ -154,9 +163,9 @@ def test_sequential():
 
             for jdx in range(gradient[idx][1].shape[0]):
                 layers_aug[idx].bias[jdx] += EPSILON
-                numerical_grad = np.sum( \
+                numerical_grad = np.sum( base_grad * ( \
                     sequential.forward(X, layers=layers_aug) \
-                    - sequential.forward(X) \
+                    - sequential.forward(X)) \
                 ) / EPSILON
                 layers_aug[idx].bias[jdx] -= EPSILON
 
