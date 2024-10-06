@@ -5,7 +5,7 @@
 # pylint: enable=invalid-name
 
 
-from typing import Literal, Self, Tuple
+from typing import List, Literal, Self, Tuple
 
 import numpy as np
 import numpy.typing as npt
@@ -22,7 +22,7 @@ class MLP:
 
     # pylint: disable-next=too-many-arguments, too-many-positional-arguments
     def __init__(
-        self, num_hidden_layers: int, num_neurons_per_layer: int, classify: bool,
+        self, num_hidden_layers: int, num_neurons_per_layer: int | List[int], classify: bool,
         activation: ActivationFunction, loss: LossFunction, lr: float = 1e-4, num_epochs: int = 15,
         batch_size: int = 16, optimizer: Literal['sgd', 'batch', 'mini-batch'] = 'mini-batch'
     ):
@@ -40,16 +40,27 @@ class MLP:
 
         # Validate the passed arguments
         assert num_hidden_layers >= 0, 'num_hidden_layers should be non-negative'
-        assert num_neurons_per_layer > 0, 'num_neurons_per_layer should be positive'
+        if isinstance(num_neurons_per_layer, int):
+            assert num_neurons_per_layer > 0, 'num_neurons_per_layer should be positive'
+        else:
+            assert len(num_neurons_per_layer) == num_hidden_layers, \
+                        f'Expected list of {num_hidden_layers} values for num_neurons_per_layer' \
+                        f', got {len(num_neurons_per_layer)}'
+            for idx, num in enumerate(num_neurons_per_layer):
+                assert num > 0, \
+                        f'num_neurons_per_layer should be positive, got {num} at index {idx}'
         assert lr > 0, 'lr should be positive'
         assert num_epochs > 0, 'num_epochs should be positive'
         assert batch_size > 0, 'batch_size should be positive'
         assert optimizer in ['sgd', 'batch', 'mini-batch'], \
-                                        f'Received unrecognized input {optimizer} for optimizer'
+                                    f'Received unrecognized input {optimizer} for optimizer'
 
         # Store the passed arguments
         self.num_hidden_layers = num_hidden_layers
-        self.num_neurons_per_layer = num_neurons_per_layer
+        if isinstance(num_neurons_per_layer, int):
+            self.num_neurons_per_layer = [num_neurons_per_layer for _ in range(num_hidden_layers)]
+        else:
+            self.num_neurons_per_layer = num_neurons_per_layer
         self.activation = activation
         self.loss = loss
         self.classify = classify
@@ -127,10 +138,12 @@ class MLP:
         if self.num_hidden_layers == 0:
             layers.append(Linear(input_dim, output_dim))
         else:
-            layers.append(Linear(input_dim, self.num_neurons_per_layer))
-            for _ in range(self.num_hidden_layers - 1):
-                layers.append(Linear(self.num_neurons_per_layer, self.num_neurons_per_layer))
-            layers.append(Linear(self.num_neurons_per_layer, output_dim))
+            layers.append(Linear(input_dim, self.num_neurons_per_layer[0]))
+            for idx in range(self.num_hidden_layers - 1):
+                layers.append( \
+                    Linear(self.num_neurons_per_layer[idx], self.num_neurons_per_layer[idx + 1]) \
+                )
+            layers.append(Linear(self.num_neurons_per_layer[-1], output_dim))
         activations = [ self.activation for _ in range(len(layers)) ]
         self.sequential = Sequential(layers, activations)
 
