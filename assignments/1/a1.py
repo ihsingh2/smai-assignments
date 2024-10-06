@@ -704,7 +704,7 @@ def simple_regression_polynomial() -> None:
     min_test_mse_model.save_parameters('results/regression_params.npy')
 
 
-# pylint: disable-next=too-many-arguments
+# pylint: disable-next=too-many-arguments, too-many-positional-arguments
 def train_val_test_split(
     X: npt.NDArray, y: npt.NDArray, train_size: float = 0.8, val_size: float = 0.1,
     test_size: float = 0.1, random_seed: int | None = 0

@@ -711,7 +711,7 @@ def pca_dimensionality_reduction() -> None:
 
 # pylint: disable=duplicate-code
 
-# pylint: disable-next=too-many-arguments
+# pylint: disable-next=too-many-arguments, too-many-positional-arguments
 def train_val_test_split(
     X: npt.NDArray, y: npt.NDArray, train_size: float = 0.8, val_size: float = 0.1,
     test_size: float = 0.1, random_seed: int | None = 0

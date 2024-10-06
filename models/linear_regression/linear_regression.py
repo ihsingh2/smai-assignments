@@ -52,7 +52,7 @@ class LinearRegression:
         self.coeff = None
 
 
-    #pylint: disable-next=too-many-arguments
+    #pylint: disable-next=too-many-arguments, too-many-positional-arguments
     def fit(self, x_train: npt.NDArray, y_train: npt.NDArray, eps: float = 1e-3,
         stop_after_max_iterations: bool = False, max_iterations: int = 500,
         random_seed: int | None = 0, animation_path: str | None = None,
