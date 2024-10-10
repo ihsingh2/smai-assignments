@@ -1,12 +1,13 @@
 """ Verification of gradients of functions against numerical gradients. """
 
 import copy
+from typing import Literal
 
 import numpy as np
 
 from .activation import ActivationFunction, Identity, ReLU, Sigmoid, Softmax, Tanh
 from .layers import Linear, Sequential
-from .loss import LossFunction, CrossEntropy, MeanSquaredError
+from .loss import LossFunction, BinaryCrossEntropy, CrossEntropy, MeanSquaredError
 
 
 EPSILON = 1e-8
@@ -39,21 +40,24 @@ def _test_activation(activation: ActivationFunction):
 
 
 def _test_loss(loss: LossFunction, activation: ActivationFunction = Identity(), \
-                                                                            one_hot: bool = False):
-    """ Gradient check for any loss function, optionally coupled with a prior activation. """
+                            output_format: Literal['single-label', 'multi-label'] | None = None):
+    """ Gradient check for any loss function, coupled with a prior activation. """
 
     for _ in range(NUM_BATCHES):
 
-        if one_hot:
+        if output_format is None:
+            Y = np.random.randn(NUM_SAMPLES, NUM_INPUT_DIMENSIONS)
+        elif output_format == 'single-label':
             Y = np.zeros((NUM_SAMPLES, NUM_INPUT_DIMENSIONS), dtype=int)
             indices = np.random.choice(NUM_INPUT_DIMENSIONS, size=NUM_SAMPLES)
             Y[np.arange(NUM_SAMPLES), indices] = 1
-        else:
-            Y = np.random.randn(NUM_SAMPLES, NUM_INPUT_DIMENSIONS)
+        elif output_format == 'multi-label':
+            Y = np.random.choice([0, 1], size=(NUM_SAMPLES, NUM_INPUT_DIMENSIONS))
 
         Y_pred = np.random.randn(NUM_SAMPLES, NUM_INPUT_DIMENSIONS)
 
         grad = loss.backward(Y, activation.forward(Y_pred))
+        grad = activation.backward(activation.forward(Y_pred), grad)
         assert grad.shape == Y_pred.shape
 
         for idx in range(NUM_SAMPLES):
@@ -213,6 +217,12 @@ def test_tanh():
 # --- loss function
 
 
+def test_binary_cross_entropy():
+    """ Gradient check for Binary Cross Entropy loss function. """
+
+    _test_loss(BinaryCrossEntropy(), Sigmoid(), output_format='multi-label')
+
+
 def test_mean_squared_error():
     """ Gradient check for Mean Squared Error loss function. """
 
@@ -222,4 +232,4 @@ def test_mean_squared_error():
 def test_softmax_cross_entropy():
     """ Gradient check for Cross Entropy loss, coupled with Softmax activation function. """
 
-    _test_loss(CrossEntropy(), Softmax(), True)
+    _test_loss(CrossEntropy(), Softmax(), output_format='single-label')
