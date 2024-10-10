@@ -6,6 +6,20 @@ import numpy as np
 import numpy.typing as npt
 
 
+def get_activation(activation: str):
+    """ Returns an instance of the activation function. """
+
+    if activation == 'identity':
+        return Identity()
+    if activation == 'relu':
+        return ReLU()
+    if activation == 'sigmoid':
+        return Sigmoid()
+    if activation == 'tanh':
+        return Tanh()
+    raise ValueError(f'Activation function {activation} not found')
+
+
 class ActivationFunction(ABC):
     """ Abstract class providing signature for activation functions,
     tailored for use in forward and backward propagation. """

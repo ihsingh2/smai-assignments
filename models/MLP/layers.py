@@ -8,15 +8,11 @@ import numpy.typing as npt
 from .activation import ActivationFunction
 
 
-MIN = np.finfo(np.float64).min
-MAX = np.finfo(np.float64).max
-
-
 class Linear:
     """ Implements Linear layer, given by f(X) = X @ W + b. """
 
 
-    def __init__(self, num_inputs, num_outputs):
+    def __init__(self, num_inputs: int, num_outputs: int):
         """ Initializes the layer parameters.
 
         Args:
@@ -46,7 +42,7 @@ class Linear:
         if bias is None:
             bias = self.bias
 
-        return np.clip(np.clip(X @ weight, MIN, MAX) + bias, MIN, MAX)
+        return (X @ weight) + bias
 
 
     def backward(self, X: npt.NDArray[np.float64], grad: npt.NDArray[np.float64]) \
@@ -54,26 +50,22 @@ class Linear:
         """ Computes the gradient with respect to function parameters (weight, bias) and input,
         based on the gradient with respect to function output. """
 
-        # pylint: disable=invalid-name
-        grad_W = np.clip(X.T @ grad, MIN, MAX)
-        grad_b = np.clip(np.sum(grad, axis=0), MIN, MAX)
-        grad_X = np.clip(grad @ self.weight.T, MIN, MAX)
-        # pylint: enable=invalid-name
-        return grad_W, grad_b, grad_X
+        return X.T @ grad, np.sum(grad, axis=0), grad @ self.weight.T
 
 
     def step(self, grad: Tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]], lr: float):
         """ Performs one update step based on the computed gradients and learning rate. """
 
-        self.weight = np.clip(self.weight - lr * grad[0], MIN, MAX)
-        self.bias = np.clip(self.bias - lr * grad[1], MIN, MAX)
+        self.weight -= lr * grad[0]
+        self.bias -= lr * grad[1]
 
 
 class Sequential:
     """ Implements a sequence of linear layers, followed by activations. """
 
 
-    def __init__(self, layers: List[Linear], activations: List[ActivationFunction]):
+    def __init__(self, layers: List[Linear], activations: List[ActivationFunction], \
+                                                        gradient_threshold: float | None = None):
         """ Initializes the sequential network.
 
         Args:
@@ -82,20 +74,23 @@ class Sequential:
         """
 
         # Validate the passed arguments
-        assert len(layers) == len(activations), \
-                                            'The number of layers and activations should be equal'
+        assert len(layers) == len(activations) + 1, \
+                                    'The number of activations should be one less than the layers'
+        if gradient_threshold is not None:
+            assert gradient_threshold > 0, 'gradient_threshold should be positive'
 
         # Store the passed arguments
         self.layers = layers
         self.activations = activations
+        self.gradient_threshold = gradient_threshold
 
         # Initialize the outputs and gradients to None (needed for backward pass)
         self.outputs = None
         self.gradients = None
 
 
-    def forward(self, X: npt.NDArray[np.float64], layers: List[Linear] | None = None) \
-                                                                        -> npt.NDArray[np.float64]:
+    def forward(self, X: npt.NDArray[np.float64], layers: List[Linear] | None = None, \
+                                            index: int | None = None) -> npt.NDArray[np.float64]:
         """ Computes the model output sequentially in forward direction,
         optionally storing the layerwise outputs for backward pass. """
 
@@ -103,13 +98,24 @@ class Sequential:
         if layers is None:
             layers = self.layers
 
+        if index is not None:
+            assert index < len(self.layers), \
+                                    'index (zero indexing) should be less than number of layers'
+            num_layers = index
+        else:
+            num_layers = len(self.layers)
+
         # Store layerwise outputs
-        self.outputs = [ None for _ in range(len(self.layers) + 1) ]
+        self.outputs = [ None for _ in range(num_layers + 1) ]
         self.outputs[0] = X
-        for idx in range(len(self.layers)):
-            self.outputs[idx + 1] = self.activations[idx].forward(
-                layers[idx].forward(self.outputs[idx])
-            )
+        for idx in range(num_layers):
+            # Don't apply activation to last layer output
+            if idx != num_layers - 1:
+                self.outputs[idx + 1] = self.activations[idx].forward(
+                    layers[idx].forward(self.outputs[idx])
+                )
+            else:
+                self.outputs[idx + 1] = layers[idx].forward(self.outputs[idx])
 
         return self.outputs[-1]
 
@@ -126,13 +132,24 @@ class Sequential:
 
         # Apply chain rule for propagation to the remaining layers
         for idx in reversed(range(len(self.layers))):
-            grad = self.activations[idx].backward(self.outputs[idx + 1], grad)
+            # Don't apply activation to last layer output
+            if idx != len(self.layers) - 1:
+                grad = self.activations[idx].backward(self.outputs[idx + 1], grad)
             # pylint: disable-next=invalid-name
             grad_W, grad_b, grad = self.layers[idx].backward(self.outputs[idx], grad)
-            self.gradients[idx] = (grad_W, grad_b)
+            self.gradients[idx] = [grad_W, grad_b]
 
         # Clear the stored outputs
         self.outputs = None
+
+        # Gradient clipping to avoid exploding gradients
+        # pylint: disable=consider-using-enumerate
+        if self.gradient_threshold is not None:
+            for idx in range(len(self.gradients)):
+                for jdx in range(len(self.gradients[idx])):
+                    self.gradients[idx][jdx] = np.clip(self.gradients[idx][jdx], \
+                                                -self.gradient_threshold, self.gradient_threshold)
+        # pylint: enable=consider-using-enumerate
 
         return self.gradients
 

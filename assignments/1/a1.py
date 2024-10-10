@@ -101,7 +101,7 @@ def knn_drop_columns() -> None:
         X = df_reduced.to_numpy()[:, :-1]
         y = df_reduced.to_numpy()[:, -1].astype(int)
 
-        # Split the array into train, test and split
+        # Split the array into train, validation and test
         X_train, X_val, _, y_train, y_val, _ = train_val_test_split(X, y)
 
         # Initialize and train the model
@@ -150,7 +150,7 @@ def knn_hyperparameter_tuning() -> None:
     X = df.to_numpy()[:, :-1]
     y = df.to_numpy()[:, -1].astype(int)
 
-    # Split the array into train, test and split
+    # Split the array into train, validation and test
     X_train, X_val, _, y_train, y_val, _ = train_val_test_split(X, y)
 
     # Initialize an empty dictionary for storing accuracy
@@ -229,7 +229,7 @@ def knn_inference_time() -> None:
 
     # ------------------------------ COMPLETE DATASET ------------------------------
 
-    # Split the array into train, test and split
+    # Split the array into train, validation and test
     X_train, X_val, _, y_train, _, _ = train_val_test_split(X, y)
 
     # Initialize an empty list to store the execution times
@@ -270,7 +270,7 @@ def knn_inference_time() -> None:
     # Iterate over all train size combinations
     for train_size in train_size_combinations:
 
-        # Split the array into train, test and split
+        # Split the array into train, validation and test
         X_train, X_val, _, y_train, _, _ = train_val_test_split(X, y, \
                         train_size=train_size, val_size=0.1, test_size=1-(train_size+0.1))
 
@@ -322,7 +322,7 @@ def knn_k_values() -> None:
     X = df.to_numpy()[:, :-1]
     y = df.to_numpy()[:, -1].astype(int)
 
-    # Split the array into train, test and split
+    # Split the array into train, validation and test
     X_train, X_val, _, y_train, y_val, _ = train_val_test_split(X, y)
 
     # Initialize an empty list for storing accuracy
@@ -460,7 +460,7 @@ def regularization() -> None:
     x = df.to_numpy()[:, 0]
     y = df.to_numpy()[:, 1]
 
-    # Split the array into train, test and split
+    # Split the array into train, validation and test
     x_train, _, x_test, y_train, _, y_test = train_val_test_split(x, y)
 
     # Domain of the training data
@@ -589,7 +589,7 @@ def simple_regression_line() -> None:
     x = df.to_numpy()[:, 0]
     y = df.to_numpy()[:, 1]
 
-    # Split the array into train, test and split
+    # Split the array into train, validation and test
     x_train, _, x_test, y_train, _, y_test = train_val_test_split(x, y)
 
     # Initialize and fit the model to data
@@ -644,7 +644,7 @@ def simple_regression_polynomial() -> None:
     x = df.to_numpy()[:, 0]
     y = df.to_numpy()[:, 1]
 
-    # Split the array into train, test and split
+    # Split the array into train, validation and test
     x_train, _, x_test, y_train, _, y_test = train_val_test_split(x, y)
 
     # Clear contents of output file

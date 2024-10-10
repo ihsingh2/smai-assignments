@@ -33,7 +33,8 @@ def _test_activation(activation: ActivationFunction):
         grad = activation.backward(activation.forward(X), base_grad)
         assert grad.shape == X.shape
 
-        numerical_grad = base_grad * (activation.forward(X + EPSILON) - activation.forward(X)) / EPSILON
+        numerical_grad = base_grad * (activation.forward(X + EPSILON) - activation.forward(X)) \
+                                                                                        / EPSILON
         assert np.isclose(grad, numerical_grad).all()
 
 
@@ -82,8 +83,8 @@ def test_linear():
         y = layer.forward(X)
         assert y.shape == (NUM_SAMPLES, NUM_OUTPUT_DIMENSIONS)
 
-        # pylint: disable-next=invalid-name
         base_grad = np.random.randn(NUM_SAMPLES, NUM_OUTPUT_DIMENSIONS)
+        # pylint: disable-next=invalid-name
         grad_W, grad_b, grad_X = layer.backward(X, base_grad)
         assert grad_W.shape == layer.weight.shape
         assert grad_b.shape == layer.bias.shape
@@ -129,7 +130,7 @@ def test_sequential():
     layers.append(Linear(NUM_HIDDEN_DIMENSIONS, NUM_OUTPUT_DIMENSIONS))
 
     activations = []
-    for _ in range(len(layers)):
+    for _ in range(len(layers) - 1):
         u = np.random.rand()
         if u <= 0.25:
             activations.append(Identity())

@@ -1,8 +1,8 @@
 # pylint: disable=invalid-name
 
-""" Provides the AutoEncoders class. """
+""" Provides the AutoEncoder class. """
 
 # pylint: enable=invalid-name
 
 
-from .AutoEncoders import AutoEncoders
+from .AutoEncoders import AutoEncoder

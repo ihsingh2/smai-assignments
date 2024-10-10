@@ -603,7 +603,7 @@ def nearest_neighbour_search() -> None:
         k, metric, _ = file.readline().strip().split(', ')
         k = int(k)
 
-    # Split the array into train, test and split
+    # Split the array into train, validation and test
     X_train, X_val, _, y_train, y_val, _ = train_val_test_split(X, y)
 
     # Initialize and train the model
@@ -623,19 +623,19 @@ def nearest_neighbour_search() -> None:
 
     # --- Apply K-Nearest Neighbours on the reduced dataset ---
 
-    # Split the array into train, test and split
+    # Split the array into train, validation and test
     X_train, X_val, _, y_train, y_val, _ = train_val_test_split(X_reduced, y)
 
     # Initialize and train the model
     knn = KNN(k, metric)
     knn.fit(X_train, y_train)
 
-    # Compute predictions on the test set
+    # Compute predictions on the validation set
     start_time = time.time()
     y_pred = knn.predict(X_val)
     reduced_exec_time = time.time() - start_time
 
-    # Evaluate predictions for the test set
+    # Evaluate predictions for the validation set
     print('Reduced dimension:', n_components, k, metric)
     cls_measures = ClassificationMeasures(y_val, y_pred)
     cls_measures.print_all_measures()

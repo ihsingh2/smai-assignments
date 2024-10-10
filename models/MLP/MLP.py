@@ -4,13 +4,24 @@
 
 # pylint: enable=invalid-name
 
-
+import sys
+from collections import deque
 from typing import List, Literal, Self, Tuple
 
 import numpy as np
 import numpy.typing as npt
+import wandb
 
-from .activation import ActivationFunction, Softmax
+#pylint: disable=wrong-import-position
+
+PROJECT_DIR = '../..'
+sys.path.insert(0, PROJECT_DIR)
+
+from performance_measures import ClassificationMeasures
+
+#pylint: enable=wrong-import-position
+
+from .activation import ActivationFunction, Sigmoid, Softmax
 from .layers import Linear, Sequential
 from .loss import LossFunction
 
@@ -22,8 +33,9 @@ class MLP:
 
     # pylint: disable-next=too-many-arguments, too-many-positional-arguments
     def __init__(
-        self, num_hidden_layers: int, num_neurons_per_layer: int | List[int], classify: bool,
-        activation: ActivationFunction, loss: LossFunction, lr: float = 1e-4, num_epochs: int = 15,
+        self, num_hidden_layers: int, num_neurons_per_layer: int | List[int],
+        task: Literal['regression', 'single-label-classification', 'multi-label-classification'],
+        activation: ActivationFunction, loss: LossFunction, lr: float = 1e-4, num_epochs: int = 25,
         batch_size: int = 16, optimizer: Literal['sgd', 'batch', 'mini-batch'] = 'mini-batch'
     ):
         """ Initializes the model hyperparameters.
@@ -31,7 +43,10 @@ class MLP:
         Args:
             num_hidden_layers: Number of hidden layers.
             num_neurons_per_layer: Number of neurons in each hidden layer.
-            activation: The activation function to apply on each neuron's output.
+            classify: Indicator for classification tasks (softmax will be applied automatically).
+            activation: The activation function to apply on each neuron's output
+                                                                    (except final layer neurons).
+            loss: The activation function to apply on the final output.
             lr: The learning rate to use in update step.
             num_epochs: Number of iterations over the training dataset.
             batch_size: Number of samples from the training dataset to process in a batch.
@@ -49,6 +64,9 @@ class MLP:
             for idx, num in enumerate(num_neurons_per_layer):
                 assert num > 0, \
                         f'num_neurons_per_layer should be positive, got {num} at index {idx}'
+        assert task in \
+            ['regression', 'single-label-classification', 'multi-label-classification'], \
+                                                        f'Got unrecognized value for task {task}'
         assert lr > 0, 'lr should be positive'
         assert num_epochs > 0, 'num_epochs should be positive'
         assert batch_size > 0, 'batch_size should be positive'
@@ -63,15 +81,16 @@ class MLP:
             self.num_neurons_per_layer = num_neurons_per_layer
         self.activation = activation
         self.loss = loss
-        self.classify = classify
+        self.task = task
         self.lr = lr
         self.num_epochs = num_epochs
         self.batch_size = batch_size
         self.optimizer = optimizer
 
-        # Initialize the model to None
+        # Initialize the model parameters to None
         self.sequential = None
         self.outputs = None
+        self.val_losses = None
 
 
     def backward(self, y: npt.NDArray) -> None:
@@ -83,6 +102,10 @@ class MLP:
         # Compute the gradient with respect to the output layer
         grad = self.loss.backward(y, self.outputs[-1])
 
+        # Compute the gradient of the output activation
+        if self.task == 'multi-label-classification':
+            grad = Sigmoid().backward(self.outputs[-1], grad)
+
         # Apply chain rule for propagation to the remaining layers
         self.sequential.backward(grad)
 
@@ -90,11 +113,31 @@ class MLP:
         self.outputs = None
 
 
-    def _early_stopping(self) -> bool:
+    def _early_stopping(self, val_loss: float) -> bool:
         """ Checks the suitability for early stopping of gradient descent. """
 
+        self.val_losses.append(val_loss)
 
-    def fit(self, X_train: npt.NDArray, y_train: npt.NDArray, random_seed: int | None = 0) -> Self:
+        # If sufficient samples for loss available for comparision
+        if len(self.val_losses) == self.val_losses.maxlen:
+
+            # Compute mean of first half and second half
+            midpoint = self.val_losses.maxlen // 2
+            previous_loss_pattern = np.mean(list(self.val_losses)[:midpoint])
+            current_loss_pattern = np.mean(list(self.val_losses)[midpoint:])
+
+            # If second half loss is greater, stop
+            if current_loss_pattern > previous_loss_pattern:
+                return True
+
+        return False
+
+
+    # pylint: disable-next=too-many-arguments, too-many-positional-arguments
+    def fit(
+        self, X_train: npt.NDArray, y_train: npt.NDArray, X_val: npt.NDArray, y_val: npt.NDArray,
+        wandb_log: bool = False, random_seed: int | None = 0
+    ) -> Self:
         """ Fits the model for the given training data. """
 
         # Reinitialize the random number generator
@@ -102,31 +145,68 @@ class MLP:
             np.random.seed(random_seed)
 
         # Ensure consistency with dataset format
-        X_train, y_train = self._process_training_dataset(X_train, y_train)
+        X_train, y_train = self._process_dataset(X_train, y_train)
+        X_val, y_val = self._process_dataset(X_val, y_val)
 
         # Initialize the sequential network
         self._init_sequential(X_train.shape[1], y_train.shape[1])
 
-        # Train the model
-        for _ in range(self.num_epochs):
+        # Queue to store recent val losses
+        self.val_losses = deque(maxlen=10)
+
+        # Iterate until termination condition
+        for epoch in range(self.num_epochs):
+
+            # Train the model
             self.train(X_train, y_train)
-            y_pred = self.forward(X_train)
-            print(self.loss.forward(y_train, y_pred))
+
+            # Compute the validation loss and accuracy
+            val_loss = self.loss.forward(y_val, self.forward(X_val))
+
+            # Log metrics
+            if wandb_log:
+                train_loss = self.loss.forward(y_train, self.forward(X_train))
+
+                if self.task == 'single-label-classification':
+                    train_acc = ClassificationMeasures(self._label_encoding(y_train), \
+                                                        self.predict(X_train) ).accuracy_score()
+                    val_acc = ClassificationMeasures(self._label_encoding(y_val), \
+                                                        self.predict(X_val) ).accuracy_score()
+                    wandb.log({
+                        'epoch': epoch,
+                        'train_loss': train_loss,
+                        'val_loss': val_loss,
+                        'train_acc': train_acc,
+                        'val_acc': val_acc
+                    })
+
+                else:
+                    wandb.log({
+                        'epoch': epoch,
+                        'train_loss': train_loss,
+                        'val_loss': val_loss
+                    })
+
+            # Check early termination condition
+            if self._early_stopping(val_loss):
+                break
 
         return self
 
 
-    def forward(self, X: npt.NDArray) -> npt.NDArray:
+    def forward(self, X: npt.NDArray, index: int | None = None) -> npt.NDArray:
         """ Computes the model output sequentially in forward direction,
         optionally storing the layerwise outputs for backward pass. """
 
         # Check if fit called before forward
         assert self.sequential is not None, 'fit should be called before forward'
 
-        # Store the final output for computing loss derivative
-        self.outputs = self.sequential.forward(X)
-        if self.classify:
+        # Store the final output for computing derivative of loss
+        self.outputs = self.sequential.forward(X, index=index)
+        if self.task == 'single-label-classification':
             self.outputs = Softmax().forward(self.outputs)
+        elif self.task == 'multi-label-classification':
+            self.outputs = Sigmoid().forward(self.outputs)
 
         return self.outputs
 
@@ -144,16 +224,22 @@ class MLP:
                     Linear(self.num_neurons_per_layer[idx], self.num_neurons_per_layer[idx + 1]) \
                 )
             layers.append(Linear(self.num_neurons_per_layer[-1], output_dim))
-        activations = [ self.activation for _ in range(len(layers)) ]
-        self.sequential = Sequential(layers, activations)
+        activations = [ self.activation for _ in range(len(layers) - 1) ]
+        self.sequential = Sequential(layers, activations, gradient_threshold=25)
 
 
-    def _one_hot_encoding(self, X: npt.NDArray[int]) -> npt.NDArray:
+    def _label_encoding(self, y: npt.NDArray[int]) -> npt.NDArray:
+        """ Generates the label encoding for a list of one hot encoded labels. """
+
+        return np.argmax(y, axis=1)
+
+
+    def _one_hot_encoding(self, y: npt.NDArray[int]) -> npt.NDArray:
         """ Generates the one hot encoding for a list of integer labels. """
 
-        num_classes = np.max(X) + 1
-        encoding = np.zeros((X.shape[0], num_classes))
-        encoding[np.arange(X.shape[0]), X] = 1
+        num_classes = np.max(y) + 1
+        encoding = np.zeros((y.shape[0], num_classes))
+        encoding[np.arange(y.shape[0]), y] = 1
         return encoding
 
 
@@ -167,28 +253,28 @@ class MLP:
         y_pred = self.forward(X_test)
 
         # Find the largest logit for classification
-        if self.classify:
-            y_pred = np.argmax(y_pred, axis=1)
+        if self.task == 'single-label-classification':
+            y_pred = self._label_encoding(y_pred)
 
         return y_pred
 
 
-    def _process_training_dataset(self, X_train: npt.NDArray, y_train: npt.NDArray) \
+    def _process_dataset(self, X: npt.NDArray, y: npt.NDArray) \
                                                                 -> Tuple[npt.NDArray, npt.NDArray]:
         """ Ensure consistency of the class with the format of the dataset. """
 
         # One hot encoding for labels
-        if self.classify:
-            y_train = self._one_hot_encoding(y_train)
+        if self.task == 'single-label-classification':
+            y = self._one_hot_encoding(y)
 
         # Match number of inputs and outputs
-        assert X_train.shape[0] == y_train.shape[0]
+        assert X.shape[0] == y.shape[0], 'Number of inputs and outputs should be equal'
 
         # Each individual output should be an array
-        if y_train.ndim == 1:
-            y_train = y_train.reshape(-1, 1)
+        if y.ndim == 1:
+            y = y.reshape(-1, 1)
 
-        return X_train, y_train
+        return X, y
 
 
     def train(self, X_train: npt.NDArray, y_train: npt.NDArray) -> None:
