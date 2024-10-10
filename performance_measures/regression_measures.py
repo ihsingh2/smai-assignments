@@ -23,6 +23,17 @@ class RegressionMeasures:
 
         return np.mean((self.y_true - self.y_pred) ** 2)
 
+    def root_mean_squared_error(self) -> float:
+        """ Computes the root mean squared error. """
+
+        return np.sqrt(np.mean((self.y_true - self.y_pred) ** 2))
+
+    def r_squared(self) -> float:
+        """ Computes the coefficient of determination. """
+
+        return 1 - (np.sum((self.y_true - self.y_pred) ** 2) / \
+                                                np.sum((self.y_true - np.mean(self.y_true)) ** 2))
+
     def standard_deviation(self) -> float:
         """ Computes the standard deviation of predicted values. """
 
