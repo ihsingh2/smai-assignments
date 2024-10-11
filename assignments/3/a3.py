@@ -1,5 +1,6 @@
 """ Assignment 3: Multi Layer Perceptron and AutoEncoders. """
 
+import ast
 import json
 import shutil
 import sys
@@ -20,14 +21,53 @@ from models.AutoEncoders import AutoEncoder
 from models.knn import KNN
 from models.MLP import MLP
 from models.MLP.activation import get_activation
-from models.MLP.loss import BinaryCrossEntropy, CrossEntropy, MeanSquaredError
-from performance_measures import ClassificationMeasures, RegressionMeasures
+from models.MLP.loss import get_loss, BinaryCrossEntropy, CrossEntropy, MeanSquaredError
+from performance_measures import ClassificationMeasures, MultiLabelClassificationMeasures, \
+                                                                                RegressionMeasures
 
 # pylint: enable=wrong-import-position
 
 # Library customizations
 pd.set_option('display.max_columns', None)
 # os.environ["WANDB_SILENT"] = "true"
+
+
+def advertisement_data_preprocessing() -> None:
+    """ Analyze and preprocess Housing Data Dataset. """
+
+    # Log function call
+    print('--- advertisement_data_preprocessing')
+
+    # Read external CSV into DataFrame
+    df = pd.read_csv(f'{PROJECT_DIR}/data/external/advertisement.csv')
+
+    # Remove columns with less relevant values
+    df.drop(columns=['city'], inplace=True)
+
+    # Backup of target column
+    labels_copy = df['labels'].copy()
+
+    # Encode categorical values
+    object_type_columns = df.select_dtypes(include=['object', 'bool']).columns
+    for col in object_type_columns:
+        df[col] = pd.factorize(df[col])[0]
+
+    # Convert all columns to floating point
+    df = df.astype(float)
+
+    # Apply standardization to all columns
+    df = (df - df.mean()) / df.std()
+
+    # Restore labels
+    df['labels'] = labels_copy
+
+    # Encode labels
+    all_labels = set(label for sublist in df['labels'].str.split() for label in sublist)
+    label_to_index = {label: idx for idx, label in enumerate(all_labels)}
+    df['labels'] = df['labels'].str.split().apply(lambda x: [label_to_index[label] for label in x])
+
+    # Write processed DataFrame to CSV file
+    df.to_csv(f'{PROJECT_DIR}/data/interim/3/advertisement.csv')
 
 
 def housing_data_analysis_preprocessing() -> None:
@@ -178,49 +218,49 @@ def mlp_classification_hyperparameter_effects() -> None:
 
     # WandB sweep configuration for task 1
     activation_sweep_config = {
-        'name': 'hyperparameter_effects_activation',
+        'name': 'hyperparameter-effects-activation',
         'method': 'grid',
         'metric': { 'name': 'val_acc', 'goal': 'maximize' },
         'parameters': {
             'activation': { 'values': ['identity', 'relu', 'sigmoid', 'tanh'] },
             'batch_size': { 'value': 16 },
             'lr': { 'value': config['lr'] },
-            'num_epochs': { 'value': config['num_neurons_per_layer'] },
+            'num_epochs': { 'value': config['num_epochs'] },
             'num_hidden_layers': { 'value': config['num_hidden_layers'] },
             'num_neurons_per_layer': { 'value': config['num_neurons_per_layer'] },
-            'optimizer': { 'value': 'mini-batch' },
+            'optimizer': { 'value': config['optimizer'] }
         }
     }
 
     # WandB sweep configuration for task 2
     lr_sweep_config = {
-        'name': 'hyperparameter_effects_lr',
+        'name': 'hyperparameter-effects-lr',
         'method': 'grid',
         'metric': { 'name': 'val_acc', 'goal': 'maximize' },
         'parameters': {
             'activation': { 'value': config['activation'] },
             'batch_size': { 'value': 16 },
             'lr': { 'values': [1e-5, 1e-4, 1e-3, 1e-2] },
-            'num_epochs': { 'value': config['num_neurons_per_layer'] },
+            'num_epochs': { 'value': config['num_epochs'] },
             'num_hidden_layers': { 'value': config['num_hidden_layers'] },
             'num_neurons_per_layer': { 'value': config['num_neurons_per_layer'] },
-            'optimizer': { 'value': 'mini-batch' },
+            'optimizer': { 'value': config['optimizer'] }
         }
     }
 
     # WandB sweep configuration for task 3
     batch_size_sweep_config = {
-        'name': 'hyperparameter_effects_batch_size',
+        'name': 'hyperparameter-effects-batch-size',
         'method': 'grid',
         'metric': { 'name': 'val_acc', 'goal': 'maximize' },
         'parameters': {
             'activation': { 'value': config['activation'] },
             'batch_size': { 'values': [8, 16, 32, 64] },
             'lr': { 'value': config['lr'] },
-            'num_epochs': { 'value': config['num_neurons_per_layer'] },
+            'num_epochs': { 'value': config['num_epochs'] },
             'num_hidden_layers': { 'value': config['num_hidden_layers'] },
             'num_neurons_per_layer': { 'value': config['num_neurons_per_layer'] },
-            'optimizer': { 'value': 'mini-batch' },
+            'optimizer': { 'value': 'mini-batch' }
         }
     }
 
@@ -420,10 +460,10 @@ def mlp_logistic_regression() -> None:
             num_hidden_layers=0,
             num_neurons_per_layer=[],
             activation=get_activation('sigmoid'),
-            lr=1e-3,
+            lr=1e-4,
             num_epochs=150,
             task='regression',
-            loss=get_loss_function(wandb.config.loss)
+            loss=get_loss(wandb.config.loss)
         )
         mlp.fit(X_train, y_train, X_val, y_val, wandb_log=True)
 
@@ -455,6 +495,125 @@ def mlp_logistic_regression() -> None:
     wandb.agent(sweep_id, train_worker)
     wandb.finish()
     shutil.rmtree('wandb')
+
+
+def mlp_multi_label_classification_hyperparameter_tuning() -> None:
+    """ Hyperparameter tuning for Multi Layer Perceptron Classification,
+    on multi-label Advertisement Dataset. """
+
+    def train_worker():
+        """ Trains a MLP with a given configuration. """
+
+        # Initialize logging process
+        wandb.init()
+
+        # Initialize and train model
+        mlp = MLP(
+            num_hidden_layers=wandb.config.num_hidden_layers,
+            num_neurons_per_layer=wandb.config.num_neurons_per_layer,
+            activation=get_activation(wandb.config.activation),
+            lr=wandb.config.lr,
+            num_epochs=100,
+            optimizer='sgd',
+            task='multi-label-classification',
+            loss=BinaryCrossEntropy()
+        )
+        mlp.fit(X_train, y_train, X_val, y_val, wandb_log=True)
+
+        # Evaluate metrics for model
+        train_measures = MultiLabelClassificationMeasures(y_train, mlp.predict(X_train))
+        val_measures = MultiLabelClassificationMeasures(y_val, mlp.predict(X_val))
+
+        # Log metrics
+        wandb.log({
+            'train_acc': train_measures.accuracy_score(),
+            'train_f1': train_measures.f1_score(),
+            'train_hamming': train_measures.hamming_distance(),
+            'train_precision': train_measures.precision_score(),
+            'train_recall': train_measures.recall_score(),
+            'val_acc': val_measures.accuracy_score(),
+            'val_f1': val_measures.f1_score(),
+            'val_hamming': val_measures.hamming_distance(),
+            'val_precision': val_measures.precision_score(),
+            'val_recall': val_measures.recall_score()
+        })
+
+    # Log function call
+    print('--- mlp_multi_label_classification_hyperparameter_tuning')
+
+    # Read interim CSV into DataFrame
+    df = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/advertisement.csv', index_col=0)
+
+    # Convert DataFrame to array
+    X = df.to_numpy()[:, :-1].astype(float)
+    y = df.to_numpy()[:, -1]
+    for idx in range(y.shape[0]):
+        y[idx] = ast.literal_eval(y[idx])
+
+    # Split the array into train, test and split
+    X_train, X_val, _, y_train, y_val, _ = train_val_test_split(X, y)
+
+    # WandB sweep configuration
+    sweep_config = {
+        'name': 'hyperparameter-tuning-multi-label',
+        'method': 'grid',
+        'metric': { 'name': 'val_acc', 'goal': 'maximize' },
+        'parameters': {
+            'activation': { 'values': ['identity', 'relu', 'sigmoid', 'tanh'] },
+            'lr': { 'values': [1e-5, 1e-4] },
+            'num_hidden_layers': { 'values': [4, 8, 16] },
+            'num_neurons_per_layer': { 'values': [4, 8, 16] }
+        }
+    }
+
+    # Start and finish WandB sweep
+    sweep_id = wandb.sweep(sweep_config, project='smai-m24-mlp-classification')
+    wandb.agent(sweep_id, train_worker)
+    wandb.finish()
+    shutil.rmtree('wandb')
+
+
+def mlp_multi_label_classification_best_model() -> None:
+    """ Evaluate the best Multi Layer Perceptron Classification model, identified through
+    hyperparameter tuning, on Advertisement Dataset. """
+
+    # Log function call
+    print('--- mlp_multi_label_classification_best_model')
+
+    # Read the best hyperparameters from the results file
+    with open(\
+        f'{PROJECT_DIR}/assignments/3/results/mlp_classification_multilabel_hyperparameters.json',\
+                                                                    'r', encoding='utf-8') as file:
+        config = json.load(file)
+
+    # Read interim CSV into DataFrame
+    df = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/advertisement.csv', index_col=0)
+
+    # Convert DataFrame to array
+    X = df.to_numpy()[:, :-1].astype(float)
+    y = df.to_numpy()[:, -1]
+    for idx in range(y.shape[0]):
+        y[idx] = ast.literal_eval(y[idx])
+
+    # Split the array into train, test and split
+    X_train, X_val, X_test, y_train, y_val, y_test = train_val_test_split(X, y)
+
+    # Initialize and train model
+    mlp = MLP(
+        num_hidden_layers=config['num_hidden_layers'],
+        num_neurons_per_layer=config['num_neurons_per_layer'],
+        activation=get_activation(config['activation']),
+        lr=config['lr'],
+        num_epochs=config['num_epochs'],
+        optimizer=config['optimizer'],
+        task='multi-label-classification',
+        loss=BinaryCrossEntropy()
+    )
+    mlp.fit(X_train, y_train, X_val, y_val)
+
+    # Evaluate metrics for model
+    test_measures = MultiLabelClassificationMeasures(y_test, mlp.predict(X_test))
+    test_measures.print_all_measures()
 
 
 def mlp_regression_best_model() -> None:
@@ -541,12 +700,10 @@ def mlp_regression_hyperparameter_tuning() -> None:
     # Read interim CSVs into DataFrames
     df_train = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/HousingData_train.csv', index_col=0)
     df_val = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/HousingData_val.csv', index_col=0)
-    df_test = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/HousingData_test.csv', index_col=0)
 
     # Convert DataFrames to arrays
     X_train, y_train = df_train.to_numpy()[:, :-1], df_train.to_numpy()[:, -1]
     X_val, y_val = df_val.to_numpy()[:, :-1], df_val.to_numpy()[:, -1]
-    X_test, y_test = df_test.to_numpy()[:, :-1], df_test.to_numpy()[:, -1]
 
     # WandB sweep configuration
     sweep_config = {
@@ -662,8 +819,10 @@ if __name__ == '__main__':
     ## 2.5 Analyzing Hyperparameters Effects
     # mlp_classification_hyperparameter_effects()
 
-    ## 2.6 Multi-Label Classification # TODO
-    # mlp_multi_label_classification()
+    ## 2.6 Multi-Label Classification
+    advertisement_data_preprocessing()
+    # mlp_multi_label_classification_hyperparameter_tuning()
+    # mlp_multi_label_classification_best_model()
 
     # 3 Multi Layer Perceptron Regression
 

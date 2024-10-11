@@ -4,6 +4,7 @@
 
 # pylint: enable=invalid-name
 
+import copy
 import sys
 from collections import deque
 from typing import List, Literal, Self, Tuple
@@ -17,7 +18,7 @@ import wandb
 PROJECT_DIR = '../..'
 sys.path.insert(0, PROJECT_DIR)
 
-from performance_measures import ClassificationMeasures
+from performance_measures import ClassificationMeasures, MultiLabelClassificationMeasures
 
 #pylint: enable=wrong-import-position
 
@@ -113,6 +114,25 @@ class MLP:
         self.outputs = None
 
 
+    def _binary_encoding(self, y: npt.NDArray[int]) -> npt.NDArray:
+        """ Generates the binary encoding for a list of integer labels. """
+
+        if self.task == 'single-label-classification':
+            num_classes = np.max(y) + 1
+            encoding = np.zeros((y.shape[0], num_classes), dtype=int)
+            encoding[np.arange(y.shape[0]), y] = 1
+            return encoding
+
+        if self.task == 'multi-label-classification':
+            num_classes = max(val for sublist in y for val in sublist) + 1
+            encoding = np.zeros((y.shape[0], num_classes), dtype=int)
+            for idx, labels in enumerate(y):
+                encoding[idx, labels] = 1
+            return encoding
+
+        raise ValueError('Binary encoding available only for classification tasks')
+
+
     def _early_stopping(self, val_loss: float) -> bool:
         """ Checks the suitability for early stopping of gradient descent. """
 
@@ -145,6 +165,7 @@ class MLP:
             np.random.seed(random_seed)
 
         # Ensure consistency with dataset format
+        y_train_label, y_val_label = copy.deepcopy(y_train), copy.deepcopy(y_val)
         X_train, y_train = self._process_dataset(X_train, y_train)
         X_val, y_val = self._process_dataset(X_val, y_val)
 
@@ -168,9 +189,22 @@ class MLP:
                 train_loss = self.loss.forward(y_train, self.forward(X_train))
 
                 if self.task == 'single-label-classification':
-                    train_acc = ClassificationMeasures(self._label_encoding(y_train), \
+                    train_acc = ClassificationMeasures(y_train_label, \
                                                         self.predict(X_train) ).accuracy_score()
-                    val_acc = ClassificationMeasures(self._label_encoding(y_val), \
+                    val_acc = ClassificationMeasures(y_val_label, \
+                                                        self.predict(X_val) ).accuracy_score()
+                    wandb.log({
+                        'epoch': epoch,
+                        'train_loss': train_loss,
+                        'val_loss': val_loss,
+                        'train_acc': train_acc,
+                        'val_acc': val_acc
+                    })
+
+                elif self.task == 'multi-label-classification':
+                    train_acc = MultiLabelClassificationMeasures(y_train_label, \
+                                                        self.predict(X_train) ).accuracy_score()
+                    val_acc = MultiLabelClassificationMeasures(y_val_label, \
                                                         self.predict(X_val) ).accuracy_score()
                     wandb.log({
                         'epoch': epoch,
@@ -231,16 +265,14 @@ class MLP:
     def _label_encoding(self, y: npt.NDArray[int]) -> npt.NDArray:
         """ Generates the label encoding for a list of one hot encoded labels. """
 
-        return np.argmax(y, axis=1)
+        if self.task == 'single-label-classification':
+            return np.argmax(y, axis=1)
 
+        if self.task == 'multi-label-classification':
+            y = np.where(y > 0.5, 1, 0).astype(int)
+            return np.array([[int(i) for i in np.where(row == 1)[0]] for row in y], dtype=object)
 
-    def _one_hot_encoding(self, y: npt.NDArray[int]) -> npt.NDArray:
-        """ Generates the one hot encoding for a list of integer labels. """
-
-        num_classes = np.max(y) + 1
-        encoding = np.zeros((y.shape[0], num_classes))
-        encoding[np.arange(y.shape[0]), y] = 1
-        return encoding
+        raise ValueError('Label encoding available only for classification tasks')
 
 
     def predict(self, X_test: npt.NDArray) -> npt.NDArray:
@@ -252,8 +284,8 @@ class MLP:
         # Compute the predictions
         y_pred = self.forward(X_test)
 
-        # Find the largest logit for classification
-        if self.task == 'single-label-classification':
+        # Find the labels for classification
+        if self.task != 'regression':
             y_pred = self._label_encoding(y_pred)
 
         return y_pred
@@ -264,8 +296,8 @@ class MLP:
         """ Ensure consistency of the class with the format of the dataset. """
 
         # One hot encoding for labels
-        if self.task == 'single-label-classification':
-            y = self._one_hot_encoding(y)
+        if self.task != 'regression':
+            y = self._binary_encoding(y)
 
         # Match number of inputs and outputs
         assert X.shape[0] == y.shape[0], 'Number of inputs and outputs should be equal'

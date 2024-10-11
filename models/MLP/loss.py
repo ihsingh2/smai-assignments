@@ -6,6 +6,18 @@ import numpy as np
 import numpy.typing as npt
 
 
+def get_loss(loss: str):
+    """ Returns an instance of the loss function. """
+
+    if loss == 'binary-cross-entropy':
+        return BinaryCrossEntropy()
+    if loss == 'cross-entropy':
+        return CrossEntropy()
+    if loss == 'mean-squared-error':
+        return MeanSquaredError()
+    raise ValueError(f'Loss function {loss} not found')
+
+
 class LossFunction(ABC):
     """ Abstract class providing signature for loss functions,
     tailored for use in forward and backward propagation. """
