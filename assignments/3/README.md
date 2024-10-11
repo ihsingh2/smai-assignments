@@ -97,7 +97,7 @@ Recall: 0.22366666666666662
 
 ### Analysis
 
-It is not difficult to see that the recall score on the Wine Quality dataset was much higher (twice infact!) than the precision. This demonstrates the model's bias towards predicting a small subset of values that it considers to be more probable. This was however expected owing to the target label's distribution being concentrated around just three values. This is reflected in the by and large ignorance of the model in predicting the quality to be outside this small range. We see the opposite effect in the multi-label classification case. The model was unable to see through such any exploitable pattern and chose to make more precise predictions, loosing out on recall.
+It is not difficult to see that the recall score on the Wine Quality dataset was much higher (twice infact!) than the precision. This demonstrates the model's bias towards predicting a small subset of values that it considers to be more probable. This was however expected owing to the target label's distribution being concentrated around just three values. This is reflected in the by and large ignorance of the model in predicting the quality to be outside this small range. We see the opposite effect in the multi-label classification case. The model was unable to see through any such exploitable pattern and chose to make more precise predictions, losing out on recall.
 
 ## Multilayer Perceptron Regression
 
@@ -165,7 +165,7 @@ VAR: 60.33205248090284
 
 ![logistic_regression_bce](./figures/logistic_regression_bce.png)
 
-MSE has a tendency to overvalue the residuals, while BCE undervalues the same. This is evident from their formula, with the former employing a quadratic and the latter a logarithmic function. As a result, MSE aggressively drives the far off predictions closer to the true values, comparatively ignoring the predictions that may be near the decision boundary. This also assists a quick reduction in the training loss value, as learning preferable values for selected outlier points contributing more to the loss is easier than optimizing for several points. On the other hand, BCE can focus on consolidating the points which are near the decision boundary, and possibly ignore the outliers, making the classifier more robust.
+MSE has a tendency to overvalue the residuals, while BCE undervalues the same. This is evident from their formula, with the former employing a quadratic and the latter a logarithmic function. As a result, MSE aggressively drives the far off predictions closer to the true values, comparatively ignoring the predictions that may be near the decision boundary. This also assists a quick reduction in the training loss value, as learning preferable values for selected points (contributing more to the loss) is easier than optimizing for several points at once. On the other hand, BCE can focus on consolidating the points which are near the decision boundary, effectively ignoring the outliers, thus making the classifier more robust.
 
 ### Analysis
 
@@ -210,3 +210,5 @@ F1 Score: 0.20159727825446447
 Precision: 0.14116899471046745
 Recall: 0.35247751346742595
 ```
+
+We notice a higher recall with MLP than in the case of KNN, albeit with a drop in accuracy. One may argue that the model has thus been able to get an idea of more frequent genres, enabling it to recall them more effectively. The precision has taken a hit showing that it has not been able to learn the decision boundary accurately. This may also be attributed to the fact that the original dataset had multiple genres for each track and the approximation we made by dropping multiple genres made it difficult for the model to see the underlying patterns properly.
