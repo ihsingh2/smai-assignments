@@ -44,7 +44,7 @@ The optimal number of dimensions was estimated to be 15.
 
 ### PCA + K-Means Clustering
 
-The optimal number of clusters was estimated to be 7.
+The optimal number of clusters was estimated to be 8.
 
 ![pca_kmeans_wcss](figures/pca_kmeans_wcss.png)
 

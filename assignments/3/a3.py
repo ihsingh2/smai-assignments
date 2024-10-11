@@ -2,6 +2,7 @@
 
 import ast
 import json
+import os
 import shutil
 import sys
 from typing import Tuple
@@ -29,7 +30,7 @@ from performance_measures import ClassificationMeasures, MultiLabelClassificatio
 
 # Library customizations
 pd.set_option('display.max_columns', None)
-# os.environ["WANDB_SILENT"] = "true"
+os.environ["WANDB_SILENT"] = "true"
 
 
 def advertisement_data_preprocessing() -> None:
@@ -68,10 +69,11 @@ def advertisement_data_preprocessing() -> None:
 
     # Write processed DataFrame to CSV file
     df.to_csv(f'{PROJECT_DIR}/data/interim/3/advertisement.csv')
+    print()
 
 
 def housing_data_analysis_preprocessing() -> None:
-    """ Analyze and preprocess Housing Data Dataset. """
+    """ Analyze and preprocess Boston Housing Data Dataset. """
 
     # Log function call
     print('--- housing_data_analysis_preprocessing')
@@ -83,7 +85,15 @@ def housing_data_analysis_preprocessing() -> None:
     desc = df.describe()
     print(desc.loc[['mean', 'std', 'min', 'max']])
 
-    # TODO: graph that shows the distribution of the various labels across the entire dataset.
+    # Plot the distribution of various attributes
+    output_path = 'figures/boston_housing_distribution.png'
+    df.hist(figsize=(12, 12), bins=15)
+    plt.suptitle('Boston Housing Dataset: Distribution of Attributes')
+    plt.tight_layout()
+    plt.savefig(output_path, bbox_inches='tight')
+    plt.close()
+    plt.clf()
+    print(output_path)
 
     # Replace missing values with mean
     df.fillna(df.mean(), inplace=True)
@@ -121,6 +131,7 @@ def housing_data_analysis_preprocessing() -> None:
     df_train.to_csv(f'{PROJECT_DIR}/data/interim/3/HousingData_train.csv')
     df_val.to_csv(f'{PROJECT_DIR}/data/interim/3/HousingData_val.csv')
     df_test.to_csv(f'{PROJECT_DIR}/data/interim/3/HousingData_test.csv')
+    print()
 
 
 def knn_autoencoder() -> None:
@@ -152,7 +163,8 @@ def knn_autoencoder() -> None:
         output_dimension = int(output_dimension)
 
     # Fit the autoencoder
-    autoenc = AutoEncoder(num_hidden_layers=5, activation=get_activation('relu'), lr=1e-4)
+    autoenc = AutoEncoder(num_hidden_layers=4, activation=get_activation('tanh'), lr=1e-4, \
+                                                                                optimizer='sgd')
     autoenc.fit(X_train, X_val, output_dimension=output_dimension)
 
     # Compute the latent representation
@@ -168,7 +180,11 @@ def knn_autoencoder() -> None:
 
     # Evaluate predictions for the validation set
     cls_measures = ClassificationMeasures(y_val, y_pred)
-    cls_measures.print_all_measures()
+    print('Accuracy:', cls_measures.accuracy_score())
+    print('F1 Score:', cls_measures.f1_score(average='macro'))
+    print('Precision:', cls_measures.precision_score(average='macro'))
+    print('Recall:', cls_measures.recall_score(average='macro'))
+    print()
 
 
 def mlp_classification_hyperparameter_effects() -> None:
@@ -280,6 +296,7 @@ def mlp_classification_hyperparameter_effects() -> None:
     wandb.finish()
 
     shutil.rmtree('wandb')
+    print()
 
 
 def mlp_classification_best_model() -> None:
@@ -324,9 +341,10 @@ def mlp_classification_best_model() -> None:
     # Evaluate metrics for model
     test_measures = ClassificationMeasures(y_test, mlp.predict(X_test))
     print('Accuracy:', test_measures.accuracy_score())
-    print('F1 Score', test_measures.f1_score(average='macro'))
-    print('Precision', test_measures.precision_score(average='macro'))
-    print('Recall', test_measures.recall_score(average='macro'))
+    print('F1 Score:', test_measures.f1_score(average='macro'))
+    print('Precision:', test_measures.precision_score(average='macro'))
+    print('Recall:', test_measures.recall_score(average='macro'))
+    print()
 
 
 def mlp_classification_hyperparameter_tuning() -> None:
@@ -403,7 +421,9 @@ def mlp_classification_hyperparameter_tuning() -> None:
     sweep_id = wandb.sweep(sweep_config, project='smai-m24-mlp-classification')
     wandb.agent(sweep_id, train_worker)
     wandb.finish()
+
     shutil.rmtree('wandb')
+    print()
 
 
 def mlp_classification_spotify_dataset() -> None:
@@ -413,7 +433,7 @@ def mlp_classification_spotify_dataset() -> None:
     print('--- mlp_classification_spotify_dataset')
 
     # Read the best hyperparameters from the results file
-    with open(\
+    with open( \
         f'{PROJECT_DIR}/assignments/3/results/mlp_classification_spotify_hyperparameters.json', \
                                                                     'r', encoding='utf-8') as file:
         config = json.load(file)
@@ -434,7 +454,6 @@ def mlp_classification_spotify_dataset() -> None:
         num_neurons_per_layer=config['num_neurons_per_layer'],
         activation=get_activation(config['activation']),
         lr=config['lr'],
-        num_epochs=config['num_epochs'],
         optimizer=config['optimizer'],
         task='single-label-classification',
         loss=CrossEntropy()
@@ -443,7 +462,11 @@ def mlp_classification_spotify_dataset() -> None:
 
     # Evaluate metrics for model
     cls_measures = ClassificationMeasures(y_val, mlp.predict(X_val))
-    cls_measures.print_all_measures()
+    print('Accuracy:', cls_measures.accuracy_score())
+    print('F1 Score:', cls_measures.f1_score(average='macro'))
+    print('Precision:', cls_measures.precision_score(average='macro'))
+    print('Recall:', cls_measures.recall_score(average='macro'))
+    print()
 
 
 def mlp_logistic_regression() -> None:
@@ -494,7 +517,9 @@ def mlp_logistic_regression() -> None:
     sweep_id = wandb.sweep(sweep_config, project='smai-m24-mlp-regression')
     wandb.agent(sweep_id, train_worker)
     wandb.finish()
+
     shutil.rmtree('wandb')
+    print()
 
 
 def mlp_multi_label_classification_hyperparameter_tuning() -> None:
@@ -570,7 +595,9 @@ def mlp_multi_label_classification_hyperparameter_tuning() -> None:
     sweep_id = wandb.sweep(sweep_config, project='smai-m24-mlp-classification')
     wandb.agent(sweep_id, train_worker)
     wandb.finish()
+
     shutil.rmtree('wandb')
+    print()
 
 
 def mlp_multi_label_classification_best_model() -> None:
@@ -614,6 +641,7 @@ def mlp_multi_label_classification_best_model() -> None:
     # Evaluate metrics for model
     test_measures = MultiLabelClassificationMeasures(y_test, mlp.predict(X_test))
     test_measures.print_all_measures()
+    print()
 
 
 def mlp_regression_best_model() -> None:
@@ -654,6 +682,7 @@ def mlp_regression_best_model() -> None:
     # Evaluate metrics for model
     test_measures = RegressionMeasures(y_test, mlp.predict(X_test))
     test_measures.print_all_measures()
+    print()
 
 
 def mlp_regression_hyperparameter_tuning() -> None:
@@ -724,7 +753,9 @@ def mlp_regression_hyperparameter_tuning() -> None:
     sweep_id = wandb.sweep(sweep_config, project='smai-m24-mlp-regression')
     wandb.agent(sweep_id, train_worker)
     wandb.finish()
+
     shutil.rmtree('wandb')
+    print()
 
 
 def wineqt_analysis_preprocessing() -> None:
@@ -740,7 +771,15 @@ def wineqt_analysis_preprocessing() -> None:
     desc = df.describe()
     print(desc.loc[['mean', 'std', 'min', 'max']])
 
-    # TODO: graph that shows the distribution of the various labels across the entire dataset.
+    # Plot the distribution of various attributes
+    output_path = 'figures/wineqt_distribution.png'
+    df.hist(figsize=(12, 12), bins=15)
+    plt.suptitle('Wine Quality Dataset: Distribution of Attributes')
+    plt.tight_layout()
+    plt.savefig(output_path, bbox_inches='tight')
+    plt.close()
+    plt.clf()
+    print(output_path)
 
     # Backup of discrete labels
     quality_copy = df['quality'].copy()
@@ -757,6 +796,7 @@ def wineqt_analysis_preprocessing() -> None:
 
     # Write processed DataFrame to CSV file
     df.to_csv(f'{PROJECT_DIR}/data/interim/3/WineQT.csv')
+    print()
 
 
 # pylint: disable=duplicate-code
@@ -808,13 +848,13 @@ if __name__ == '__main__':
     # 2 Multi Layer Perceptron Classification
 
     ## 2.1 Dataset Analysis and Preprocessing
-    # wineqt_analysis_preprocessing()
+    wineqt_analysis_preprocessing()
 
     ## 2.3 Model Training & Hyperparameter Tuning
     # mlp_classification_hyperparameter_tuning()
 
     ## 2.4 Evaluating Single-label Classification Model
-    # mlp_classification_best_model()
+    mlp_classification_best_model()
 
     ## 2.5 Analyzing Hyperparameters Effects
     # mlp_classification_hyperparameter_effects()
@@ -822,18 +862,18 @@ if __name__ == '__main__':
     ## 2.6 Multi-Label Classification
     advertisement_data_preprocessing()
     # mlp_multi_label_classification_hyperparameter_tuning()
-    # mlp_multi_label_classification_best_model()
+    mlp_multi_label_classification_best_model()
 
     # 3 Multi Layer Perceptron Regression
 
     ## 3.1 Data Preprocessing
-    # housing_data_analysis_preprocessing()
+    housing_data_analysis_preprocessing()
 
     ## 3.3 Model Training & Hyperparameter Tuning
     # mlp_regression_hyperparameter_tuning()
 
     ## 3.4 Evaluating Model
-    # mlp_regression_best_model()
+    mlp_regression_best_model()
 
     ## 3.5 Mean Squared Error vs Binary Cross Entropy
     # mlp_logistic_regression()
@@ -841,7 +881,7 @@ if __name__ == '__main__':
     # 4 AutoEncoders
 
     ## 4.3 AutoEncoder + KNN
-    # knn_autoencoder()
+    knn_autoencoder()
 
     ## 4.4 MLP Classification
-    # mlp_classification_spotify_dataset()
+    mlp_classification_spotify_dataset()
