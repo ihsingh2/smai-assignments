@@ -20,8 +20,8 @@ from models.AutoEncoders import AutoEncoder
 from models.knn import KNN
 from models.MLP import MLP
 from models.MLP.activation import get_activation
-from models.MLP.loss import CrossEntropy, MeanSquaredError
-from performance_measures import ClassificationMeasures
+from models.MLP.loss import BinaryCrossEntropy, CrossEntropy, MeanSquaredError
+from performance_measures import ClassificationMeasures, RegressionMeasures
 
 # pylint: enable=wrong-import-position
 
@@ -137,10 +137,10 @@ def mlp_classification_hyperparameter_effects() -> None:
     def train_worker():
         """ Trains a MLP with a given configuration. """
 
-        # Init logging process
+        # Initialize logging process
         wandb.init()
 
-        # Train model
+        # Initialize and train model
         mlp = MLP(
             num_hidden_layers=wandb.config.num_hidden_layers,
             num_neurons_per_layer=wandb.config.num_neurons_per_layer,
@@ -163,7 +163,7 @@ def mlp_classification_hyperparameter_effects() -> None:
         config = json.load(file)
 
     # Read interim CSV into DataFrame
-    df = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/WineQT.csv')
+    df = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/WineQT.csv', index_col=0)
 
     # Convert DataFrame to array
     X = df.to_numpy()[:, :-1]
@@ -180,20 +180,15 @@ def mlp_classification_hyperparameter_effects() -> None:
     activation_sweep_config = {
         'name': 'hyperparameter_effects_activation',
         'method': 'grid',
-        'metrics': [
-            { 'name': 'train_loss', 'goal': 'minimize' },
-            { 'name': 'val_loss', 'goal': 'minimize' },
-            { 'name': 'train_acc', 'goal': 'maximize' },
-            { 'name': 'val_acc', 'goal': 'maximize' },
-        ],
+        'metric': { 'name': 'val_acc', 'goal': 'maximize' },
         'parameters': {
-            'num_hidden_layers': config['num_hidden_layers'],
-            'num_neurons_per_layer': config['num_neurons_per_layer'],
             'activation': { 'values': ['identity', 'relu', 'sigmoid', 'tanh'] },
-            'lr': config['lr'],
-            'batch_size': 16,
-            'optimizer': 'mini-batch',
-            'num_epochs': config['num_neurons_per_layer']
+            'batch_size': { 'value': 16 },
+            'lr': { 'value': config['lr'] },
+            'num_epochs': { 'value': config['num_neurons_per_layer'] },
+            'num_hidden_layers': { 'value': config['num_hidden_layers'] },
+            'num_neurons_per_layer': { 'value': config['num_neurons_per_layer'] },
+            'optimizer': { 'value': 'mini-batch' },
         }
     }
 
@@ -201,20 +196,15 @@ def mlp_classification_hyperparameter_effects() -> None:
     lr_sweep_config = {
         'name': 'hyperparameter_effects_lr',
         'method': 'grid',
-        'metrics': [
-            { 'name': 'train_loss', 'goal': 'minimize' },
-            { 'name': 'val_loss', 'goal': 'minimize' },
-            { 'name': 'train_acc', 'goal': 'maximize' },
-            { 'name': 'val_acc', 'goal': 'maximize' },
-        ],
+        'metric': { 'name': 'val_acc', 'goal': 'maximize' },
         'parameters': {
-            'num_hidden_layers': config['num_hidden_layers'],
-            'num_neurons_per_layer': config['num_neurons_per_layer'],
-            'activation': config['activation'],
+            'activation': { 'value': config['activation'] },
+            'batch_size': { 'value': 16 },
             'lr': { 'values': [1e-5, 1e-4, 1e-3, 1e-2] },
-            'batch_size': 16,
-            'optimizer': 'mini-batch',
-            'num_epochs': config['num_neurons_per_layer']
+            'num_epochs': { 'value': config['num_neurons_per_layer'] },
+            'num_hidden_layers': { 'value': config['num_hidden_layers'] },
+            'num_neurons_per_layer': { 'value': config['num_neurons_per_layer'] },
+            'optimizer': { 'value': 'mini-batch' },
         }
     }
 
@@ -222,20 +212,15 @@ def mlp_classification_hyperparameter_effects() -> None:
     batch_size_sweep_config = {
         'name': 'hyperparameter_effects_batch_size',
         'method': 'grid',
-        'metrics': [
-            { 'name': 'train_loss', 'goal': 'minimize' },
-            { 'name': 'val_loss', 'goal': 'minimize' },
-            { 'name': 'train_acc', 'goal': 'maximize' },
-            { 'name': 'val_acc', 'goal': 'maximize' },
-        ],
+        'metric': { 'name': 'val_acc', 'goal': 'maximize' },
         'parameters': {
-            'num_hidden_layers': config['num_hidden_layers'],
-            'num_neurons_per_layer': config['num_neurons_per_layer'],
-            'activation': config['activation'],
-            'lr': config['lr'],
+            'activation': { 'value': config['activation'] },
             'batch_size': { 'values': [8, 16, 32, 64] },
-            'optimizer': 'mini-batch',
-            'num_epochs': config['num_neurons_per_layer']
+            'lr': { 'value': config['lr'] },
+            'num_epochs': { 'value': config['num_neurons_per_layer'] },
+            'num_hidden_layers': { 'value': config['num_hidden_layers'] },
+            'num_neurons_per_layer': { 'value': config['num_neurons_per_layer'] },
+            'optimizer': { 'value': 'mini-batch' },
         }
     }
 
@@ -258,7 +243,7 @@ def mlp_classification_hyperparameter_effects() -> None:
 
 
 def mlp_classification_best_model() -> None:
-    """ Evaluation of best Multi Layer Perceptron Classification model, identified through
+    """ Evaluate the best Multi Layer Perceptron Classification model, identified through
     hyperparameter tuning, on Wine Quality Test Dataset. """
 
     # Log function call
@@ -270,7 +255,7 @@ def mlp_classification_best_model() -> None:
         config = json.load(file)
 
     # Read interim CSV into DataFrame
-    df = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/WineQT.csv')
+    df = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/WineQT.csv', index_col=0)
 
     # Convert DataFrame to array
     X = df.to_numpy()[:, :-1]
@@ -283,14 +268,14 @@ def mlp_classification_best_model() -> None:
     # Split the array into train, test and split
     X_train, X_val, X_test, y_train, y_val, y_test = train_val_test_split(X, y)
 
-    # Train model
+    # Initialize and train model
     mlp = MLP(
-        num_hidden_layers=config[num_hidden_layers],
-        num_neurons_per_layer=config[num_neurons_per_layer],
-        activation=get_activation(config[activation]),
-        lr=config[lr],
-        num_epochs=config[num_epochs],
-        optimizer=config[optimizer],
+        num_hidden_layers=config['num_hidden_layers'],
+        num_neurons_per_layer=config['num_neurons_per_layer'],
+        activation=get_activation(config['activation']),
+        lr=config['lr'],
+        num_epochs=config['num_epochs'],
+        optimizer=config['optimizer'],
         task='single-label-classification',
         loss=CrossEntropy()
     )
@@ -310,10 +295,10 @@ def mlp_classification_hyperparameter_tuning() -> None:
     def train_worker():
         """ Trains a MLP with a given configuration. """
 
-        # Init logging process
+        # Initialize logging process
         wandb.init()
 
-        # Train model
+        # Initialize and train model
         mlp = MLP(
             num_hidden_layers=wandb.config.num_hidden_layers,
             num_neurons_per_layer=wandb.config.num_neurons_per_layer,
@@ -346,7 +331,7 @@ def mlp_classification_hyperparameter_tuning() -> None:
     print('--- mlp_classification_hyperparameter_tuning')
 
     # Read interim CSV into DataFrame
-    df = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/WineQT.csv')
+    df = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/WineQT.csv', index_col=0)
 
     # Convert DataFrame to array
     X = df.to_numpy()[:, :-1]
@@ -363,18 +348,13 @@ def mlp_classification_hyperparameter_tuning() -> None:
     sweep_config = {
         'name': 'hyperparameter-tuning',
         'method': 'grid',
-        'metrics': [
-            { 'name': 'train_loss', 'goal': 'minimize' },
-            { 'name': 'val_loss', 'goal': 'minimize' },
-            { 'name': 'train_acc', 'goal': 'maximize' },
-            { 'name': 'val_acc', 'goal': 'maximize' },
-        ],
+        'metric': { 'name': 'val_acc', 'goal': 'maximize' },
         'parameters': {
-            'num_hidden_layers': { 'values': [2, 4, 6, 8] },
-            'num_neurons_per_layer': { 'values': [4, 6, 8, 10] },
             'activation': { 'values': ['identity', 'relu', 'sigmoid', 'tanh'] },
-            'lr': { 'values': [1e-5, 1e-4, 1e-3, 1e-2] },
-            'num_epochs': { 'values': [25, 50, 75, 100] },
+            'lr': { 'values': [1e-5, 1e-4] },
+            'num_epochs': { 'values': [50, 100] },
+            'num_hidden_layers': { 'values': [4, 8, 16] },
+            'num_neurons_per_layer': { 'values': [4, 8, 16] },
             'optimizer': { 'values': ['sgd', 'batch', 'mini-batch'] }
         }
     }
@@ -392,6 +372,12 @@ def mlp_classification_spotify_dataset() -> None:
     # Log function call
     print('--- mlp_classification_spotify_dataset')
 
+    # Read the best hyperparameters from the results file
+    with open(\
+        f'{PROJECT_DIR}/assignments/3/results/mlp_classification_spotify_hyperparameters.json', \
+                                                                    'r', encoding='utf-8') as file:
+        config = json.load(file)
+
     # Read interim CSV into DataFrame
     df = pd.read_csv(f'{PROJECT_DIR}/data/interim/1/spotify.csv', index_col=0)
 
@@ -402,13 +388,14 @@ def mlp_classification_spotify_dataset() -> None:
     # Split the array into train, validation and test
     X_train, X_val, _, y_train, y_val, _ = train_val_test_split(X, y)
 
-    # Train model
+    # Initialize and train model
     mlp = MLP(
-        num_hidden_layers=6,
-        num_neurons_per_layer=10,
-        activation=get_activation('sigmoid'),
-        lr=1e-3,
-        num_epochs=50,
+        num_hidden_layers=config['num_hidden_layers'],
+        num_neurons_per_layer=config['num_neurons_per_layer'],
+        activation=get_activation(config['activation']),
+        lr=config['lr'],
+        num_epochs=config['num_epochs'],
+        optimizer=config['optimizer'],
         task='single-label-classification',
         loss=CrossEntropy()
     )
@@ -417,6 +404,170 @@ def mlp_classification_spotify_dataset() -> None:
     # Evaluate metrics for model
     cls_measures = ClassificationMeasures(y_val, mlp.predict(X_val))
     cls_measures.print_all_measures()
+
+
+def mlp_logistic_regression() -> None:
+    """ Apply Logistic Regression using MLP, on the Pima Indians Diabetes dataset. """
+
+    def train_worker():
+        """ Trains a MLP with a given configuration. """
+
+        # Initialize logging process
+        wandb.init()
+
+        # Initialize and train model
+        mlp = MLP(
+            num_hidden_layers=0,
+            num_neurons_per_layer=[],
+            activation=get_activation('sigmoid'),
+            lr=1e-3,
+            num_epochs=150,
+            task='regression',
+            loss=get_loss_function(wandb.config.loss)
+        )
+        mlp.fit(X_train, y_train, X_val, y_val, wandb_log=True)
+
+    # Log function call
+    print('--- mlp_logistic_regression')
+
+    # Read interim CSVs into DataFrames
+    df = pd.read_csv(f'{PROJECT_DIR}/data/external/diabetes.csv')
+
+    # Convert DataFrames to arrays
+    X = df.to_numpy()[:, :-1]
+    y = df.to_numpy()[:, -1]
+
+    # Split the array into train, test and split
+    X_train, X_val, _, y_train, y_val, _ = train_val_test_split(X, y)
+
+    # WandB sweep configuration
+    sweep_config = {
+        'name': 'binary-classification',
+        'method': 'grid',
+        'metric': { 'name': 'val_loss', 'goal': 'minimize' },
+        'parameters': {
+            'loss': { 'values': ['binary-cross-entropy', 'mean-squared-error'] }
+        }
+    }
+
+    # Start and finish sweep
+    sweep_id = wandb.sweep(sweep_config, project='smai-m24-mlp-regression')
+    wandb.agent(sweep_id, train_worker)
+    wandb.finish()
+    shutil.rmtree('wandb')
+
+
+def mlp_regression_best_model() -> None:
+    """ Evaluate the best Multi Layer Perceptron Regression model, identified through
+    hyperparameter tuning, on Boston Housing Dataset. """
+
+    # Log function call
+    print('--- mlp_regression_best_model')
+
+    # Read the best hyperparameters from the results file
+    with open(f'{PROJECT_DIR}/assignments/3/results/mlp_regression_hyperparameters.json', \
+                                                                    'r', encoding='utf-8') as file:
+        config = json.load(file)
+
+    # Read interim CSVs into DataFrames
+    df_train = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/HousingData_train.csv', index_col=0)
+    df_val = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/HousingData_val.csv', index_col=0)
+    df_test = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/HousingData_test.csv', index_col=0)
+
+    # Convert DataFrames to arrays
+    X_train, y_train = df_train.to_numpy()[:, :-1], df_train.to_numpy()[:, -1]
+    X_val, y_val = df_val.to_numpy()[:, :-1], df_val.to_numpy()[:, -1]
+    X_test, y_test = df_test.to_numpy()[:, :-1], df_test.to_numpy()[:, -1]
+
+    # Initialize and train model
+    mlp = MLP(
+        num_hidden_layers=config['num_hidden_layers'],
+        num_neurons_per_layer=config['num_neurons_per_layer'],
+        activation=get_activation(config['activation']),
+        lr=config['lr'],
+        num_epochs=config['num_epochs'],
+        optimizer=config['optimizer'],
+        task='regression',
+        loss=MeanSquaredError()
+    )
+    mlp.fit(X_train, y_train, X_val, y_val)
+
+    # Evaluate metrics for model
+    test_measures = RegressionMeasures(y_test, mlp.predict(X_test))
+    test_measures.print_all_measures()
+
+
+def mlp_regression_hyperparameter_tuning() -> None:
+    """ Hyperparameter tuning for Multi Layer Perceptron Regression on Boston Housing Dataset. """
+
+    def train_worker():
+        """ Trains a MLP with a given configuration. """
+
+        # Initialize logging process
+        wandb.init()
+
+        # Initialize and train model
+        mlp = MLP(
+            num_hidden_layers=wandb.config.num_hidden_layers,
+            num_neurons_per_layer=wandb.config.num_neurons_per_layer,
+            activation=get_activation(wandb.config.activation),
+            lr=wandb.config.lr,
+            num_epochs=wandb.config.num_epochs,
+            optimizer=wandb.config.optimizer,
+            task='regression',
+            loss=MeanSquaredError()
+        )
+        mlp.fit(X_train, y_train, X_val, y_val, wandb_log=True)
+
+        # Evaluate metrics for model
+        train_measures = RegressionMeasures(y_train, mlp.predict(X_train))
+        val_measures = RegressionMeasures(y_val, mlp.predict(X_val))
+
+        # Log metrics
+        wandb.log({
+            'train_mae': train_measures.mean_absolute_error(),
+            'train_mse': train_measures.mean_squared_error(),
+            'train_rmse': train_measures.root_mean_squared_error(),
+            'train_r2': train_measures.r_squared(),
+            'val_mae': val_measures.mean_absolute_error(),
+            'val_mse': val_measures.mean_squared_error(),
+            'val_rmse': val_measures.root_mean_squared_error(),
+            'val_r2': val_measures.r_squared(),
+        })
+
+    # Log function call
+    print('--- mlp_regression_hyperparameter_tuning')
+
+    # Read interim CSVs into DataFrames
+    df_train = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/HousingData_train.csv', index_col=0)
+    df_val = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/HousingData_val.csv', index_col=0)
+    df_test = pd.read_csv(f'{PROJECT_DIR}/data/interim/3/HousingData_test.csv', index_col=0)
+
+    # Convert DataFrames to arrays
+    X_train, y_train = df_train.to_numpy()[:, :-1], df_train.to_numpy()[:, -1]
+    X_val, y_val = df_val.to_numpy()[:, :-1], df_val.to_numpy()[:, -1]
+    X_test, y_test = df_test.to_numpy()[:, :-1], df_test.to_numpy()[:, -1]
+
+    # WandB sweep configuration
+    sweep_config = {
+        'name': 'hyperparameter-tuning',
+        'method': 'grid',
+        'metric': { 'name': 'val_loss', 'goal': 'minimize' },
+        'parameters': {
+            'activation': { 'values': ['identity', 'relu', 'sigmoid', 'tanh'] },
+            'lr': { 'values': [1e-5, 1e-4] },
+            'num_epochs': { 'values': [50, 100] },
+            'num_hidden_layers': { 'values': [4, 8, 16] },
+            'num_neurons_per_layer': { 'values': [4, 8, 16] },
+            'optimizer': { 'values': ['sgd', 'batch', 'mini-batch'] }
+        }
+    }
+
+    # Start and finish WandB sweep
+    sweep_id = wandb.sweep(sweep_config, project='smai-m24-mlp-regression')
+    wandb.agent(sweep_id, train_worker)
+    wandb.finish()
+    shutil.rmtree('wandb')
 
 
 def wineqt_analysis_preprocessing() -> None:
@@ -500,7 +651,7 @@ if __name__ == '__main__':
     # 2 Multi Layer Perceptron Classification
 
     ## 2.1 Dataset Analysis and Preprocessing
-    wineqt_analysis_preprocessing()
+    # wineqt_analysis_preprocessing()
 
     ## 2.3 Model Training & Hyperparameter Tuning
     # mlp_classification_hyperparameter_tuning()
@@ -520,12 +671,13 @@ if __name__ == '__main__':
     # housing_data_analysis_preprocessing()
 
     ## 3.3 Model Training & Hyperparameter Tuning
-    # mlp_regression_hyperparameter_tuning() # TODO
+    # mlp_regression_hyperparameter_tuning()
 
     ## 3.4 Evaluating Model
-    # mlp_regression_best_model() # TODO
+    # mlp_regression_best_model()
 
-    ## 3.5 Mean Squared Error vs Binary Cross Entropy # TODO
+    ## 3.5 Mean Squared Error vs Binary Cross Entropy
+    # mlp_logistic_regression()
 
     # 4 AutoEncoders
 
