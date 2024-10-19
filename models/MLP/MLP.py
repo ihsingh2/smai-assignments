@@ -44,7 +44,8 @@ class MLP:
         Args:
             num_hidden_layers: Number of hidden layers.
             num_neurons_per_layer: Number of neurons in each hidden layer.
-            classify: Indicator for classification tasks (softmax will be applied automatically).
+            task: Indicator for which task the model should perform.
+                  The input and output are transformed accordingly.
             activation: The activation function to apply on each neuron's output
                                                                     (except final layer neurons).
             loss: The activation function to apply on the final output.
