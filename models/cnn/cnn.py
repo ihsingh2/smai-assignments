@@ -1,7 +1,8 @@
 """ Provides the CNN class. """
 
-from typing import Literal
+from typing import List, Literal, Self
 
+import numpy.typing as npt
 import torch
 from torchinfo import ModelStatistics, summary
 
@@ -20,20 +21,18 @@ class CNN:
     def __init__(
         self, activation: Literal['relu', 'sigmoid', 'tanh'], pool: Literal['avgpool', 'maxpool'],
         task: Literal['regression', 'single-label-classification', 'multi-label-classification'],
-        optimizer: Literal['sgd', 'adam'], lr: float = 1e-4, momentum: float = 0,
-        weight_decay: float = 0, num_blocks: int = 5, kernel_size: int = 3,
-        dropout: float = 0, num_epochs: int = 10, batch_size: int = 32
+        optimizer: Literal['sgd', 'adam'], lr: float = 1e-4, num_blocks: int = 5,
+        kernel_size: int = 3, dropout: float = 0, num_epochs: int = 10, batch_size: int = 32
     ):
         """ Initializes the model hyperparameters.
 
         Args:
+            activation: The activation function to use for non-linearity.
+            pool: The pooling layer to use after each block of convolution.
             task: Indicator for which task the model should perform.
                   The final output is transformed accordingly.
-            activation: The activation function to use for non-linearity.
             optimizer: The optimizer to use for weight updates.
             lr: The learning rate for weight updates.
-            momentum: The momentum factor to use with optimizer (if supported).
-            weight_decay: The weight decay coefficient to use with optimizer (if supported).
             num_blocks: The number of blocks of convolution layers to add to the network.
             dropout: The dropout rate to use after each block of convolution layer and
                      each fully connected layer.
@@ -50,9 +49,7 @@ class CNN:
                                                         f'Got unrecognized value for task {task}'
         assert optimizer in ['sgd', 'adam'], f'Got unrecognized value for optimizer {optimizer}'
         assert lr > 0, 'lr should be positive'
-        assert momentum >= 0, 'momentum should be non-negative'
-        assert weight_decay >= 0, 'weight_decay should be non-negative'
-        assert num_blocks > 0, 'num_blocks should be positive'
+        assert num_blocks >= 0, 'num_blocks should be non-negative'
         assert kernel_size > 0, 'kernel_size should be positive'
         assert dropout >= 0, 'momentum should be non-negative'
         assert num_epochs > 0, 'num_epochs should be positive'
@@ -66,27 +63,68 @@ class CNN:
 
         # Initialize the model parameters
         self.network = self._init_network(num_blocks, kernel_size, dropout, activation, pool)
+        self.optimizer = self._get_optimizer(optimizer, lr)
         self.loss_function = self._get_loss(task)
-        self.optimizer = self._get_optimizer(optimizer, lr, momentum, weight_decay)
 
 
-    def fit(self, dataset: torch.utils.data.Dataset):
+    def cpu(self) -> Self:
+        """ Moves the model to CPU. """
+
+        self.network = self.network.cpu()
+        return self
+
+
+    def cuda(self) -> Self:
+        """ Moves the model to GPU, if available. """
+
+        device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        self.network = self.network.to(device)
+        return self
+
+
+    def eval(self) -> Self:
+        """ Sets the model to eval state. """
+
+        self.network = self.network.eval()
+        return self
+
+
+    def feature_maps(self, X: torch.Tensor) -> List[npt.NDArray[float]]:
+        """ Extracts the feature maps for a given input. """
+
+        maps = []
+        for idx in range(self.num_blocks):
+            maps.append(self.forward(X, idx).detach().numpy())
+        return maps
+
+
+    def fit(self, dataset: torch.utils.data.Dataset) -> Self:
         """ Fits the model for the given training data. """
 
-        # TODO validation
+        # Set the models to train
+        self.cuda()
+        self.train()
 
+        # Dataloader
         dataloader = torch.utils.data.DataLoader(
             dataset,
             batch_size=self.batch_size,
             shuffle=True
         )
 
+        # Iterate over the dataset
         for epoch in range(self.num_epochs):
-            loss = self.pass_epoch(dataloader, train=True)
-            print(epoch, loss)
+            loss = self.pass_epoch(dataloader)
+            print(f'Epoch {epoch}, Loss: {loss}')
+
+        # Set the models to eval
+        self.cpu()
+        self.eval()
+
+        return self
 
 
-    def forward(self, X: torch.Tensor, index: int | None = None):
+    def forward(self, X: torch.Tensor, index: int | None = None) -> torch.Tensor:
         """ Performs forward propagation on the input image and returns the output of the
         final layer (or an intermediate layer optionally). """
 
@@ -94,7 +132,7 @@ class CNN:
             return self.network.forward(X)
 
         if not 0 <= index < self.num_blocks + 3:
-            raise ValueError(f'index should be in range(0, {self.num_blocks + 2})')
+            raise ValueError(f'index should be in range [0, {self.num_blocks + 2}]')
 
         for idx, layer in enumerate(self.network):
             X = layer(X)
@@ -135,15 +173,14 @@ class CNN:
         return torch.nn.MSELoss()
 
 
-    def _get_optimizer(self, optimizer: Literal['sgd', 'adam'], lr: float, momentum: float, \
-                                                    weight_decay: float) -> torch.optim.Optimizer:
+    def _get_optimizer(self, optimizer: Literal['sgd', 'adam'], lr: float) \
+                                                                        -> torch.optim.Optimizer:
         """ Returns the optimizer, specified by the description. """
 
         if optimizer == 'sgd':
-            return torch.optim.SGD(self.network.parameters(), lr=lr, momentum=momentum, \
-                                                                        weight_decay=weight_decay)
+            return torch.optim.SGD(self.network.parameters(), lr=lr)
 
-        return torch.optim.Adam(self.network.parameters(), lr=lr, weight_decay=weight_decay)
+        return torch.optim.Adam(self.network.parameters(), lr=lr)
 
 
     def _get_pool(self, pool: Literal['avgpool', 'maxpool']) -> torch.nn.Module:
@@ -190,7 +227,7 @@ class CNN:
         # Fully connected block 1
         layers.append(torch.nn.Sequential(
             torch.nn.Flatten(),
-            torch.nn.Linear(64 * num_blocks * ((2 ** (7 - num_blocks)) ** 2), 512),
+            torch.nn.Linear(max(64 * num_blocks, 1) * ((2 ** (7 - num_blocks)) ** 2), 512),
             self._get_activation(activation),
             torch.nn.Dropout(dropout)
         ))
@@ -216,20 +253,12 @@ class CNN:
         else:
             layers.append(torch.nn.Linear(128, 1))
 
-        # Device to run model on
-        device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
-        return torch.nn.Sequential(*layers).to(device)
+        return torch.nn.Sequential(*layers)
 
 
-    def pass_epoch(self, dataloader: torch.utils.data.DataLoader, train: bool = False) -> float:
+    def pass_epoch(self, dataloader: torch.utils.data.DataLoader) -> float:
         """ Performs one pass over the dataset, optionally trains the model
         and returns the total loss. """
-
-        if train:
-            self.network.train()
-        else:
-            self.network.eval()
 
         # Device the model is stored on
         device = self._get_device()
@@ -253,9 +282,34 @@ class CNN:
             loss += loss_batch.detach().cpu()
 
             # Update step
-            if train:
-                loss_batch.backward()
-                self.optimizer.step()
-                self.optimizer.zero_grad()
+            loss_batch.backward()
+            self.optimizer.step()
+            self.optimizer.zero_grad()
+
+        # Average loss
+        loss /= len(dataloader)
 
         return loss
+
+
+    def predict(self, X: torch.Tensor, threshold: float | None = None) -> torch.Tensor:
+        """ Returns the model output for an image, after post-processing based on task. """
+
+        y = self.forward(X)
+
+        if self.task == 'single-label-classification':
+            # TODO
+            pass
+
+        elif self.task == 'multi-label-classification':
+            # TODO
+            pass
+
+        return y
+
+
+    def train(self) -> Self:
+        """ Sets the model to train state. """
+
+        self.network = self.network.train()
+        return self

@@ -66,17 +66,17 @@ class AutoEncoder:
         # Initialize the model parameters to None
         self.mlp = None
         self.input_dimension = None
-        self.output_dimension = None
+        self.latent_dimension = None
 
 
-    def fit(self, X_train: npt.NDArray, X_val: npt.NDArray, output_dimension: int) -> Self:
+    def fit(self, X_train: npt.NDArray, X_val: npt.NDArray, latent_dimension: int) -> Self:
         """ Fits the model for the given training data. """
 
         # Store the dimensions
         assert X_train.shape[1] == X_val.shape[1], \
                                         'The training and validation sets have inconsistent shape'
         self.input_dimension = X_train.shape[1]
-        self.output_dimension = output_dimension
+        self.latent_dimension = latent_dimension
 
         # Initialize the model
         self.mlp = MLP(
@@ -105,7 +105,7 @@ class AutoEncoder:
 
         # Compute the latent representation
         latent = self.mlp.forward(X_test, index=self.num_hidden_layers + 1)
-        assert latent.shape[1] == self.output_dimension
+        assert latent.shape[1] == self.latent_dimension
 
         return latent
 
@@ -114,9 +114,9 @@ class AutoEncoder:
         """ Computes the number of neurons per layer for gradual reduction in dimensionality. """
 
         num_neurons_per_layer = [ None for _ in range(self.num_hidden_layers * 2 + 1) ]
-        num_neurons_per_layer[self.num_hidden_layers] = self.output_dimension
+        num_neurons_per_layer[self.num_hidden_layers] = self.latent_dimension
 
-        slope = (self.output_dimension - self.input_dimension) / (self.num_hidden_layers + 1)
+        slope = (self.latent_dimension - self.input_dimension) / (self.num_hidden_layers + 1)
         for idx in range(self.num_hidden_layers):
             num_neurons_per_layer[idx] = num_neurons_per_layer[- idx - 1] \
                                                 = round(slope * (idx + 1) + self.input_dimension)

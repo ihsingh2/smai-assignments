@@ -159,13 +159,13 @@ def knn_autoencoder() -> None:
     # Read the optimal number of dimensions from file
     with open(f'{PROJECT_DIR}/assignments/2/results/pca_spotify_optimal_dimensions.txt', 'r', \
                                                                     encoding='utf-8') as file:
-        output_dimension = file.readline().strip()
-        output_dimension = int(output_dimension)
+        latent_dimension = file.readline().strip()
+        latent_dimension = int(latent_dimension)
 
     # Fit the autoencoder
     autoenc = AutoEncoder(num_hidden_layers=4, activation=get_activation('tanh'), lr=1e-4, \
                                                                                 optimizer='sgd')
-    autoenc.fit(X_train, X_val, output_dimension=output_dimension)
+    autoenc.fit(X_train, X_val, latent_dimension=latent_dimension)
 
     # Compute the latent representation
     X_train_latent = autoenc.get_latent(X_train)
