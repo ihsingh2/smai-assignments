@@ -92,7 +92,7 @@ class Sequential:
     def forward(self, X: npt.NDArray[np.float64], layers: List[Linear] | None = None, \
                                             index: int | None = None) -> npt.NDArray[np.float64]:
         """ Computes the model output sequentially in forward direction,
-        optionally storing the layerwise outputs for backward pass. """
+        storing the layerwise outputs for backward pass. """
 
         # Use the sequential layers if layers not provided
         if layers is None:

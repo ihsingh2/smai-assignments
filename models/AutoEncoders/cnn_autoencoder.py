@@ -3,6 +3,7 @@
 from typing import Literal, Self, Tuple
 
 import torch
+import wandb
 from torchinfo import ModelStatistics, summary
 
 
@@ -21,7 +22,7 @@ class CNNAutoEncoder:
         self, latent_dimension: int, activation: Literal['relu', 'sigmoid', 'tanh'],
         pool: Literal['avgpool', 'maxpool'], optimizer: Literal['sgd', 'adam'], lr: float = 1e-4,
         num_blocks: int = 5, kernel_size: int = 3, dropout: float = 0, num_epochs: int = 10,
-        batch_size: int = 32
+        batch_size: int = 32, random_seed: int | None = 0
     ):
         """ Initializes the model hyperparameters.
 
@@ -55,6 +56,10 @@ class CNNAutoEncoder:
         self.num_blocks = num_blocks
         self.num_epochs = num_epochs
         self.batch_size = batch_size
+
+        # Reinitialize the random number generator
+        if random_seed is not None:
+            torch.manual_seed(random_seed)
 
         # Initialize the model parameters
         self.encoder = self._init_encoder(num_blocks, kernel_size, dropout, activation, pool)
@@ -99,34 +104,62 @@ class CNNAutoEncoder:
         self.decoder = self.decoder.eval()
         return self
 
+
     # pylint: disable=duplicate-code
 
-    def fit(self, dataset: torch.utils.data.Dataset) -> Self:
-        """ Fits the model for the given training data. """
+    def fit(self, train_dataset: torch.utils.data.Dataset, val_dataset: torch.utils.data.Dataset, \
+                                        verbose: bool = False, wandb_log: bool = False) -> Self:
+        """ Fits the model for given training data, using validation data for early stopping. """
 
-        # Set the models to train
+        # Load the model to GPU
         self.cuda()
-        self.train()
 
-        # Dataloader
-        dataloader = torch.utils.data.DataLoader(
-            dataset,
+        # Dataloaders
+        train_dataloader = torch.utils.data.DataLoader(
+            train_dataset,
             batch_size=self.batch_size,
             shuffle=True
         )
+        val_dataloader = torch.utils.data.DataLoader(
+            val_dataset,
+            batch_size=self.batch_size
+        )
 
-        # Iterate over the dataset
+        # Track previous iteration loss for early stopping
+        prev_val_loss = float('inf')
+
+        # Iterate over the datasets
         for epoch in range(self.num_epochs):
-            loss = self.pass_epoch(dataloader)
-            print(f'Epoch {epoch}, Loss: {loss}')
 
-        # Set the models to eval
+            # Train
+            self.train()
+            train_loss = self.pass_epoch(train_dataloader, train=True)
+
+            # Validate
+            self.eval()
+            val_loss = self.pass_epoch(val_dataloader)
+
+            # Log metrics
+            if verbose:
+                print(f'Epoch {epoch}, Train Loss: {train_loss}, Val Loss: {val_loss}')
+            if wandb_log:
+                wandb.log({
+                    'train_loss': train_loss,
+                    'val_loss': val_loss
+                })
+
+            # Early stopping
+            if val_loss > prev_val_loss:
+                break
+            prev_val_loss = val_loss
+
+        # Unload the model from GPU
         self.cpu()
-        self.eval()
 
         return self
 
     # pylint: enable=duplicate-code
+
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """ Compresses the input image and reconstructs it back. """
@@ -300,9 +333,8 @@ class CNNAutoEncoder:
 
     # pylint: enable=duplicate-code
 
-    def pass_epoch(self, dataloader: torch.utils.data.DataLoader) -> float:
-        """ Performs one pass over the dataset, optionally trains the model
-        and returns the total loss. """
+    def pass_epoch(self, dataloader: torch.utils.data.DataLoader, train: bool = False) -> float:
+        """ Iterates over the dataset, optionally trains the model and returns the total loss. """
 
         # Device the model is stored on
         device = self._get_device()
@@ -318,12 +350,13 @@ class CNNAutoEncoder:
 
             # Compute loss
             loss_batch = self.loss_function(x_pred, x)
-            loss += loss_batch.detach().cpu()
+            loss += loss_batch.detach().cpu().item()
 
             # Update step
-            loss_batch.backward()
-            self.optimizer.step()
-            self.optimizer.zero_grad()
+            if train:
+                loss_batch.backward()
+                self.optimizer.step()
+                self.optimizer.zero_grad()
 
         # Average loss
         loss /= len(dataloader)

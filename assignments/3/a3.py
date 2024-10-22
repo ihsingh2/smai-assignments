@@ -163,9 +163,9 @@ def knn_autoencoder() -> None:
         latent_dimension = int(latent_dimension)
 
     # Fit the autoencoder
-    autoenc = AutoEncoder(num_hidden_layers=4, activation=get_activation('tanh'), lr=1e-4, \
-                                                                                optimizer='sgd')
-    autoenc.fit(X_train, X_val, latent_dimension=latent_dimension)
+    autoenc = AutoEncoder(latent_dimension=latent_dimension, num_hidden_layers=4, \
+                                    activation=get_activation('tanh'), lr=1e-4, optimizer='sgd')
+    autoenc.fit(X_train, X_val)
 
     # Compute the latent representation
     X_train_latent = autoenc.get_latent(X_train)

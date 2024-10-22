@@ -231,7 +231,7 @@ class MLP:
 
     def forward(self, X: npt.NDArray, index: int | None = None) -> npt.NDArray:
         """ Computes the model output sequentially in forward direction,
-        optionally storing the layerwise outputs for backward pass. """
+        storing the layerwise outputs for backward pass. """
 
         # Check if fit called before forward
         assert self.sequential is not None, 'fit should be called before forward'
