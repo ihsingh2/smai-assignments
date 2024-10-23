@@ -1,13 +1,16 @@
 """ Provides the CNN class. """
 
+from collections import deque
 from typing import List, Literal, Self
 
+import numpy as np
 import numpy.typing as npt
 import torch
 import wandb
 from torchinfo import ModelStatistics, summary
 
 
+# pylint: disable-next=too-many-instance-attributes
 class CNN:
     """ Implements Convolutional Neural Network, using VGG-Net Architecture with Dropout.
 
@@ -71,6 +74,7 @@ class CNN:
         self.network = self._init_network(num_blocks, kernel_size, dropout, activation, pool)
         self.optimizer = self._get_optimizer(optimizer, lr)
         self.loss_function = self._get_loss(task)
+        self.val_losses = None
 
 
     def cpu(self) -> Self:
@@ -88,6 +92,26 @@ class CNN:
         return self
 
 
+    def _early_stopping(self, val_loss: float) -> bool:
+        """ Checks the suitability for early stopping of gradient descent. """
+
+        self.val_losses.append(val_loss)
+
+        # If sufficient samples for loss available for comparision
+        if len(self.val_losses) == self.val_losses.maxlen:
+
+            # Compute mean of first half and second half
+            midpoint = self.val_losses.maxlen // 2
+            previous_loss_pattern = np.mean(list(self.val_losses)[:midpoint])
+            current_loss_pattern = np.mean(list(self.val_losses)[midpoint:])
+
+            # If second half loss is greater, stop
+            if current_loss_pattern > previous_loss_pattern:
+                return True
+
+        return False
+
+
     def eval(self) -> Self:
         """ Sets the model to eval state. """
 
@@ -98,10 +122,11 @@ class CNN:
     def feature_maps(self, X: torch.Tensor) -> List[npt.NDArray[float]]:
         """ Extracts the feature maps for a given input. """
 
-        maps = []
-        for idx in range(self.num_blocks):
-            maps.append(self.forward(X, idx).detach().numpy())
-        return maps
+        with torch.no_grad():
+            maps = []
+            for idx in range(self.num_blocks):
+                maps.append(self.forward(X, idx).detach().numpy())
+            return maps
 
 
     def fit(self, train_dataset: torch.utils.data.Dataset, val_dataset: torch.utils.data.Dataset, \
@@ -122,8 +147,8 @@ class CNN:
             batch_size=self.batch_size
         )
 
-        # Track previous iteration loss for early stopping
-        prev_val_loss = float('inf')
+        # Queue to store recent val losses for early stopping
+        self.val_losses = deque(maxlen=4)
 
         # Iterate over the datasets
         for epoch in range(self.num_epochs):
@@ -146,9 +171,8 @@ class CNN:
                 })
 
             # Early stopping
-            if val_loss > prev_val_loss:
+            if self._early_stopping(val_loss):
                 break
-            prev_val_loss = val_loss
 
         # Unload the model from GPU
         self.cpu()
@@ -324,20 +348,47 @@ class CNN:
         return loss
 
 
-    def predict(self, X: torch.Tensor, multi_label_threshold: float = 0.2) -> torch.Tensor:
+    def predict(self, X: torch.Tensor | torch.utils.data.Dataset) -> torch.Tensor:
         """ Returns the model output for an image, after post-processing based on task. """
 
+        # Inference mode
+        self.eval()
         with torch.inference_mode():
-            y = self.forward(X)
 
+            # Compute prediction on CPU - The tensor may be too large to store on VRAM
+            if isinstance(X, torch.Tensor):
+                y = self.forward(X)
+
+            # Compute prediction on GPU - Setup dataloader with configured batch size
+            elif isinstance(X, torch.utils.data.Dataset):
+                self.cuda()
+                device = self._get_device()
+
+                y = []
+                dataloader = torch.utils.data.DataLoader(X, batch_size=self.batch_size)
+
+                for _, (x, _) in enumerate(dataloader):
+                    x = x.to(device)
+                    y_pred = self.forward(x).cpu()
+                    y.append(y_pred)
+
+                y = torch.cat(y, dim=0)
+                self.cpu()
+
+            else:
+                raise ValueError('Expected a Tensor or Dataset')
+
+        # Clip the unbounded regression output
         if self.task == 'regression':
             y = y.clip(0, 3).round()
 
+        # Predict the class with largest logit
         elif self.task == 'single-label-classification':
             y = y.argmax(axis=1).unsqueeze(1)
 
+        # Binary thresholding on each class probability
         elif self.task == 'multi-label-classification':
-            y = torch.where(y > multi_label_threshold, 1, 0)
+            y = torch.where(y > 0.5, 1, 0)
 
         return y
 

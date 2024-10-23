@@ -1,7 +1,9 @@
 """ Provides the CNNAutoEncoder class. """
 
+from collections import deque
 from typing import Literal, Self, Tuple
 
+import numpy as np
 import torch
 import wandb
 from torchinfo import ModelStatistics, summary
@@ -66,6 +68,7 @@ class CNNAutoEncoder:
         self.decoder = self._init_decoder(num_blocks, kernel_size, dropout, activation, pool)
         self.optimizer = self._get_optimizer(optimizer, lr)
         self.loss_function = torch.nn.MSELoss()
+        self.val_losses = None
 
 
     def cpu(self) -> Self:
@@ -86,15 +89,89 @@ class CNNAutoEncoder:
 
 
     def decode(self, X: torch.Tensor) -> torch.Tensor:
-        """ Reconstructs the image using the compressed latent space vector. """
+        """ Reconstructs the images using the compressed latent space vectors. """
 
         return self.decoder.forward(X)
 
 
+    def decode_dataset(self, dataset: torch.utils.data.Dataset) -> torch.Tensor:
+        """ Reconstructs the dataset using the compressed latent space vectors. """
+
+        # Inference mode
+        self.eval()
+        with torch.inference_mode():
+
+            # Use GPU for batch computation
+            self.cuda()
+            device = self._get_device()
+
+            # Batch dataloader
+            dataloader = torch.utils.data.DataLoader(dataset, batch_size=self.batch_size)
+            y = []
+
+            for _, x in enumerate(dataloader):
+                x = x.to(device)
+                image = self.decode(x).cpu()
+                y.append(image)
+
+            # Gather output and unload the model
+            y = torch.cat(y, dim=0)
+            self.cpu()
+
+        return y
+
+
+    def _early_stopping(self, val_loss: float) -> bool:
+        """ Checks the suitability for early stopping of gradient descent. """
+
+        self.val_losses.append(val_loss)
+
+        # If sufficient samples for loss available for comparision
+        if len(self.val_losses) == self.val_losses.maxlen:
+
+            # Compute mean of first half and second half
+            midpoint = self.val_losses.maxlen // 2
+            previous_loss_pattern = np.mean(list(self.val_losses)[:midpoint])
+            current_loss_pattern = np.mean(list(self.val_losses)[midpoint:])
+
+            # If second half loss is greater, stop
+            if current_loss_pattern > previous_loss_pattern:
+                return True
+
+        return False
+
+
     def encode(self, X: torch.Tensor) -> torch.Tensor:
-        """ Reduces the spatial dimension of the input image."""
+        """ Reduces the spatial dimension of the input images."""
 
         return self.encoder.forward(X)
+
+
+    def encode_dataset(self, dataset: torch.utils.data.Dataset) -> torch.Tensor:
+        """ Reduces the spatial dimension of the input dataset. """
+
+        # Inference mode
+        self.eval()
+        with torch.inference_mode():
+
+            # Use GPU for batch computation
+            self.cuda()
+            device = self._get_device()
+
+            # Batch dataloader
+            dataloader = torch.utils.data.DataLoader(dataset, batch_size=self.batch_size)
+            y = []
+
+            for _, x in enumerate(dataloader):
+                x = x.to(device)
+                encoding = self.encode(x).cpu()
+                y.append(encoding)
+
+            # Gather output and unload the model
+            y = torch.cat(y, dim=0)
+            self.cpu()
+
+        return y
 
 
     def eval(self) -> Self:
@@ -125,8 +202,8 @@ class CNNAutoEncoder:
             batch_size=self.batch_size
         )
 
-        # Track previous iteration loss for early stopping
-        prev_val_loss = float('inf')
+        # Queue to store recent val losses for early stopping
+        self.val_losses = deque(maxlen=4)
 
         # Iterate over the datasets
         for epoch in range(self.num_epochs):
@@ -149,9 +226,8 @@ class CNNAutoEncoder:
                 })
 
             # Early stopping
-            if val_loss > prev_val_loss:
+            if self._early_stopping(val_loss):
                 break
-            prev_val_loss = val_loss
 
         # Unload the model from GPU
         self.cpu()
