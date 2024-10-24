@@ -157,7 +157,7 @@ class MLP:
     # pylint: disable-next=too-many-arguments, too-many-positional-arguments
     def fit(
         self, X_train: npt.NDArray, y_train: npt.NDArray, X_val: npt.NDArray, y_val: npt.NDArray,
-        wandb_log: bool = False, random_seed: int | None = 0
+        verbose: bool = False, wandb_log: bool = False, random_seed: int | None = 0
     ) -> Self:
         """ Fits the model for the given training data. """
 
@@ -186,6 +186,8 @@ class MLP:
             val_loss = self.loss.forward(y_val, self.forward(X_val))
 
             # Log metrics
+            if verbose:
+                print(f'Epoch {epoch}, Val Loss: {val_loss}')
             if wandb_log:
                 train_loss = self.loss.forward(y_train, self.forward(X_train))
 

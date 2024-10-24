@@ -36,8 +36,8 @@ class ClassificationMeasures:
         return np.mean(self.y_true == self.y_pred)
 
 
-    def compute_confusion_matrices(self) -> npt.NDArray:
-        """ Compute the confusion matrices for each class. """
+    def _compute_confusion_matrices(self) -> npt.NDArray:
+        """ Computes the confusion matrices for each class. """
 
         confusion_matrices = np.empty((self.num_classes, 2, 2))
 
@@ -53,6 +53,17 @@ class ClassificationMeasures:
             confusion_matrices[idx, 1, 1] = np.sum((self.y_true != clx) & (self.y_pred != clx))
 
         return confusion_matrices
+
+
+    def confusion_matrix(self) -> npt.NDArray:
+        """ Computes the overall confusion matrix. """
+
+        confusion_matrix = np.zeros((self.num_classes, self.num_classes), dtype=int)
+
+        for true_idx, pred_idx in zip(self.y_true, self.y_pred):
+            confusion_matrix[true_idx, pred_idx] += 1
+
+        return confusion_matrix
 
 
     def f1_score(self, average: Literal['micro', 'macro']) -> float:
@@ -78,7 +89,7 @@ class ClassificationMeasures:
 
         # Compute confusion matrix for each class
         if self.confusion_matrices is None:
-            self.confusion_matrices = self.compute_confusion_matrices()
+            self.confusion_matrices = self._compute_confusion_matrices()
 
         if average == 'micro':
             # Compute recall of pooled confusion matrix
@@ -108,7 +119,7 @@ class ClassificationMeasures:
 
         # Compute confusion matrix for each class
         if self.confusion_matrices is None:
-            self.confusion_matrices = self.compute_confusion_matrices()
+            self.confusion_matrices = self._compute_confusion_matrices()
 
         if average == 'micro':
             # Compute precision of pooled confusion matrix

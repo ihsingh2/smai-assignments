@@ -29,6 +29,12 @@ class PCA:
         self.components = None
 
 
+    def encode(self, X: npt.NDArray) -> npt.NDArray:
+        """ Transforms the data using the n_components. """
+
+        return self.transform(X)
+
+
     def fit(self, X_train: npt.NDArray) -> Self:
         """ Obtains the principal component of the dataset. """
 
@@ -61,8 +67,14 @@ class PCA:
         return self
 
 
+    def forward(self, X: npt.NDArray) -> npt.NDArray:
+        """ Transforms the data to latent space and reconstructs it back."""
+
+        return self.inverse_transform(self.transform(X))
+
+
     def transform(self, X: npt.NDArray) -> npt.NDArray:
-        """ Transforms the data using the n_components."""
+        """ Transforms the data using the n_components. """
 
         # Check if fit method called before transform
         assert self.X_train is not None, 'transform called before fit'
@@ -77,7 +89,7 @@ class PCA:
 
 
     def inverse_transform(self, X_transformed: npt.NDArray) -> npt.NDArray:
-        """ Reconstructs the data earlier projected to the n_components."""
+        """ Reconstructs the data earlier projected to the n_components. """
 
         # Check if fit method called before inverse_transform
         assert self.X_train is not None, 'inverse_transform called before fit'
@@ -92,13 +104,13 @@ class PCA:
 
 
     def _transform(self, X: npt.NDArray, n_components: int) -> npt.NDArray:
-        """ Transforms the data using a subset of principal components."""
+        """ Transforms the data using a subset of principal components. """
 
         return (X - self.means) @ self.components[:, :n_components]
 
 
     def _inverse_transform(self, X_transformed: npt.NDArray, n_components: int) -> npt.NDArray:
-        """ Reconstructs the data earlier projected to a subset of principal components."""
+        """ Reconstructs the data earlier projected to a subset of principal components. """
 
         return (X_transformed @ self.components[:, :n_components].T) + self.means
 

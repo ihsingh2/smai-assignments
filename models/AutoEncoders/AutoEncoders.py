@@ -71,7 +71,14 @@ class AutoEncoder:
         self.input_dimension = None
 
 
-    def fit(self, X_train: npt.NDArray, X_val: npt.NDArray, wandb_log: bool = False) -> Self:
+    def encode(self, X: npt.NDArray) -> npt.NDArray:
+        """ Returns the reduced dataset. """
+
+        return self.get_latent(X)
+
+
+    def fit(self, X_train: npt.NDArray, X_val: npt.NDArray, \
+                                        verbose: bool = False, wandb_log: bool = False) -> Self:
         """ Fits the model for the given training data. """
 
         # Store the dimensions
@@ -93,19 +100,28 @@ class AutoEncoder:
         )
 
         # Fit the model
-        self.mlp.fit(X_train, X_train, X_val, X_val, wandb_log=wandb_log)
+        self.mlp.fit(X_train, X_train, X_val, X_val, verbose=verbose, wandb_log=wandb_log)
 
         return self
 
 
-    def get_latent(self, X_test: npt.NDArray) -> npt.NDArray:
+    def forward(self, X: npt.NDArray) -> npt.NDArray:
+        """ Transforms the data to latent space and reconstructs it back."""
+
+        # Check if fit method called before forward
+        assert self.mlp is not None, 'fit should be called before forward'
+
+        return self.mlp.forward(X)
+
+
+    def get_latent(self, X: npt.NDArray) -> npt.NDArray:
         """ Returns the reduced dataset."""
 
-        # Check if fit method called before predict
+        # Check if fit method called before get_latent
         assert self.mlp is not None, 'fit should be called before get_latent'
 
         # Compute the latent representation
-        latent = self.mlp.forward(X_test, index=self.num_hidden_layers + 1)
+        latent = self.mlp.forward(X, index=self.num_hidden_layers + 1)
         assert latent.shape[1] == self.latent_dimension
 
         return latent
