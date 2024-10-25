@@ -150,13 +150,17 @@ Reconstruction error: 1879.4041074107338
 
 #### Plots and Visualizations
 
-The 2D and 3D visualization of latent space is given below. Besides the small overlap in the class points, the class distributions looks well separated and distinguishable. A few classes predominantly contribute the most to the observed overlap. For example, class indices 4 and 6. As we shall see later in the classification confusion matrices, these classes tend to contribute the most to errors made by the KNN model.
+The 2D and 3D visualization of latent space is given below. Besides the small overlap in the class points, the class distributions looks well separated and distinguishable. A few classes predominantly contribute the most to the observed overlap. For example, class indexed by 4 (coat) and 6 (shirt). As we shall see later in the classification confusion matrices, these classes tend to contribute the most to errors made by the KNN model.
+
+```
+Reconstruction error: 1818.5985827605555
+```
+
+![cnn_reconstruction](./figures/cnn_reconstruction.png)
 
 ![cnn_2d_visualization](./figures/cnn_2d_visualization.png)
 
 ![cnn_3d_visualization](./figures/cnn_3d_visualization.png)
-
-![cnn_reconstruction](./figures/cnn_reconstruction.png)
 
 ### MLP AutoEncoder
 
@@ -166,9 +170,17 @@ We notice that the network is clearly overfitting on the training data and is un
 
 ![mlp_autoencoder_val_loss](./figures/mlp_autoencoder_val_loss.png)
 
-Based on the reconstructed images given below, one may be tempted to think that the model has not learned much about the images from the dataset. But as it will become more apparent during classification, the model's major failure is in reconstruction rather than understanding of the image.
+Based on the reconstructed images given below, one may be tempted to think that the model has not learned much about the images from the dataset. But as it will become more apparent during classification, the model's major failure is in reconstruction rather than understanding of the image. The classes may not have neat boundaries as in the case of CNN, but still provide some distinguishability.
+
+```
+Reconstruction error: 5671.708497353421
+```
 
 ![mlp_reconstruction](./figures/mlp_reconstruction.png)
+
+![mlp_2d_visualization](./figures/mlp_2d_visualization.png)
+
+![mlp_3d_visualization](./figures/mlp_3d_visualization.png)
 
 ### PCA AutoEncoder
 
@@ -178,11 +190,33 @@ The optimal number of components, based on reconstruction error on validation se
 
 PCA based reconstruction achieves results comparable to CNN, as the reconstruction error also affirms. However, it must be noted that the produced images lack clear boundaries and segmentation between foreground and background (notice the grey regions around the objects). The CNN, on the other hand, does a much better job, owing to its non-linearity and ability to suppress intermediate outputs.
 
+```
+Reconstruction error: 1977.5109844216408
+```
+
 ![pca_reconstruction](./figures/pca_reconstruction.png)
+
+![pca_2d_visualization](./figures/pca_2d_visualization.png)
+
+![pca_3d_visualization](./figures/pca_3d_visualization.png)
 
 ### KNN Classification
 
-CNN and PCA based classification accuracies and confusion matrices are comparable, just like their reconstruction errors were. MLP based classification gives poorer performance, on all classes except class indexed by 7. The worst hit was class indexed by 8, which saw a drop in recognition by 350 (around 30%).
+CNN and PCA based classification accuracies and confusion matrices are comparable, just like their reconstruction errors were. MLP based classification gives poorer performance comparatively, on all classes except the class indexed by 7 (sneaker). The worst hit was class indexed by 8 (bag), which saw a drop in recognition by 350 (around 30%).
+
+```
+CNN Autoencoder
+Train Accuracy: 0.7975952380952381
+Test Accuracy: 0.7735833333333333
+
+MLP Autoencoder
+Train Accuracy: 0.6592380952380953
+Test Accuracy: 0.6193333333333333
+
+PCA Autoencoder
+Train Accuracy: 0.7972619047619047
+Test Accuracy: 0.7736666666666666
+```
 
 ![knn_accuracy](./figures/knn_accuracy.png)
 

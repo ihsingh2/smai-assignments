@@ -243,6 +243,33 @@ class CNNAutoEncoder:
         return self.decode(self.encode(X))
 
 
+    def forward_dataset(self, dataset: torch.utils.data.Dataset) -> torch.Tensor:
+        """ Compresses the input dataset and reconstructs it back. """
+
+        # Inference mode
+        self.eval()
+        with torch.inference_mode():
+
+            # Use GPU for batch computation
+            self.cuda()
+            device = self._get_device()
+
+            # Batch dataloader
+            dataloader = torch.utils.data.DataLoader(dataset, batch_size=self.batch_size)
+            y = []
+
+            for _, x in enumerate(dataloader):
+                x = x.to(device)
+                reconstruction = self.forward(x).cpu()
+                y.append(reconstruction)
+
+            # Gather output and unload the model
+            y = torch.cat(y, dim=0)
+            self.cpu()
+
+        return y
+
+
     def _get_activation(self, activation: Literal['relu', 'sigmoid', 'tanh']) -> torch.nn.Module:
         """ Returns the activation function, specified by the description. """
 
