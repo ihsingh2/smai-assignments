@@ -76,7 +76,7 @@ The parameters and accuracy of the best model found were as follows.
 
 ```json
 {
-    "dropout": 0.4,
+    "dropout": 0.2,
     "lr": 0.0001,
     "num_blocks": 4,
     "optimizer": "adam"
@@ -84,12 +84,12 @@ The parameters and accuracy of the best model found were as follows.
 ```
 
 ```
-Train exact match accuracy: 0.8263491988182068
-Train hamming accuracy: 0.9767618775367737
-Validation exact match accuracy: 0.6303333044052124
-Validation hamming accuracy: 0.9467333555221558
-Test exact match accuracy: 0.5810869336128235
-Test hamming accuracy: 0.9422174096107483
+Train exact match accuracy: 0.845634937286377
+Train hamming accuracy: 0.9933121800422668
+Validation exact match accuracy: 0.429666668176651
+Validation hamming accuracy: 0.9737222194671631
+Test exact match accuracy: 0.34217390418052673
+Test hamming accuracy: 0.9685289859771729
 ```
 
 ## AutoEncoder: Comparative Analysis

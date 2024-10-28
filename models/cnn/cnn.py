@@ -303,7 +303,7 @@ class CNN:
             ))
         elif self.task == 'multi-label-classification':
             layers.append(torch.nn.Sequential(
-                torch.nn.Linear(128, 10),
+                torch.nn.Linear(128, 30),
                 torch.nn.Sigmoid()
             ))
         else:
