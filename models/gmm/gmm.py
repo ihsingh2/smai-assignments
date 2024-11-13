@@ -2,6 +2,7 @@
 
 from typing import Self, Tuple
 
+import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 from scipy.stats import multivariate_normal
@@ -195,3 +196,31 @@ class GMM:
         log_likelihood = np.sum(np.log(np.sum(log_likelihood, axis=1)))
 
         return log_likelihood
+
+
+# pylint: disable=duplicate-code
+
+    def visualize(self, output_path: str = None) -> None:
+        """ Visualizes the density for two dimensional training data. """
+
+        if self.X_train.shape[1] != 2:
+            raise ValueError("Visualization is only supported for 2D data.")
+
+        membership = self.getMembership(self.X_train)
+
+        plt.figure(figsize=(10, 8))
+        plt.scatter(self.X_train[:, 0], self.X_train[:, 1], c=membership, s=1, cmap='viridis')
+        plt.title(f'Gaussian Mixture Model Membership (k={self.k})')
+        plt.grid()
+        plt.colorbar()
+        plt.tight_layout()
+
+        if output_path is not None:
+            plt.savefig(output_path, bbox_inches='tight')
+            plt.close()
+            plt.clf()
+
+        else:
+            plt.show()
+
+# pylint: enable=duplicate-code
