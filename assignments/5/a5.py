@@ -472,6 +472,7 @@ def optimal_character_recognition() -> None:
         # Validation
         model.eval()
         val_loss = 0.0
+        total_correct = 0
         with torch.no_grad():
             for images, labels, label_lengths, input_lengths in val_loader:
                 images = images.to(device)
@@ -483,10 +484,22 @@ def optimal_character_recognition() -> None:
                 loss = criterion(log_probs, labels, input_lengths, label_lengths)
                 val_loss += loss.item()
 
+                preds = torch.argmax(log_probs, dim=2).permute(1, 0)
+                cumulative_lengths = torch.cumsum(label_lengths, dim=0)
+                start_indices = cumulative_lengths - label_lengths
+                end_indices = cumulative_lengths
+
+                for i in range(preds.size(0)):
+                    target = labels[start_indices[i].item(): end_indices[i].item()].cpu().numpy()
+                    pred = decode_ctc_output(preds[i].cpu().numpy())
+                    total_correct += sum(p == t for p, t in zip(pred, target))
+
         # Log loss
         train_loss /= len(train_loader)
         val_loss /= len(val_loader)
-        print(f'Epoch {epoch+1}, Train Loss: {train_loss}, Validation Loss: {val_loss}')
+        avg_pred_correct = total_correct / len(val_dataset)
+        print(f'Epoch {epoch+1}, Train Loss: {train_loss}, Validation Loss: {val_loss}, ' \
+                                    f'Average Number of Correct Characters: {avg_pred_correct}')
 
         # Examples
         with torch.no_grad():

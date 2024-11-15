@@ -87,33 +87,33 @@ figures/rnn_bit_counting_generalization.png
 --- optimal_character_recognition
 [nltk_data] Downloading package words to /home/himanshu/nltk_data...
 [nltk_data]   Package words is already up-to-date!
-Epoch 1, Train Loss: 1.132981941175461, Validation Loss: 0.39812650175610925
+Epoch 1, Train Loss: 1.1330148339509964, Validation Loss: 0.3995721045952694, Average Number of Correct Characters: 6.4148
 Example predictions:
-Actual: flunkyize, Prediction: flunyize
-Actual: imperate, Prediction: iperate
-Actual: intersterile, Prediction: intetsterile
-Epoch 2, Train Loss: 0.26329046605825424, Validation Loss: 0.18149829295220649
+Actual: flunkyize, Prediction: flnkyize
+Actual: imperate, Prediction: imperate
+Actual: intersterile, Prediction: intersterile
+Epoch 2, Train Loss: 0.2591480255484581, Validation Loss: 0.18350919867586937, Average Number of Correct Characters: 7.6499
 Example predictions:
 Actual: flunkyize, Prediction: flunkyize
 Actual: imperate, Prediction: imperate
 Actual: intersterile, Prediction: intersterile
-Epoch 3, Train Loss: 0.1294818816125393, Validation Loss: 0.12315561873897625
+Epoch 3, Train Loss: 0.1276602579176426, Validation Loss: 0.1095039697162285, Average Number of Correct Characters: 8.1659
 Example predictions:
 Actual: flunkyize, Prediction: flunkyize
 Actual: imperate, Prediction: imperate
 Actual: intersterile, Prediction: intersterile
-Epoch 4, Train Loss: 0.07693328697681427, Validation Loss: 0.07582431682830404
+Epoch 4, Train Loss: 0.07589898224025965, Validation Loss: 0.07003932637251487, Average Number of Correct Characters: 8.5255
 Example predictions:
 Actual: flunkyize, Prediction: flunkyize
 Actual: imperate, Prediction: imperate
 Actual: intersterile, Prediction: intersterile
-Epoch 5, Train Loss: 0.05041496753394604, Validation Loss: 0.05502624938466177
+Epoch 5, Train Loss: 0.050198552015423774, Validation Loss: 0.05705882861000148, Average Number of Correct Characters: 8.5814
 Example predictions:
 Actual: flunkyize, Prediction: flunkyize
 Actual: imperate, Prediction: imperate
 Actual: intersterile, Prediction: intersterile
 Average Number of Total Characters: 9.4672
-[Prediction] Average Number of Correct Characters: 8.6607
-[Prediction] Accuracy: 0.9148
-[Baseline] Average Number of Correct Characters: 0.3643
-[Baseline] Accuracy: 0.0385
+[Prediction] Average Number of Correct Characters: 8.6161
+[Prediction] Accuracy: 0.9101
+[Baseline] Average Number of Correct Characters: 0.3632
+[Baseline] Accuracy: 0.0384

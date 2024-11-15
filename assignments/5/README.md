@@ -72,12 +72,12 @@ The model predicts reasonably well for the [1, 16] range present in the training
 We notice a difference in ground truth and prediction in the first epoch, which gets rectified in the training during second epoch.
 
 ```
-Epoch 1, Train Loss: 1.132981941175461, Validation Loss: 0.39812650175610925
+Epoch 1, Train Loss: 1.1330148339509964, Validation Loss: 0.3995721045952694, Average Number of Correct Characters: 6.4148
 Example predictions:
-Actual: flunkyize, Prediction: flunyize
-Actual: imperate, Prediction: iperate
-Actual: intersterile, Prediction: intetsterile
-Epoch 2, Train Loss: 0.26329046605825424, Validation Loss: 0.18149829295220649
+Actual: flunkyize, Prediction: flnkyize
+Actual: imperate, Prediction: imperate
+Actual: intersterile, Prediction: intersterile
+Epoch 2, Train Loss: 0.2591480255484581, Validation Loss: 0.18350919867586937, Average Number of Correct Characters: 7.6499
 Example predictions:
 Actual: flunkyize, Prediction: flunkyize
 Actual: imperate, Prediction: imperate
@@ -88,8 +88,8 @@ The comparision of the model output against random baseline is as follows.
 
 ```
 Average Number of Total Characters: 9.4672
-[Prediction] Average Number of Correct Characters: 8.6607
-[Prediction] Accuracy: 0.9148
-[Baseline] Average Number of Correct Characters: 0.3643
-[Baseline] Accuracy: 0.0385
+[Prediction] Average Number of Correct Characters: 8.6161
+[Prediction] Accuracy: 0.9101
+[Baseline] Average Number of Correct Characters: 0.3632
+[Baseline] Accuracy: 0.0384
 ```
