@@ -206,11 +206,22 @@ class GMM:
         if self.X_train.shape[1] != 2:
             raise ValueError("Visualization is only supported for 2D data.")
 
-        membership = self.getMembership(self.X_train)
+        x_min, x_max = self.X_train[:, 0].min() - 1, self.X_train[:, 0].max() + 1
+        y_min, y_max = self.X_train[:, 1].min() - 1, self.X_train[:, 1].max() + 1
+        x_grid, y_grid = np.meshgrid(np.linspace(x_min, x_max, 100), np.linspace(y_min, y_max, 100))
+        grid_points = np.vstack([x_grid.ravel(), y_grid.ravel()]).T
+
+        density = np.empty((grid_points.shape[0], self.k))
+        for component in range(self.k):
+            density[:, component] = multivariate_normal.pdf(grid_points, \
+                mean=self.means[component], cov=self.covariances[component], allow_singular=True)
+        density = density * self.mixing_coeffs
+        density = np.sum(density, axis=1).reshape(100, 100)
 
         plt.figure(figsize=(10, 8))
-        plt.scatter(self.X_train[:, 0], self.X_train[:, 1], c=membership, s=1, cmap='viridis')
-        plt.title(f'Gaussian Mixture Model Membership (k={self.k})')
+        plt.contourf(x_grid, y_grid, density, levels=20, cmap='viridis')
+        plt.scatter(self.X_train[:, 0], self.X_train[:, 1], c='red', s=1)
+        plt.title(f'GMM Density Estimate (k={self.k})')
         plt.grid()
         plt.colorbar()
         plt.tight_layout()
