@@ -1,0 +1,119 @@
+--- kernel_density_estimation
+figures/synthetic_data.png
+figures/synthetic_data_kde.png
+figures/synthetic_data_gmm_2.png
+figures/synthetic_data_gmm_3.png
+figures/synthetic_data_gmm_4.png
+figures/synthetic_data_gmm_5.png
+
+--- speech_digit_recognition
+figures/mfcc_features_same_digit.png
+figures/mfcc_features_diff_digit.png
+Training for digit 0
+Training for digit 1
+Training for digit 2
+Training for digit 3
+Training for digit 4
+Training for digit 5
+Training for digit 6
+Training for digit 7
+Training for digit 8
+Training for digit 9
+Evaluating for digit 0
+Evaluating for digit 1
+Evaluating for digit 2
+Evaluating for digit 3
+Evaluating for digit 4
+Evaluating for digit 5
+Evaluating for digit 6
+Evaluating for digit 7
+Evaluating for digit 8
+Evaluating for digit 9
+Accuracy on test set: 0.8466666666666667
+Accuracy on personal set: 0.2
+
+--- bit_counting
+Generated 100000 sequences
+Example sequences:
+[1, 1, 0, 1, 1, 0, 0, 1, 1] 6
+[1] 1
+[0, 1, 0, 1] 2
+Epoch 1, Train MAE: 2.029262331819534, Validation MAE: 1.0988255052050209
+Epoch 2, Train MAE: 0.8824426855087281, Validation MAE: 0.6650605063149884
+Epoch 3, Train MAE: 0.4381381331205368, Validation MAE: 0.26412060856819153
+Epoch 4, Train MAE: 0.19855392749905587, Validation MAE: 0.14980167515908077
+Epoch 5, Train MAE: 0.12220048496723175, Validation MAE: 0.09466778021898999
+Epoch 6, Train MAE: 0.08107853788137435, Validation MAE: 0.06919355514892347
+Epoch 7, Train MAE: 0.0612039987385273, Validation MAE: 0.05197135679376353
+Epoch 8, Train MAE: 0.04951157492548227, Validation MAE: 0.05705121000576171
+Epoch 9, Train MAE: 0.04288169070184231, Validation MAE: 0.039403074391328605
+Epoch 10, Train MAE: 0.037873534213006495, Validation MAE: 0.0329825932717627
+Test MAE: 0.033774947106933136
+Random MAE: 5.530951433121019
+Length 1, MAE: 0.10703553942738066
+Length 2, MAE: 0.04885973195266572
+Length 3, MAE: 0.0203322844496768
+Length 4, MAE: 0.012338526155443707
+Length 5, MAE: 0.013505345216364997
+Length 6, MAE: 0.012326559585750482
+Length 7, MAE: 0.01351652808700967
+Length 8, MAE: 0.015841829679479266
+Length 9, MAE: 0.017326808457446705
+Length 10, MAE: 0.018654594660564593
+Length 11, MAE: 0.020106393654065528
+Length 12, MAE: 0.021872555374339887
+Length 13, MAE: 0.026676663179781027
+Length 14, MAE: 0.0376792215641327
+Length 15, MAE: 0.05738210322181131
+Length 16, MAE: 0.0931533460926478
+Length 17, MAE: 0.14359611576529824
+Length 18, MAE: 0.23790090365015018
+Length 19, MAE: 0.35069653761994307
+Length 20, MAE: 0.5308826184196836
+Length 21, MAE: 0.6938079618344641
+Length 22, MAE: 0.9444191603903558
+Length 23, MAE: 1.2237837986581643
+Length 24, MAE: 1.5565235827379167
+Length 25, MAE: 1.8574979920296153
+Length 26, MAE: 2.2515052944231946
+Length 27, MAE: 2.6545204584765587
+Length 28, MAE: 3.052473478256517
+Length 29, MAE: 3.5603438410789345
+Length 30, MAE: 3.91786855497178
+Length 31, MAE: 4.420664611136078
+Length 32, MAE: 4.910373620926195
+figures/rnn_bit_counting_generalization.png
+
+--- optimal_character_recognition
+[nltk_data] Downloading package words to /home/himanshu/nltk_data...
+[nltk_data]   Package words is already up-to-date!
+Epoch 1, Train Loss: 1.132981941175461, Validation Loss: 0.39812650175610925
+Example predictions:
+Actual: flunkyize, Prediction: flunyize
+Actual: imperate, Prediction: iperate
+Actual: intersterile, Prediction: intetsterile
+Epoch 2, Train Loss: 0.26329046605825424, Validation Loss: 0.18149829295220649
+Example predictions:
+Actual: flunkyize, Prediction: flunkyize
+Actual: imperate, Prediction: imperate
+Actual: intersterile, Prediction: intersterile
+Epoch 3, Train Loss: 0.1294818816125393, Validation Loss: 0.12315561873897625
+Example predictions:
+Actual: flunkyize, Prediction: flunkyize
+Actual: imperate, Prediction: imperate
+Actual: intersterile, Prediction: intersterile
+Epoch 4, Train Loss: 0.07693328697681427, Validation Loss: 0.07582431682830404
+Example predictions:
+Actual: flunkyize, Prediction: flunkyize
+Actual: imperate, Prediction: imperate
+Actual: intersterile, Prediction: intersterile
+Epoch 5, Train Loss: 0.05041496753394604, Validation Loss: 0.05502624938466177
+Example predictions:
+Actual: flunkyize, Prediction: flunkyize
+Actual: imperate, Prediction: imperate
+Actual: intersterile, Prediction: intersterile
+Average Number of Total Characters: 9.4672
+[Prediction] Average Number of Correct Characters: 8.6607
+[Prediction] Accuracy: 0.9148
+[Baseline] Average Number of Correct Characters: 0.3643
+[Baseline] Accuracy: 0.0385

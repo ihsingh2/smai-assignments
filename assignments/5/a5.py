@@ -392,7 +392,7 @@ def optimal_character_recognition() -> None:
     class CharacterRecognizer(torch.nn.Module):
         """ Encoder decoder model for recognizing characters in an image. """
 
-        def __init__(self, num_chars=27, hidden_size=512, num_layers=2, dropout=0.2):
+        def __init__(self):
             super().__init__()
             self.cnn = torch.nn.Sequential(
                 ConvBlock(1, 64),
@@ -401,9 +401,8 @@ def optimal_character_recognition() -> None:
                 ConvBlock(256, 512),
                 torch.nn.AdaptiveMaxPool2d((1, 16))
             )
-            self.rnn = torch.nn.LSTM(512, hidden_size, num_layers, bidirectional=True, \
-                                                                                dropout=dropout)
-            self.fc = torch.nn.Linear(hidden_size * 2, num_chars)
+            self.rnn = torch.nn.RNN(512, 512, 2, bidirectional=True, dropout=0.2)
+            self.fc = torch.nn.Linear(1024, 27)
             self.softmax = torch.nn.LogSoftmax(dim=2)
 
         # pylint: disable-next=missing-function-docstring
@@ -438,9 +437,9 @@ def optimal_character_recognition() -> None:
     # Dataloader
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True, \
                                                                         collate_fn=collate_fn_ctc)
-    val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=64, shuffle=True, \
+    val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=64, shuffle=False, \
                                                                         collate_fn=collate_fn_ctc)
-    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=64, shuffle=True, \
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=64, shuffle=False, \
                                                                         collate_fn=collate_fn_ctc)
 
     # Use GPU if available
@@ -449,10 +448,10 @@ def optimal_character_recognition() -> None:
     # Model and optimizer
     model = CharacterRecognizer().to(device)
     criterion = torch.nn.CTCLoss(zero_infinity=True)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.00005)
 
     # Iterate over dataset
-    for epoch in range(10):
+    for epoch in range(5):
 
         # Train
         model.train()
@@ -627,8 +626,17 @@ def speech_digit_recognition() -> None:
     test_accuracy = (np.array(list_actual) == np.array(list_prediction)).mean()
     print(f'Accuracy on test set: {test_accuracy}')
 
-    # TODO Personal recordings
-    # personal_accuracy =
+    # Evaluate model on personal recordings
+    num_correct = 0
+    for digit in range(10):
+        y, sr = librosa.load(f'{PROJECT_DIR}/data/interim/5/spoken_digits/{digit}.wav')
+        mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=15).T
+        if np.argmax([ model.score(mfcc) for model in list_hmm ]) == digit:
+            print(digit)
+            num_correct += 1
+
+    personal_accuracy = num_correct / 10
+    print(f'Accuracy on personal set: {personal_accuracy}')
 
     print()
 
