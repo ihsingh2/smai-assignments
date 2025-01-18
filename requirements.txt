@@ -1,0 +1,13 @@
+hmmlearn==0.3.3
+librosa==0.10.2.post1
+matplotlib==3.10.0
+nltk==3.9.1
+numpy==2.2.1
+pandas==2.2.3
+Pillow==11.1.0
+scikit_learn==1.6.1
+scipy==1.15.1
+seaborn==0.13.2
+torch==2.5.1
+torchinfo==1.8.0
+wandb==0.19.4
